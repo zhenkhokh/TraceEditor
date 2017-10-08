@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TraceEditor</string>
+    <string name="title_activity_main">Редактор маршрутов</string>
+    <string name="title_activity_points">Точки</string>
+    <string name="title_activity_traces">Маршруты</string>
+    <string name="title_activity_geo">Местоположение</string>
+    <string name="title_activity_maps">Просмотр</string>
+    <string name="title_activity_toTrace">Точки для маршрута</string>
+    <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA</string>
+    <string name="cancel_save_point">Отмена</string>
+    <string name="ok_save_point">Ok</string>
+    <string name="hint_dialog_point">Имя точки</string>
+    <string name="hint_dialog_trace">Имя маршрута</string>
+    <string name="points_column_name">Точки</string>
+    <string name="traces_column_name">Маршруты</string>  
+    
+       <string
+            name="feedbacktitle">Enter feedback details to send to the developer:
+    </string>
+     <string
+             name="feedbackname">Your Name</string>
+    <string
+            name="feedbackemail">Your Email</string>
+    <string
+            name="feedbackbody">Feedback Details...</string>
+    <string
+            name="feedbackresponse">Would you like an email response?</string>
+    <string
+            name="feedbackbutton">Send Feedback</string>
+    <string
+            name="feedbacktype">Enter feedback type...</string>
+
+    <string
+            name="feedbacktype1">Praise</string>
+    <string
+            name="feedbacktype2">Gripe</string>
+    <string
+            name="feedbacktype3">Suggestion</string>
+    <string
+            name="feedbacktype4">Bug</string>
+</resources>

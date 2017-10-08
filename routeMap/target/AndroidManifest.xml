@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="12" android:versionName="1.0.3-SNAPSHOT" package="ru.android.zheka.gmapexample1">
+
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="16"/>
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality. 
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <!-- External storage for caching. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- My Location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+        <!-- Maps API needs OpenGL ES 2.0. -->
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+<!--     android:name="ru.android.zheka.gmapexample1.Application"
+android:name="com.activeandroid.app.Application"
+ -->
+    <application android:allowBackup="true" android:hardwareAccelerated="false" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:name="ru.android.zheka.gmapexample1.Application" android:theme="@style/AppTheme">
+        
+        <!--uses-library android:name="com.google.android.maps" /-->
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_key"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <!-- specify AA_MODELS if db-file dont exist-->
+        <meta-data android:name="AA_MODELS" android:value="ru.android.zheka.db.Point, ru.android.zheka.db.Trace, ru.android.zheka.db.Config"/>        
+        <meta-data android:name="AA_DB_NAME" android:value="Navi.db"/>
+        <meta-data android:name="AA_DB_VERSION" android:value="1"/>
+		<meta-data android:name="AA_SERIALIZERS" android:value="ru.android.zheka.db.UtilePointSerializer, ru.android.zheka.db.UtileTracePointsSerializer, ru.android.UtileLatLngSerializer"/>   
+    
+        <activity android:label="@string/title_activity_main" android:name=".FormActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/title_activity_main" android:name=".MainActivity"/>
+        <activity android:label="@string/title_activity_maps" android:name=".MapsActivity"/>
+        <activity android:label="@string/title_activity_geo" android:name=".GeoPositionActivity"/>
+        <activity android:label="@string/title_activity_points" android:name=".LatLngActivity"/>
+        <activity android:label="@string/title_activity_traces" android:name=".TraceActivity"/>
+     	<activity android:label="@string/title_activity_toTrace" android:name=".PointToTraceActivity"/>
+        <activity android:label="@string/title_activity_edit" android:name=".EditActivity"/>
+        <activity android:label="@string/title_activity_waypointsToTrace" android:name=".WayPointsToTrace"/>
+        <activity android:label="@string/title_activity_settings" android:name=".SettingsActivity"/>
+        <!--
+            Because android:exported is set to "false",
+            the service is only available to this app.
+        -->
+        <service android:exported="false" android:name=".TimerService"/>
+        		
+        <!--<activity
+    android:name=".UninstallIntentActivity"
+    android:label="@string/app_name" >
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.DELETE" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="package"  />
+    </intent-filter>
+</activity>-->
+
+    </application>
+
+</manifest>

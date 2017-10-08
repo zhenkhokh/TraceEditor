@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string-array name="feedbacktypelist">
+		<item>@string/feedbacktype1</item>
+		<item>@string/feedbacktype2</item>
+		<item>@string/feedbacktype3</item>
+		<item>@string/feedbacktype4</item>
+	</string-array>
+	
+	<string-array name="travelmodelist">
+		<item>@string/travelmode1</item>
+		<item>@string/travelmode2</item>
+		<item>@string/travelmode3</item>
+		<item>@string/travelmode4</item>
+	</string-array>
+		<string-array name="traveluserlist">
+		<item>@string/traveluser1</item>
+		<item>@string/traveluser2</item>
+		<item>@string/traveluser3</item>
+		<item>@string/traveluser4</item>
+	</string-array>
+	
+	<string-array name="timerdatalist">
+		<item>@string/timerdata1</item>
+		<item>@string/timerdata2</item>
+		<item>@string/timerdata3</item>
+		<item>@string/timerdata4</item>
+	</string-array>
+	<string-array name="timeruserlist">
+		<item>@string/timeruser1</item>
+		<item>@string/timeruser2</item>
+		<item>@string/timeruser3</item>
+		<item>@string/timeruser4</item>
+	</string-array>
+</resources>
