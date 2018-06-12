@@ -9,6 +9,8 @@
 # For more details on the use of proguard in Android, please read:
 # http://proguard.sourceforge.net/manual/examples.html#androidapplication
 
+#-keep class !java.io.** { *; }
+
 # Uncommnet injars option for android-plugin, comment for proguard plugin
 
 #-injars /home/zheka/.m2/repository/com/android/support/support-v4/21.0.0/support-v4-21.0.0.jar(!META-INF/MANIFEST.MF)

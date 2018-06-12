@@ -12,18 +12,23 @@
     <string name="title_activity_settings">Настройки</string>
     
     <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU -->
+    <!-- AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven-->
+    <!-- AIzaSyDMSQdJ-_asTHWkp-jmmdBJ3YPIkgbTxJw some new-->
+    <!--AIzaSyC_JfwHhRG7vChS_loyaIoL2adp6PPINXs old
+    AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 new
+    -->
+
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA</string>
-    
+
     <string name="cancel_save_point">Отмена</string>
     <string name="ok_save_point">Ok</string>
-    
-    <string name="cancel_plot_trace">Нет</string>
-    <string name="ok_plot_trace">Да</string>
-    
-    <string name="hint_latitude">Широта</string>        
+
+    <string name="cancel_plot_trace">Нет</string>    <string name="ok_plot_trace">Да</string>
+
+    <string name="hint_latitude">Широта</string>
     <string name="hint_longitude">Долгота</string>        
     
-    <string name="cancel_choice">Конечная</string>        
+    <string name="cancel_choice">Конечная</string>
     <string name="ok_choice">Путевая</string>    
     
     <string name="hint_dialog_point">Имя точки</string>

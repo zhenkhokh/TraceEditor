@@ -40,7 +40,33 @@ public class MainActivity extends RoboActivity implements JsCallable{
 	WebView webViewHome;
 	Context context = this;
 	Class clGeo, clLatLng, clPtoTr;
+public static class MyDialog extends CoordinateDialog{
+	public MainActivity activity;
+	public Class clGeo;
 
+	@Override
+	public void process() {
+		try{
+			Float longitude = new Float(lonField.getText().toString());
+			Float latitude = new Float(latField.getText().toString());
+			LatLng point  = new LatLng(latitude, longitude);
+			PositionInterceptor position = new PositionInterceptor(activity);
+			position.updatePosition();
+			position.centerPosition = point;
+			Intent intent = position.getNewIntent();
+			intent.setClass(activity, clGeo);
+			intent.setAction(Intent.ACTION_VIEW);
+			startActivity(intent);
+			activity.finish();
+		}
+		catch (Exception e) {
+			ru.android.zheka.gmapexample1.AlertDialog alert
+					= new ru.android.zheka.gmapexample1.AlertDialog("Неверный формат чиел. Углы должны быть дробными");
+			alert.show(activity.getFragmentManager(), "Ошибка");
+			e.printStackTrace();
+		}
+	}
+}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,32 +148,10 @@ try {
           finish();
       }
       if (val.contentEquals(COORDINATE_GO)) {
-    	  CoordinateDialog dialog = new CoordinateDialog() {
-			
-			@Override
-			public void process() {
-				try{
-					Float longitude = new Float(lonField.getText().toString());
-					Float latitude = new Float(latField.getText().toString());
-					LatLng point  = new LatLng(latitude, longitude);
-					PositionInterceptor position = new PositionInterceptor(MainActivity.this);
-					position.updatePosition();
-					position.centerPosition = point;
-					Intent intent = position.getNewIntent();
-					intent.setClass(MainActivity.this, clGeo);
-					intent.setAction(Intent.ACTION_VIEW);
-			    	startActivity(intent);
-			        finish();			    	  
-				}
-				catch (Exception e) {
-					 ru.android.zheka.gmapexample1.AlertDialog alert 
-					 = new ru.android.zheka.gmapexample1.AlertDialog("Неверный формат чиел. Углы должны быть дробными");
-					 alert.show(MainActivity.this.getFragmentManager(), "Ошибка");
-					 e.printStackTrace();
-				}
-			}
-		};
-		dialog.show(getFragmentManager(), "Переход");
+    	  MyDialog dialog = new MyDialog();
+    	  dialog.activity = this;
+    	  dialog.clGeo = clGeo;
+    	  dialog.show(getFragmentManager(), "Переход");
       }
       if (val.contentEquals(SETTINGS)) {
     	  intent.setAction(Intent.ACTION_VIEW);

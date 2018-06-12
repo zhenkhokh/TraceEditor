@@ -56,6 +56,41 @@ import com.google.android.gms.maps.model.LatLng;
 	        ConcurrentHashMap<String,Boolean> status = new ConcurrentHashMap<String, Boolean>();
 	        EditModel model=null;
 	        MyAdapter adapter;
+	        static public class MySaveDialog extends SaveDialog{
+	        	public Editable p;
+	        	public EditModel model;
+	        	public ConcurrentHashMap<String,Boolean> status;
+	        	public String pName;
+	        	public EditActivity activity;
+
+				@Override
+				protected void positiveProcess() {
+					String newName = nameField.getText().toString();
+					if (DbFunctions.getModelByName(newName, model.getClassTable())!=null){
+						AlertDialog dialog = new AlertDialog("Введеное имя уже существует, введите другое");
+						dialog.show(getFragmentManager(), "Переименование");
+						return;
+					}
+					DbFunctions.delete(p.model);
+					p.setName(newName);
+					try{DbFunctions.add(p.model);
+					}catch(java.lang.InstantiationException e){
+						e.printStackTrace();
+					}catch(IllegalAccessException e){
+						e.printStackTrace();
+					}catch(IllegalArgumentException e){
+						e.printStackTrace();
+					}
+					boolean pStatus = status.get(pName);
+					status.remove(pName);
+					status.put(newName, pStatus);
+					activity.updateView();
+				}
+				@Override
+				protected SaveDialog newInstance() {
+					return this;
+				}
+			}
 	        //public EditActivity(EditModel model){
 	        //	this.model = model;
 	        //}
@@ -193,35 +228,12 @@ import com.google.android.gms.maps.model.LatLng;
 						final Editable p = new Editable(DbFunctions
 								.getModelByName(pName										
 										,model.getClassTable()));
-						SaveDialog dialog = new SaveDialog() {
-							@Override
-							protected void positiveProcess() {
-								String newName = nameField.getText().toString();
-								if (DbFunctions.getModelByName(newName, model.getClassTable())!=null){
-									AlertDialog dialog = new AlertDialog("Введеное имя уже существует, введите другое");
-									dialog.show(getFragmentManager(), "Переименование");
-									return;
-								}
-								DbFunctions.delete(p.model);
-								p.setName(newName);
-								try{DbFunctions.add(p.model);								
-						        }catch(java.lang.InstantiationException e){
-						        	e.printStackTrace();
-						        }catch(IllegalAccessException e){
-						        	 e.printStackTrace();
-								}catch(IllegalArgumentException e){
-									 e.printStackTrace();
-								}
-								boolean pStatus = status.get(pName);
-								status.remove(pName);
-								status.put(newName, pStatus);
-								updateView();
-							}
-							@Override
-							protected SaveDialog newInstance() {
-								return this;
-							}
-						}.newInstance(pName);
+						MySaveDialog dialog = (MySaveDialog)new MySaveDialog().newInstance(pName);
+						dialog.activity = this;
+						dialog.model = model;
+						dialog.p = p;
+						dialog.pName = pName;
+						dialog.status = status;
 						dialog.show(getFragmentManager(),"Переименование");
 					}
 				}

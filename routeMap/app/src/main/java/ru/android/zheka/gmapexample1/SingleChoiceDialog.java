@@ -18,7 +18,7 @@ public abstract class SingleChoiceDialog extends DialogFragment{
 	public SingleChoiceDialog(String msg) {
 		this.msg = msg;		
 	}
-	public SingleChoiceDialog(String msg,int negativeId, int positiveId){
+	protected SingleChoiceDialog(String msg,int negativeId, int positiveId){
 		this(msg);
 		this.positiveId = positiveId;
 		this.negativeId = negativeId;

@@ -99,6 +99,54 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	Config config=null;
 	//TimerService timerService=TimerService.getInstance();
 	PositionReciever positionReciever = null;
+
+	public static class MySaveDialog extends SaveDialog{
+
+		public MapsActivity map;
+		public PositionInterceptor position;
+		public DataTrace dataTrace;
+
+		@Override
+		protected void positiveProcess() {
+			Trace trace = new Trace();
+			if (dataTrace!=null
+					&& position.start!=null
+					&& position.end!=null){
+				trace.data = dataTrace;
+				trace.start = position.start;
+				trace.end = position.end;
+				trace.name = nameField.getText().toString();
+				AlertDialog dialog = new AlertDialog("");
+				if (trace.name.isEmpty()){
+					//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
+					dialog.msg = "Отсутсвует текст, введите название";
+					dialog.show(getFragmentManager(), "Ошибка");
+					return;
+				}
+				if (DbFunctions.getTraceByName(trace.name)!=null){
+					dialog.msg = "Маршрут с таким именем существует";
+					dialog.show(getFragmentManager(), "Ошибка");
+					return;
+				}
+				try{DbFunctions.add(trace);
+				}catch(java.lang.InstantiationException e){
+					e.printStackTrace();
+				}catch(IllegalAccessException e){
+					e.printStackTrace();
+				}catch(IllegalArgumentException e){
+					e.printStackTrace();
+				}
+			}else{
+				Toast.makeText(map, "trace is not initialized", 15);
+			}
+		}
+
+		@Override
+		protected SaveDialog newInstance() {
+			return this;
+		}
+
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -428,48 +476,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
          }
         // SQLite pojo: name, (?)trace, (String)traceLight  
         if (val.contentEquals(SAVE_TRACE)) {
-        	SaveDialog dialog = new SaveDialog() {
-				
-				@Override
-				protected void positiveProcess() {
-					Trace trace = new Trace();
-					if (dataTrace!=null
-							&& position.start!=null
-							&& position.end!=null){
-						trace.data = dataTrace;
-						trace.start = position.start;
-						trace.end = position.end;
-						trace.name = nameField.getText().toString();
-						AlertDialog dialog = new AlertDialog("");
-						if (trace.name.isEmpty()){
-							//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
-							dialog.msg = "Отсутсвует текст, введите название";
-							dialog.show(getFragmentManager(), "Ошибка");
-							return;									
-						}
-						if (DbFunctions.getTraceByName(trace.name)!=null){
-							dialog.msg = "Маршрут с таким именем существует";
-							dialog.show(getFragmentManager(), "Ошибка");
-							return;
-						}
-				         try{DbFunctions.add(trace);	         
-				         }catch(java.lang.InstantiationException e){
-				        	 e.printStackTrace();
-				         }catch(IllegalAccessException e){
-				        	 e.printStackTrace();
-						 }catch(IllegalArgumentException e){
-							 e.printStackTrace();
-						 }
-					}else{
-						Toast.makeText(MapsActivity.this, "trace is not initialized", 15);
-					}
-				}
-				
-				@Override
-				protected SaveDialog newInstance() {
-					return this;
-				}
-			}.newInstance(R.string.hint_dialog_trace);
+        	MySaveDialog dialog = (MySaveDialog)(new MySaveDialog().newInstance(R.string.hint_dialog_trace));
+        	dialog.map = MapsActivity.this;
+        	dialog.dataTrace = dataTrace;
+        	dialog.position = position;
 			//dialog.show(getSupportFragmentManager(), "dialog");
 			dialog.show(getFragmentManager(), "dialog");
          }

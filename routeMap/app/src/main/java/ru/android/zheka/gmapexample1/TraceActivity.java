@@ -20,6 +20,8 @@ import ru.android.zheka.jsbridge.JsCallable;
 import com.activeandroid.Model;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -43,8 +45,38 @@ public class TraceActivity extends RoboListActivity implements JsCallable{
 	protected String url =  "file:///android_asset/trace.html";
 	protected int resViewId = R.layout.activity_points;
 	String name;
-	boolean ready=false;
-	
+	static String msg = "";
+	static boolean ready=false;
+	static Object monitor = new Object();
+			//SingleChoiceDialog("Выберете текущую точку маршрута как путевую или как конечную") {
+	static public class MyDialogFragment extends SingleChoiceDialog{
+public MyDialogFragment(){
+	super(null);
+}
+				@Override
+				public void positiveProcess() {
+					synchronized (monitor) {
+						TraceActivity.msg = "yes";
+						ready = true;
+						monitor.notify();
+					}
+				}
+				@Override
+				public void negativeProcess() {
+					synchronized (monitor) {
+						TraceActivity.msg = "no";
+						ready = true;
+						monitor.notify();
+					}
+				}
+			};
+	SingleChoiceDialog dialog = new MyDialogFragment();
+	{
+		dialog.msg="Выберете текущую точку маршрута как путевую или как конечную";
+	}
+
+	FragmentManager fm;
+
 	@InjectView(R.id.webViewPoint)
 	WebView webViewHome;
 	
@@ -190,27 +222,11 @@ public class TraceActivity extends RoboListActivity implements JsCallable{
 	            	positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_START_COMMAND);
 	            }
 	            if(isEndCmd){
-	            	final Object monitor = new Object();
-	            	SingleChoiceDialog dialog = new 
-SingleChoiceDialog("Выберете текущую точку маршрута как путевую или как конечную") {
-						@Override
-						public void positiveProcess() {
-							synchronized (monitor) {							
-							msg = "yes";
-							ready = true;
-							monitor.notify();
-							}
-						}
-						@Override
-						public void negativeProcess() {
-							synchronized (monitor) {							
-								msg = "no";
-								ready = true;
-								monitor.notify();
-								}
-						}
-					};
-					dialog.show(getFragmentManager(), "Сообщение");
+	            	//final Object monitor = new Object();
+
+					fm = getFragmentManager();
+					//fm.beginTransaction().add(new DialogFragment(),"test").commit();
+					dialog.show(fm, "Сообщение");
 					synchronized (monitor) {
 		        		System.out.println("waiting dialog ...");
 		        		while(!ready){
@@ -222,7 +238,7 @@ SingleChoiceDialog("Выберете текущую точку маршрута 
 		        		}
 						ready = false;
 					}
-					if(dialog.msg.contains("yes")){
+					if(TraceActivity.msg.contains("yes")){
 						nextView(CONNECT_POINT);
 						return;
 					}

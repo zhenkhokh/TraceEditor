@@ -63,10 +63,74 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
     Config config = null;
 	protected String url =  "file:///android_asset/geo.html";
 	protected int resViewId = R.layout.activity_maps;
-	boolean ready = false;
+	static boolean ready = false;
 	//TimerService timerService = TimerService.getInstance();
 	PositionReciever positionReciever = null;
-	
+	SingleChoiceDialog dialog = new MyDialog();
+	MySaveDialog saveDialog = new MySaveDialog();
+	static Object monitor = new Object();
+	static String msg = "";
+	public static class MyDialog extends SingleChoiceDialog{
+		public MyDialog(){
+			super("Маршрут не закончен. Хотите закончить?"
+					,R.string.cancel_plot_trace
+					,R.string.ok_plot_trace);
+		}
+		@Override
+		public void positiveProcess() {
+			synchronized (monitor) {
+				GeoPositionActivity.msg = "yes";
+				ready = true;
+				monitor.notify();
+			}
+		}
+		@Override
+		public void negativeProcess() {
+			synchronized (monitor) {
+				GeoPositionActivity.msg = "no";
+				ready = true;
+				monitor.notify();
+			}
+		}
+	}
+	public static class MySaveDialog extends SaveDialog{
+        public PositionInterceptor position;
+		@Override
+		protected void positiveProcess() {
+			System.out.println("start positiveProcess");
+			Point point = new Point();
+			point.data = position.centerPosition;
+			point.name = nameField.getText().toString();
+			AlertDialog dialog = new AlertDialog("");
+			if (point.name.isEmpty()){
+				//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
+				dialog.msg = "Отсутсвует текст, введите название";
+				dialog.show(getFragmentManager(), "Ошибка");
+				return;
+			}
+			if (DbFunctions.getPointByName(point.name)!=null){
+				dialog.msg = "Точка с таким именем существует";
+				dialog.show(getFragmentManager(), "Ошибка");
+				return;
+			}
+			System.out.println("start adding point "+point.toString());
+			try{DbFunctions.add(point);
+			}catch(java.lang.InstantiationException e){
+				e.printStackTrace();
+			}catch(IllegalAccessException e){
+				e.printStackTrace();
+			}catch(IllegalArgumentException e){
+				e.printStackTrace();
+			}
+			System.out.println("end positiveProcess");
+		}
+
+		@Override
+		protected SaveDialog newInstance() {
+			return this;
+		}
+	}
+
 	@Override
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -161,72 +225,13 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	    }
 	    if (val.contentEquals(SAVE_POINT)) {
 	          Toast.makeText(this, "savePoint view called: " + val, 15).show();			  
-	          SaveDialog dialog = new SaveDialog() {
-				
-				@Override
-				protected void positiveProcess() {
-					System.out.println("start positiveProcess");
-					Point point = new Point();
-					point.data = position.centerPosition;
-					point.name = nameField.getText().toString();
-					AlertDialog dialog = new AlertDialog("");
-					if (point.name.isEmpty()){
-						//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
-						dialog.msg = "Отсутсвует текст, введите название";
-						dialog.show(getFragmentManager(), "Ошибка");
-						return;
-					}
-					if (DbFunctions.getPointByName(point.name)!=null){
-						dialog.msg = "Точка с таким именем существует";
-						dialog.show(getFragmentManager(), "Ошибка");
-						return;
-					}
-					System.out.println("start adding point "+point.toString());
-			         try{DbFunctions.add(point);	         
-			         }catch(java.lang.InstantiationException e){
-			        	 e.printStackTrace();
-			         }catch(IllegalAccessException e){
-			        	 e.printStackTrace();
-					 }catch(IllegalArgumentException e){
-						 e.printStackTrace();
-					 }
-			         System.out.println("end positiveProcess");
-				}
-				
-				@Override
-				protected SaveDialog newInstance() {
-					return this;
-				}
-			}.newInstance(R.string.hint_dialog_point);
+	          MySaveDialog dialog = (MySaveDialog)new MySaveDialog().newInstance(R.string.hint_dialog_point);
+	          dialog.position = position;
 			//dialog.show(getSupportFragmentManager(), "dialog");
 			dialog.show(getFragmentManager(), "dialog");
 	    }
 	    if (val.contentEquals(MAP)) {	    	
 	    	if (position.state!=TRACE_PLOT_STATE.CENTER_END_COMMAND){
-	    		final Object monitor = new Object();
-	    		SingleChoiceDialog dialog = 
-	    				new SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
-	    						,R.string.cancel_plot_trace
-	    						,R.string.ok_plot_trace) {
-					
-					@Override
-					public void positiveProcess() {
-						synchronized (monitor) {							
-						msg = "yes";
-						ready = true;
-						monitor.notify();
-						}						
-					}
-					
-					@Override
-					public void negativeProcess() {
-						synchronized (monitor) {							
-						msg = "no";
-						ready = true;
-						monitor.notify();
-						}						
-					}
-				};
 				dialog.show(getFragmentManager(), "Сообщение");
 				synchronized (monitor) {
 	        		System.out.println("waiting dialog ...");
@@ -240,7 +245,7 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 					ready = false;
 				}
 				//finish trace
-				if(dialog.msg.contains("yes")){					
+				if(msg.contains("yes")){
 					return;
 				}
 				//else go to map
