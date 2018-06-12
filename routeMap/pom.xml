@@ -18,9 +18,9 @@
 <!--com.jayway.maven.plugins.android.generation2 or 
 com.simpligility.maven.plugins -->
 <android.plugin.groupId>com.simpligility.maven.plugins</android.plugin.groupId>
-                 <!--3.9.0-rc.1 or 4.4.2 or 4.4.2-SNAPSHOT-->
-        <android.plugin.version>4.4.3-SNAPSHOT</android.plugin.version>
-        <robolectric.version>3.2-SNAPSHOT</robolectric.version>
+                 <!--3.9.0-rc.1 or 4.4.2 or 4.4.2-SNAPSHOT 4.4.3-SNAPSHOT<-->
+        <android.plugin.version>4.5.0</android.plugin.version>
+        <robolectric.version>3.8</robolectric.version>
 	<com.activeandroid.version>3.1.18-SNAPSHOT</com.activeandroid.version>
 	<platform.sdk>16</platform.sdk>
 	<!-- 22.2.0 or 18.0.0 depend from play-service version -->
@@ -42,28 +42,42 @@ com.simpligility.maven.plugins -->
  </profiles>
  
     <repositories>
-        <repository>
+        <!--repository>
             <id>google-local</id>
-            <url>file:/home/zheka/Android/Sdk/extras/google/m2repository</url>
+            iold one <url>file:/home/zheka/Android/Sdk/extras/google/m2repository</url>
+	    <url>https://maven.google.com</url>
         </repository>
         <repository>
             <id>android-local</id>
             <url>file:/home/zheka/Android/Sdk/extras/android/m2repository</url>
-        </repository>
+        </repository-->
         <repository>
+            <id>local1</id>
+            <url>file:/home/zheka/.m2/repository</url>
+            <name>local</name>
+            <layout>default</layout>
+	</repository>
+        <!--repository>
             <id>android</id>
             <name>Android ROME Feed Reader Repository</name>
             <url>https://android-rome-feed-reader.googlecode.com/svn/maven2/releases</url>
-        </repository>
+        </repository-->
         <repository>
             <id>sonatype</id>
             <name>OSS</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <layout>default</layout>
+            <!--url>https://oss.sonatype.org/content/repositories/snapshots/</url-->
+            <!--url>http://search.maven.org/</url-->
+	    <url>http://repo1.maven.org/maven2</url>
         </repository>
     </repositories>
     
 <dependencies>  
+        <!--dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1</version>
+	    <type>jar</type>
+	</dependency-->
 <!-- dependency>
     <groupId>com.github.wvengen</groupId>
     <artifactId>proguard-maven-plugin</artifactId>
@@ -92,11 +106,30 @@ com.simpligility.maven.plugins -->
         <groupId>${platform.groupId}</groupId>
         <artifactId>android</artifactId>
         <version>${platform.version}</version>
+	<!--scope>test</scope-->
         <scope>provided</scope>
       </dependency>
       <dependency>
 	   <groupId>org.robolectric</groupId>
 	   <artifactId>robolectric</artifactId>
+	   <version>${robolectric.version}</version>
+	   <scope>test</scope>
+	  </dependency>
+	  <dependency>
+	   <groupId>org.robolectric</groupId>
+	   <artifactId>sandbox</artifactId>
+	   <version>${robolectric.version}</version>
+	   <scope>test</scope>
+	  </dependency>
+	  <dependency>
+	   <groupId>org.robolectric</groupId>
+	   <artifactId>resources</artifactId>
+	   <version>${robolectric.version}</version>
+	   <scope>test</scope>
+	  </dependency>
+	  <dependency>
+	   <groupId>org.robolectric</groupId>
+	   <artifactId>utils</artifactId>
 	   <version>${robolectric.version}</version>
 	   <scope>test</scope>
 	  </dependency>
