@@ -1,5 +1,9 @@
 package ru.android.zheka.gmapexample1;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
+//import android.support.multidex.MultiDexApplication;
+
 import java.lang.reflect.Field;
 
 import com.activeandroid.ActiveAndroid;
@@ -14,11 +18,11 @@ import ru.android.zheka.db.UtileTracePointsSerializer;
 import ru.android.zheka.route.Routing;
 
 //TODO use it for activeandroid
-public class Application extends com.activeandroid.app.Application {
-	public static Config config=null;
+public class Application extends com.activeandroid.app.Application {//extends MultiDexApplication{
+	private static Config config=null;
+	public static String optimizationBellmanFlag = "";
 	@Override
 	public void onCreate(){
-		super.onCreate();
         Configuration dbConfiguration = new Configuration.Builder(this)
         .setDatabaseName("Navi.db")
         .setDatabaseVersion(1)
@@ -27,6 +31,9 @@ public class Application extends com.activeandroid.app.Application {
         .create();
         ActiveAndroid.initialize(dbConfiguration);
         initConfig();
+        if (optimizationBellmanFlag.isEmpty ())
+        	optimizationBellmanFlag = getString (R.string.optimizationdata3);
+		super.onCreate();
 	}
 	public static void initConfig(){
 		System.out.println("initConfig");
@@ -40,7 +47,7 @@ public class Application extends com.activeandroid.app.Application {
 			config.uLocation = true;// prefer move camera to location rather than intent
 			config.tenMSTime = "0";
 			config.avoid = "tolls"; // tolls, highways, ferries, indoor or empty
-			config.reserved1 = "";
+			config.bellmanFord = "";
 			config.reserved2 = "";
 			config.reserved3 = "";
 			
@@ -75,4 +82,15 @@ public class Application extends com.activeandroid.app.Application {
 		}
 		return false;
 	}
+
+	// extends SomeOtherApp
+   @Override protected void attachBaseContext(Context base) {
+        try {
+            super.attachBaseContext(base);
+			MultiDex.install(this);
+        } catch (RuntimeException ignored) {
+            // Multidex support doesn't play well with Robolectric yet
+        }
+    }
+
 }

@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'com.android.application'
 
 group = 'ru.android.zheka.gmapexample1'
-version = '1.0.4'
+version = '1.1.1-SNAPSHOT'
 
 description = """Trace Editor"""
 
@@ -56,7 +56,7 @@ sourceSets{
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
+        versionCode 15
         versionName "1.0"
         multiDexEnabled = true
     }
@@ -81,8 +81,11 @@ sourceSets{
     dexOptions{
         javaMaxHeapSize="9000M"
         List<String> p = new ArrayList<>();
-        //p.add("--main-dex-list mainClasses")
+        p.add("--main-dex-list mainClasses1")
+        p.add("--multi-dex")
+        p.add("--set-max-idx=55000")
         additionalParameters=p
+        //mainClassName "mainClasses"
     }
     lintOptions {
           checkReleaseBuilds false
@@ -155,7 +158,10 @@ exclude(module: 'guice')
     testCompile group: 'org.robolectric', name: 'utils', version:'3.8+'
     testCompile group: 'org.robolectric', name: 'shadows-core-v16', version:'3.1.3'
     testCompile group: 'org.robolectric', name: 'shadows-play-services', version:'3.1'
-    provided (group: 'android', name: 'android', version:'6.0_r3')
+    provided (group: 'android', name: 'android', version:'6.0_r3')//6.0_r3
+    //testCompile (group: 'android', name: 'android', version:'5.1.1_r2')
+    compile 'com.android.support:multidex:1.0.3'
+    testCompile "org.robolectric:shadows-multidex:3.1.1"
     testCompile group: 'junit', name: 'junit', version:'4.11'
     compile (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1')
     compile group: 'com.android.support', name: 'mediarouter-v7', version:'18.0.0'

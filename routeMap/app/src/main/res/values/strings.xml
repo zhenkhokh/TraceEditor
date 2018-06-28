@@ -73,4 +73,9 @@
         <string name="timeruser2">Редко (раз в 5 минут)</string>
         <string name="timeruser3">Иногда (раз в пол минуты)</string>
         <string name="timeruser4">Часто (раз в 3 секунды)</string>
+    <!-- 1 and 2 options use boolean optimization field-->
+    <string name="optimizationdata3">bellmanFord</string>
+        <string name="optimizationuser1">Нет</string>
+        <string name="optimizationuser2">Google</string>
+        <string name="optimizationuser3">Беллман-Форд</string>
 </resources>

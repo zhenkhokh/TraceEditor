@@ -3,6 +3,10 @@ package ru.android.zheka.db;
 import com.activeandroid.Configuration;
 import com.activeandroid.content.ContentProvider;
 
+import ru.android.zheka.db.Config;
+import ru.android.zheka.db.Point;
+import ru.android.zheka.db.Trace;
+
 public class DatabaseContentProvider extends ContentProvider {
 
 @Override

@@ -45,6 +45,7 @@ com/google/android/gms/maps/model/LatLng.class
 ru/android/zheka/gmapexample1/LatLngActivity.class
 ru/android/zheka/gmapexample1/GeoPositionActivity.class
 ru/android/zheka/gmapexample1/MapsActivity.class
+ru/android.zheka/gmapexample1/DatabaseContentProvider.class
 ru/android/zheka/route/RoutingListener.class
 ru/android/zheka/route/XMLParser.class
 ru/android/zheka/route/Parser.class
@@ -1806,3 +1807,7 @@ com/google/android/gms/location/internal/zzh.class
 com/google/android/gms/location/internal/zzh$zza$zza.class
 com/google/android/gms/location/internal/zzh$zza.class
 com/google/android/gms/location/internal/zzi.class
+com/google/android/gms/internal/zzqu$1.class
+com/google/android/gms/internal/zzqu$2.class
+com/google/android/gms/internal/zzqu.class
+

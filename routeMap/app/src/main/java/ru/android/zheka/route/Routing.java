@@ -6,10 +6,13 @@ package ru.android.zheka.route;
  *
  */
 
+import android.app.Service;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.common.io.Resources;
 
 import java.util.ArrayList;
 
@@ -17,7 +20,7 @@ import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.gmapexample1.Application;
 import ru.android.zheka.gmapexample1.PositionUtil;
-
+import ru.android.zheka.gmapexample1.R;
 
 public class Routing extends AsyncTask<LatLng, Void, Route> {
     protected ArrayList<RoutingListener> _aListeners;
@@ -84,7 +87,6 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         for (LatLng mPoint : aPoints) {
             if (mPoint == null) return null;
         }
-
         return new GoogleParser(constructURL(aPoints)).parse();
     }
 
@@ -104,15 +106,25 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         mBuf.append(dest.longitude);
         mBuf.append("&sensor=true&mode=");
         mBuf.append(_mTravelMode.getValue());
-        if(points.length>2){
-        	mBuf.append("&waypoints=optimize:")
-        	.append(ru.android.zheka.gmapexample1.Application.config.optimization);
-        	for (int i=2;i<points.length;i++)
-        		mBuf.append("|"+points[i].latitude+","+points[i].longitude);        	
-        }
-        
         Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
-        		, Config.class);
+                , Config.class);
+        if(points.length>2){
+            System.out.println ("optimizationBellmanFlag= "+Application.optimizationBellmanFlag
+                    +" points.length="+points.length
+                    +" config.bellmanFord="+config.bellmanFord);
+            mBuf.append ("&waypoints=optimize:")
+                    .append (config.optimization);
+            boolean isBellman = config.bellmanFord.equals ( Application.optimizationBellmanFlag);
+/*            if (isBellman) {
+                points = BellmannFord.process(points);
+            }
+*/
+//TODO make post request, not limit by 8 points in get-request
+            for (int i=2;i<points.length;i++) {
+                if ((isBellman && i<=4) || !isBellman)
+                    mBuf.append ("|" + points[i].latitude + "," + points[i].longitude);
+            }
+        }
         String avoid  = config.avoid;
         if (!avoid.isEmpty())
         	mBuf.append("&avoid="+avoid);
