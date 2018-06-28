@@ -7,32 +7,55 @@
       android:layout_height="wrap_content"-->
       <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/container"
+		  xmlns:tools="http://schemas.android.com/tools"
+		  android:id="@+id/container"
             android:orientation="vertical" 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+		  tools:ignore="WebViewLayout">
          <WebView xmlns:android="http://schemas.android.com/apk/res/android"
 	        android:id="@+id/webViewSettings"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content" />
-	    <Switch
-	        android:id="@+id/update"
+
+		  <Switch
+			  android:id="@+id/update"
+			  android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_alignParentLeft="true"
+			  android:layout_alignParentTop="true"
+			  android:layout_marginTop="20dp"
+			  android:text="@string/update_text"
+			  android:textSize="8pt" />
+		<TextView
+			android:id="@+id/radioTitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textSize="8pt"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_marginTop="20dp"
+			android:text="@string/optimization_text"/>
+		<RadioGroup
+	        android:id="@+id/optimizationRadio"
 	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:layout_marginTop="20dp"
-	        android:text="@string/update_text"
-	        android:textSize="8pt" />
-	     <Switch
-	        android:id="@+id/optimization"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:layout_marginTop="20dp"
-	        android:text="@string/optimization_text"
-	        android:textSize="8pt"/>
+	        android:layout_height="wrap_content">
+			<RadioButton android:id="@+id/optimizationNo"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/optimizationuser1"
+				android:onClick="onRadioButtonClicked"/>
+		  <RadioButton android:id="@+id/optimizationGoogle"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="@string/optimizationuser2"
+        		android:onClick="onRadioButtonClicked"/>
+      	  <RadioButton android:id="@+id/optimizationBellmanFord"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/optimizationuser3"
+				android:onClick="onRadioButtonClicked"/>
+		</RadioGroup>
 	     <Switch
 	        android:id="@+id/avoid"
 	        android:layout_width="match_parent"

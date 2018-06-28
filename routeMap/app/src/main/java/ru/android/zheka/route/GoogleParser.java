@@ -92,6 +92,8 @@ public class GoogleParser extends XMLParser implements Parser {
             }
         } catch (JSONException e) {
             Log.e("Routing Error", e.getMessage());
+            e.printStackTrace ();
+            System.out.println ("result="+result);
             return null;
         }
         return route;

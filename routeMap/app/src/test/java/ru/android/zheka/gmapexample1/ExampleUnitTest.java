@@ -14,26 +14,21 @@ import com.activeandroid.Model;
 //import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 
 import org.junit.Before;
 import org.junit.Test;
+//
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
+//import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 //import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowCamera;
+//import org.robolectric.shadows.ShadowCamera;
 //import org.robolectric.shadows.gms.ShadowGooglePlayServicesUtil;
 //import org.robolectric.shadows.gms.common.ShadowGoogleApiAvailability;
 
@@ -42,13 +37,7 @@ import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
-import ru.android.zheka.gmapexample1.GeoPositionActivity;
-import ru.android.zheka.gmapexample1.LatLngActivity;
-import ru.android.zheka.gmapexample1.MainActivity;
-import ru.android.zheka.gmapexample1.MapsActivity;
-import ru.android.zheka.gmapexample1.PositionUtil;
-import ru.android.zheka.gmapexample1.R;
-import ru.android.zheka.gmapexample1.TraceActivity;
+//
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
 import static org.fest.assertions.api.ANDROID.assertThat;
 //import org.robolectric.shadows.ShadowActivity;

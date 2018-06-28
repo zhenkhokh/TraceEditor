@@ -28,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -42,7 +43,7 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 	@InjectView(R.id.webViewSettings)
 	WebView vebViewHome;
 	final int layoutResID = R.layout.activity_settings;	
-	final int optimViewId = R.id.optimization;
+	final int optimViewId = R.id.optimizationRadio;
 	final int updateViewId = R.id.update;
 	final int avoidId = R.id.avoid;
 
@@ -74,23 +75,63 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 		//FragmentTransaction transaction =  fm.beginTransaction();
 		//transaction.add(travel,"list");
 		//transaction.commit();
-		Switch optimization = (Switch)findViewById(optimViewId);
+		RadioGroup optimization = (RadioGroup) findViewById(optimViewId);
+		RadioButton no = (RadioButton)findViewById (R.id.optimizationNo);
+		RadioButton google = (RadioButton)findViewById (R.id.optimizationGoogle);
+		RadioButton bellman = (RadioButton)findViewById (R.id.optimizationBellmanFord);
+		no.setOnClickListener (new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+		google.setOnClickListener (new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+		bellman.setOnClickListener (new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
 		final Switch update = (Switch)findViewById(updateViewId);
 		Switch avoidTolls = (Switch)findViewById(avoidId);
 	    Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
-	    optimization.setChecked(config.optimization);
+	    //optimization.setChecked(config.optimization);
+		int radioId = 0;
+		if (config.bellmanFord.equals (getResources().getString (R.string.optimizationdata3)))
+			radioId = R.id.optimizationBellmanFord;
+		else if (config.optimization)
+			radioId = R.id.optimizationGoogle;
+		else
+			radioId = R.id.optimizationNo;
+		RadioButton radioButton = (RadioButton)findViewById (radioId);
+		radioButton.setChecked (true);
 	    update.setChecked(config.uLocation);
 	    avoidTolls.setChecked(config.avoid.contains(DbFunctions.AVOID_TOLLS));
 	    
-		optimization.setOnCheckedChangeListener(new OnCheckedChangeListener() {			
+		optimization.setOnCheckedChangeListener (new RadioGroup.OnCheckedChangeListener () {
 			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
 			    Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
 			    boolean optimization = false;
-				if (arg0.isChecked())
+			    if (group.getCheckedRadioButtonId () == checkedId)
+					System.out.println ("optimization.setOnCheckedChangeListene: chekId is ok");
+			    else
+					System.err.println ("optimization.setOnCheckedChangeListene: chekId is incorrect");
+			    String optimizationBellman = getResources().getString (R.string.optimizationdata3);
+			    //RadioButton checked = (RadioButton) findViewById(checkedId);
+				if (checkedId==R.id.optimizationGoogle) {
 					optimization = true;
-				else
-					optimization = false;
+					config.bellmanFord = "";
+				}else if (checkedId==R.id.optimizationNo){
+					config.bellmanFord = "";
+				}else if (checkedId==R.id.optimizationBellmanFord ){
+					config.bellmanFord = optimizationBellman;
+				}
 				config.optimization = optimization;
 			    try{DbFunctions.add(config);		    
 			    }catch(IllegalAccessException e){			e.printStackTrace();
