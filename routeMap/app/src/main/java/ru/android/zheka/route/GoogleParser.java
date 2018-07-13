@@ -18,7 +18,8 @@ public class GoogleParser extends XMLParser implements Parser {
      * Distance covered. *
      */
     private int distance;
-
+public static String result;
+static int runException=0;
     public GoogleParser(String feedUrl) {
         super(feedUrl);
     }
@@ -31,7 +32,7 @@ public class GoogleParser extends XMLParser implements Parser {
 
     public Route parse() {
         // turn the stream into a string
-        final String result = convertStreamToString(this.getInputStream());
+        result = convertStreamToString(this.getInputStream());
         if (result == null) return null;
 
         //Create an empty route
@@ -39,6 +40,9 @@ public class GoogleParser extends XMLParser implements Parser {
         //Create an empty segment
         final Segment segment = new Segment();
         try {
+            /*if (runException++%9==0)
+                throw new JSONException("my Exception");
+                */
             //Tranform the string into a json object
             final JSONObject json = new JSONObject(result);
             //Get the route object

@@ -132,8 +132,8 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
         System.out.println("start init point,pointName: "+pointName);
         Point point = DbFunctions.getPointByName(pointName);
         System.out.println("init point: "+point);
-        System.out.println("check point 1 "+DbFunctions.getPointByName("1"));
-        System.out.println("check point 2 "+DbFunctions.getPointByName("2"));
+        //System.out.println("check point 1 "+DbFunctions.getPointByName("1"));
+        //System.out.println("check point 2 "+DbFunctions.getPointByName("2"));
 
 
         String centerSer = (String)new UtilePointSerializer().serialize(point.data);

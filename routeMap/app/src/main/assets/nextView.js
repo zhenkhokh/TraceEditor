@@ -23,11 +23,11 @@ function setUpMenuEvents() {
     	//alert("hello editTrace");
         menuHandler.nextView("editTrace");
     });
-    $('#coordinateGo').click(function() {        
+    $('#address').click(function() {
     	//alert("hello coordinateGo");
-    	menuHandler.nextView("coordinateGo");
-    				  }); 
-    $('#geo').click(function() {        
+    	menuHandler.nextView("address");
+    				  });
+    $('#geo').click(function() {
     	//alert("hello geo");
     	menuHandler.nextView("geo");
     				  });   
@@ -80,6 +80,19 @@ function setUpMenuEvents() {
     	//alert("hello remove");
         menuHandler.nextView("remove");
                       });
+    // address
+    $('#coordinateGo').click(function() {
+        	//alert("hello coordinateGo");
+        	menuHandler.nextView("coordinateGo");
+            });
+    $('#addressGo').click(function() {
+        	//alert("hello coordinateGo");
+        	menuHandler.nextView("addressGo");
+            });
+    $('#clearAddress').click(function() {
+        	//alert("hello coordinateGo");
+        	menuHandler.nextView("clearAddress");
+            });
     // home, addWaypoints for waypoints 
     // ...
 }

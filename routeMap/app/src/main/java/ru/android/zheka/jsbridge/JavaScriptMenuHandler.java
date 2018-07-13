@@ -13,7 +13,13 @@ public class JavaScriptMenuHandler implements JsCallable{
 
     @JavascriptInterface
     public void nextView(String val){
-        this.activity.nextView(val);
+        try {
+            this.activity.nextView(val);
+        } catch (InstantiationException e) {
+            e.printStackTrace ();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace ();
+        }
     }
 
 	@Override

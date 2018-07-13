@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 //import android.support.multidex.MultiDexApplication;
 
 import java.lang.reflect.Field;
+import java.util.ConcurrentModificationException;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
@@ -23,6 +24,8 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 	public static String optimizationBellmanFlag = "";
 	@Override
 	public void onCreate(){
+		super.onCreate();
+
         Configuration dbConfiguration = new Configuration.Builder(this)
         .setDatabaseName("Navi.db")
         .setDatabaseVersion(1)
@@ -33,13 +36,14 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
         initConfig();
         if (optimizationBellmanFlag.isEmpty ())
         	optimizationBellmanFlag = getString (R.string.optimizationdata3);
-		super.onCreate();
+
 	}
 	public static void initConfig(){
 		System.out.println("initConfig");
 		config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+		Config tmp = config;
 		System.out.println("config is "+config);
-		if (isFieldNull(config)){
+		if (tmp ==null || isFieldNull(config) || config.rateLimit_ms.isEmpty ()){
 			config = new Config();
 			config.name = DbFunctions.DEFAULT_CONFIG_NAME;
 			config.optimization = false;
@@ -48,8 +52,10 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 			config.tenMSTime = "0";
 			config.avoid = "tolls"; // tolls, highways, ferries, indoor or empty
 			config.bellmanFord = "";
-			config.reserved2 = "";
-			config.reserved3 = "";
+			//config.reserved2 = "";
+			config.address = AddressActivity.aDelimiter+AddressActivity.aDelimiter+AddressActivity.aDelimiter;
+			config.rateLimit_ms = "800";
+			//config.reserved4 = "";
 			
 			Routing.TravelMode w =Enum.valueOf(Routing.TravelMode.class,config.travelMode);
 			System.out.println("init "+config.toString());
@@ -62,7 +68,10 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 				e.printStackTrace();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
-			}			
+			} catch (ConcurrentModificationException e){
+				DbFunctions.delete (tmp);
+				initConfig ();
+			}
 		}else
 			System.out.println("Config was succesfully get "+config.toString());
 	}

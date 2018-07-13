@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -30,6 +31,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +81,7 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 		RadioButton no = (RadioButton)findViewById (R.id.optimizationNo);
 		RadioButton google = (RadioButton)findViewById (R.id.optimizationGoogle);
 		RadioButton bellman = (RadioButton)findViewById (R.id.optimizationBellmanFord);
+		Spinner spinner = (Spinner)findViewById (R.id.speedSpinner);
 		no.setOnClickListener (new OnClickListener () {
 			@Override
 			public void onClick(View v) {
@@ -112,7 +115,14 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 		radioButton.setChecked (true);
 	    update.setChecked(config.uLocation);
 	    avoidTolls.setChecked(config.avoid.contains(DbFunctions.AVOID_TOLLS));
-	    
+	    int pos=0;
+	    String[] choose = getResources().getStringArray(R.array.speedList);
+	    String value = config.rateLimit_ms;
+		value = new Double (Double.valueOf (value)/1000.0).toString ();
+		while(pos<choose.length)
+			if (choose[pos++].equals (value))
+				break;
+	    spinner.setSelection (pos-1);
 		optimization.setOnCheckedChangeListener (new RadioGroup.OnCheckedChangeListener () {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -178,7 +188,27 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 			    System.out.println("avoid tolls is set as "+config.avoid);
 			}
 		});
-		
+
+		spinner.setOnItemSelectedListener (new AdapterView.OnItemSelectedListener (){
+			@Override
+			public void onItemSelected(AdapterView <?> parent, View view, int position, long id) {
+					String[] choose = getResources().getStringArray(R.array.speedList);
+					String value = choose[position];
+					Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+					config.rateLimit_ms = new Double(Double.valueOf (value)*1000).toString ();
+					try{DbFunctions.add(config);
+					}catch(IllegalAccessException e){			e.printStackTrace();
+					}catch (InstantiationException e) {			e.printStackTrace();
+					}catch (IllegalArgumentException e) {		e.printStackTrace();
+					}catch (Exception e) {	e.printStackTrace();
+					}
+				}
+			@Override
+			public void onNothingSelected(AdapterView <?> parent) {
+
+			}
+		});
+
         MenuHandler m = new MenuHandler();
         m.initJsBridge(this, url);
 	};

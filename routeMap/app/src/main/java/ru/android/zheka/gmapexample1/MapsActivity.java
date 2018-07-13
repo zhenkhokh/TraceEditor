@@ -16,6 +16,7 @@ import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
 import ru.android.zheka.route.BellmannFord;
+import ru.android.zheka.route.GoogleParser;
 import ru.android.zheka.route.Route;
 import ru.android.zheka.route.Routing;
 import ru.android.zheka.route.RoutingListener;
@@ -77,6 +78,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 , RoutingListener
 , JsCallable
 , OnCameraChangeListener {
+	private static Object traceDrawMonitor = new Object ();
 	public static final String GO_POSITION = "goPosition";
 	public static final String TRACE = "trace";
 	//public static final String SAVE_POINT = "savePoint";
@@ -96,10 +98,13 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	private int cnt=0;
 	private int cntCtrl=0;
 	private int rateLimit_ms = 800;
-	LatLng prevPoint=null;
-	LatLng point=null;
-	Class clMain, clGeo, clTrace;
-	Config config=null;
+	private LatLng prevPoint=null;
+	private LatLng point=null;
+	private Class clMain, clGeo, clTrace;
+	private Config config=null;
+	private static int cntRun = 0;
+	private static final int maxFailures = 1;
+	private static int failuresCnt = 0;
 	//TimerService timerService=TimerService.getInstance();
 	PositionReciever positionReciever = null;
 
@@ -174,6 +179,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         clTrace = classes[2];
 		config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
 				, Config.class);
+		rateLimit_ms = new Double (config.rateLimit_ms).intValue ();
 		TextView coordinate = (TextView) findViewById(PositionInterceptor.resViewId);
 		System.out.println("get config");
 		coordinate.setVisibility(View.GONE);
@@ -323,31 +329,33 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 								);
             				}///else
 							//	wayPoints.remove(wayPoints.size()-1);//end point
-		        			routing = new Routing();
-							AsyncTask<LatLng, Void, Route> task = routing.execute(wayPoints.toArray(new LatLng[0]));
-							Route route = null;
-							try{route = task.get();							
-							}catch(InterruptedException e){
-								e.printStackTrace();
-							}catch (ExecutionException e) {
-								e.printStackTrace();
-							}
-							if (route==null){
-								AlertDialog dialog = new AlertDialog("Слишком длинная задача, уменьшите число промежуточных точек");
-								dialog.show(getFragmentManager(), "Ошибка");
-								return;
-							}
-							ArrayList<Integer> order = route.getOrder();
-							System.out.println("order is "+order);
-							if (order.size()==position.extraPoints.size()-1)
-								System.out.println("order.size() is fine");
-							ArrayList<String> temp = new ArrayList<String>();
-							for (Iterator iterator = order.iterator(); iterator
-									.hasNext();) {
-								iterator.next();
-								temp.add("");
-							}
-							int index_= 0;
+		        			if (!isBellman) {
+								routing = new Routing ();
+								AsyncTask <LatLng, Void, Route> task = routing.execute (wayPoints.toArray (new LatLng[0]));
+								Route route = null;
+								try {
+									route = task.get ();
+								} catch (InterruptedException e) {
+									e.printStackTrace ();
+								} catch (ExecutionException e) {
+									e.printStackTrace ();
+								}
+								if (route == null) {
+									AlertDialog dialog = new AlertDialog ("Слишком длинная задача, уменьшите число промежуточных точек");
+									dialog.show (getFragmentManager (), "Ошибка");
+									return;
+								}
+								ArrayList <Integer> order = route.getOrder ();
+								System.out.println ("order is " + order);
+								if (order.size () == position.extraPoints.size () - 1)
+									System.out.println ("order.size() is fine");
+								ArrayList <String> temp = new ArrayList <String> ();
+								for (Iterator iterator = order.iterator (); iterator
+										.hasNext (); ) {
+									iterator.next ();
+									temp.add ("");
+								}
+								int index_ = 0;
 							/*if (config.bellmanFord.equals ( Application.optimizationBellmanFlag)) {
 								position.extraPoints = new ArrayList <String> ();
 								for (int i=0; i < wayPoints.size ();i++) {
@@ -362,11 +370,12 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 											, position.extraPoints.get (index_++));
 								}
 								position.extraPoints = temp;
-							//}
-							//add end point
-							//position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
-					        routing = new Routing();
-					        routing.registerListener(MapsActivity.this);
+								//}
+								//add end point
+								//position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
+								routing = new Routing ();
+								routing.registerListener (MapsActivity.this);
+							}
 		        		}
 		        		Iterator iterator;
 		        		if (isBellman) {
@@ -394,28 +403,39 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 								));
 						}
 						iterator = position.extraPoints.iterator();
+						failuresCnt = 0;
+		        		final int curCnt=cntRun+1;
+		        		cntRun++;
 		        		for (//Iterator iterator = position.extraPoints.iterator(); iterator
 								; iterator
 								.hasNext();) {
 							String sPoint = (String) iterator.next ();
 							point = (LatLng) (new UtilePointSerializer ().deserialize (sPoint));
-
-							routing.execute(prevPoint, point);
+//do {
+							if (curCnt==cntRun)
+								routing.execute (prevPoint, point);
 							//Cannot execute task: the task is already running
-					        routing = new Routing();
-					        routing.registerListener(MapsActivity.this);
-					        synchronized (MapsActivity.this) {
-								System.out.println("wait for onRoutingSuccess cnt="+cnt);
-								while(!onRoutingReady){
-									try{MapsActivity.this.wait(rateLimit_ms);
-									}catch (InterruptedException e) {
-										e.printStackTrace();
+							routing = new Routing ();
+							routing.registerListener (MapsActivity.this);
+							synchronized (traceDrawMonitor/*MapsActivity.this*/) {
+								System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
+								int goFromDad = 3;
+								while (!onRoutingReady && goFromDad-->0) {
+									try {
+										traceDrawMonitor.wait (rateLimit_ms);/*MapsActivity.this.wait(rateLimit_ms);*/
+									} catch (InterruptedException e) {
+										e.printStackTrace ();
 									}
 								}
-						        onRoutingReady = false;
+								onRoutingReady = false;
 							}
-							prevPoint = point;
-							cnt++;
+//}while(cnt<cntRun);
+//							if (curCnt<cntRun)//do not touch prevPoint
+//								break;
+							if (curCnt==cntRun) {
+								prevPoint = point;
+								cnt++;
+							}
 						}
 					}
 				};
@@ -432,11 +452,89 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         System.out.println("end of onMapReady");
     }
 
-
 	@Override
 	public void onRoutingFailure() {
 		System.out.println("onRoutingFailure");
-		//TODO make dialog-break
+/*
+		//cntRun++;
+		Runnable r = new Runnable () {
+			@Override
+			public void run() {
+				Iterator iterator = position.extraPoints.iterator ();
+				int skip = 0;
+				//TODO do not copy from previouse
+				//cnt--;cntCtrl--;
+				final int curCnt = cntRun+1;
+				cntRun++;
+				for (//Iterator iterator = position.extraPoints.iterator(); iterator
+						; iterator
+						.hasNext (); ) {
+					if (skip++ >= cnt) {
+						String sPoint = (String) iterator.next ();
+						point = (LatLng) (new UtilePointSerializer ().deserialize (sPoint));
+						try {
+							if (curCnt == cntRun)
+								routing.execute (prevPoint, point);
+						}catch (IllegalStateException e){continue; }
+							synchronized (traceDrawMonitor) {
+								System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
+								int goFromDad = 3;
+								while (!onRoutingReady && goFromDad-->0) {
+									try {
+										traceDrawMonitor.wait (rateLimit_ms);
+									} catch (InterruptedException e) {
+										e.printStackTrace ();
+									}
+								}
+								onRoutingReady = false;
+							}
+						//Cannot execute task: the task is already running
+						routing = new Routing ();
+						routing.registerListener (MapsActivity.this);
+
+						if (curCnt==cntRun) {
+							prevPoint = point;
+							cnt++;
+						}
+					} else
+						prevPoint = (LatLng) (new UtilePointSerializer ().deserialize ((String) iterator.next ()));
+
+				}
+
+			}
+		};
+			Thread t = new Thread (r);
+			t.start();
+*/
+	if (failuresCnt++<maxFailures) {
+		cntRun++;
+		try {
+			routing.execute (prevPoint, point);
+		} catch (IllegalStateException e) {
+			System.out.println ("miss route point cnt=" + cnt);
+		}
+		synchronized (traceDrawMonitor) {
+			System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
+			int goFromDad = 2;
+			while (!onRoutingReady && goFromDad-- > 0) {
+				try {
+					traceDrawMonitor.wait (rateLimit_ms);
+				} catch (InterruptedException e) {
+					e.printStackTrace ();
+				}
+			}
+			onRoutingReady = false;
+		}
+		routing = new Routing ();
+		routing.registerListener (MapsActivity.this);
+		cntRun--;
+		try {
+			AlertDialog dialog = new AlertDialog ("Возможно высокая скорость построения. Получен неожиданный ответ от maps.googleapis.com:" + GoogleParser.result);
+			dialog.show (getFragmentManager (), "Ошибка");
+		} catch (IllegalStateException e) {
+			e.printStackTrace ();
+		}
+	}
 /*			routing = new Routing ();
 			routing.registerListener (MapsActivity.this);
 			routing.execute (prevPoint, point);
@@ -452,8 +550,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
 	@Override	
 	public void onRoutingSuccess(PolylineOptions mPolyOptions) {
+    	//cntRun=cnt;
+
 		System.out.println("befor synchronize block in onRoutingSuccess");
-		synchronized (this) {
+		synchronized (traceDrawMonitor/*this*/) {
 			System.out.println("after synchronize block in onRoutingSuccess");
 
 		
@@ -484,7 +584,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         	markerPosition = position.centerPosition;
         options.position(markerPosition);
         if (cnt!=cntCtrl)
-        	System.out.println("cnt!=cntCtrl - error cnt="+cnt+" cntCtrl="+cntCtrl);
+        	System.err.println("cnt!=cntCtrl - error cnt="+cnt+" cntCtrl="+cntCtrl);
         if (cnt==0)
         	options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
         else
@@ -514,10 +614,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         mMap.addMarker(options);
         onRoutingReady = true;
         //You have exceeded your rate-limit for this API
-        //notify();
+        //traceDrawMonitor.notify();
 		}
 		System.out.println("end of onRoutingSuccess, cntCtrl is "+cntCtrl+" cnt is "+cnt);
         cntCtrl++;
+        failuresCnt=0;
 	}
 	private String getName(LatLng point){
 		String out = DbFunctions.getNamePointByData(point);

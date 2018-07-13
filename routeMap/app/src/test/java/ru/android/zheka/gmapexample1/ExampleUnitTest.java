@@ -159,7 +159,7 @@ public class ExampleUnitTest {
 		System.out.println("----- mainActivity.nextView(vals[i]):");
 		String[] vals2 = {MainActivity.GEO, MainActivity.POINTS
 				,MainActivity.TO_TRACE,MainActivity.EDIT_POINT
-				,MainActivity.EDIT_TRACE, MainActivity.COORDINATE_GO
+				,MainActivity.EDIT_TRACE, MainActivity.GO
 				,MainActivity.SETTINGS};
 		System.out.println(mainActivity);
 		for (int i = 0; i < vals2.length; i++) {

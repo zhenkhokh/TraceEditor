@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
+import ru.android.zheka.route.BellmannFord;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -195,18 +197,27 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		    	mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
 		                 mGoogleApiClient);
 		    	String text = null;
+		    	//TODO reduce precision add length
 		        if (mLastLocation != null) {
-		        	LatLng location = new LatLng(mLastLocation.getLatitude()
-		        			, mLastLocation.getLongitude());
-		        	text = location.toString();
+		        	//LatLng location = new LatLng(mLastLocation.getLatitude()
+		        	//		, mLastLocation.getLongitude());
+		        	//text = location.toString();
+					text = String.format ("(%.4f %.4f)",mLastLocation.getLatitude(),mLastLocation.getLongitude());
 			        System.out.println("updateUILocation succesfully finished");
 		        }else
-		        	text = PositionUtil.LAT_LNG.toString();
+		        	text = String.format ("(%.4f %.4f)",PositionUtil.LAT_LNG.latitude
+							,PositionUtil.LAT_LNG.longitude);
+		        	//text = PositionUtil.LAT_LNG.toString();
 				Config config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
 						, Config.class);
 				if(config.uLocation){
+					StringBuilder sb = new StringBuilder ("ш.д.: ");
+					sb.append (text.replace (",","."))
+							.append (" длина: ")
+							.append (String.format ("%.2f",BellmannFord.length).replace (",","."))
+							.append (" км");
 					coordinate.setVisibility(View.VISIBLE);
-					coordinate.setText(text);
+					coordinate.setText(sb.toString ());
 				}
 		        System.out.println("updateUI coordinate succesfully finished. mLastLocation is "+mLastLocation);
 	    	}
