@@ -3,15 +3,18 @@ package ru.android.zheka.route;
 import com.google.android.gms.maps.model.LatLng;
 
 public class BellmannFord {
-    static double toRad = Math.PI/180;
-    static double R = 6371;//km
+    final static double toRad = Math.PI/180;
+    final static double R = 6371;//km
+    // !!! use process once
+    public static double length = 0;
 
     public static LatLng[] process(LatLng[] latLngs){
         LatLng [] order = fliplr (latLngs);
         order = getOrder(order);
         order = fliplr (order);
         order = getOrder(order);
-        System.out.println ("BellmanFord opt length = "+getPathLength (order));
+        length = getPathLength (order);
+        System.out.println ("BellmanFord opt length = "+length);
         return order;
     }
 

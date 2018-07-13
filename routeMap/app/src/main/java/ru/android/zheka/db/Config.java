@@ -20,9 +20,11 @@ public class Config extends Model{
 	@Column(name = "reserved1")// do not modify name
 	public String bellmanFord;//can be renamed
 	@Column(name = "reserved2")
-	public String reserved2;
+	public String address;
 	@Column(name = "reserved3")
-	public String reserved3;
+	public String rateLimit_ms;
+	//@Column(name = "reserved3")
+	//public String reserved4;
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
@@ -33,8 +35,9 @@ public class Config extends Model{
 				.append(" update location time:"+tenMSTime)
 				.append(" avoid:"+avoid)
 				.append(" bellmanFord:"+bellmanFord)
-				.append(" reserved2:"+reserved2)
-				.append(" reserved3:"+reserved3)
+				.append(" address:"+address)
+				.append(" rateLimit_ms:"+rateLimit_ms)
+				//.append(" reserved4:"+reserved4)
 				.toString();
 	}
 }

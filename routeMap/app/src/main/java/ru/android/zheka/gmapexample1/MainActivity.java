@@ -1,9 +1,12 @@
 package ru.android.zheka.gmapexample1;
 
+import com.activeandroid.ActiveAndroid;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
+import ru.android.zheka.db.UtilePointSerializer;
+import ru.android.zheka.db.UtileTracePointsSerializer;
 import ru.android.zheka.gmapexample1.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,48 +28,23 @@ import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
+import com.activeandroid.Configuration;
 
 public class MainActivity extends RoboActivity implements JsCallable{
 	public static final String SETTINGS = "settings";
-	public static final String COORDINATE_GO = "coordinateGo";
 	public static final String EDIT_TRACE = "editTrace";
 	public static final String EDIT_POINT = "editPoint";
 	public static final String GEO = "geo";
 	public static final String TO_TRACE = "toTrace";
 	public static final String POINTS = "points";
+	public static final String GO = "address";
 	protected String url =  "file:///android_asset/home.html";
 	protected int resViewId = R.layout.activity_home;
 	@InjectView(R.id.webView)
 	WebView webViewHome;
 	Context context = this;
 	Class clGeo, clLatLng, clPtoTr;
-public static class MyDialog extends CoordinateDialog{
-	public MainActivity activity;
-	public Class clGeo;
 
-	@Override
-	public void process() {
-		try{
-			Float longitude = new Float(lonField.getText().toString());
-			Float latitude = new Float(latField.getText().toString());
-			LatLng point  = new LatLng(latitude, longitude);
-			PositionInterceptor position = new PositionInterceptor(activity);
-			position.updatePosition();
-			position.centerPosition = point;
-			Intent intent = position.getNewIntent();
-			intent.setClass(activity, clGeo);
-			intent.setAction(Intent.ACTION_VIEW);
-			startActivity(intent);
-			activity.finish();
-		}
-		catch (Exception e) {
-			ru.android.zheka.gmapexample1.AlertDialog alert
-					= new ru.android.zheka.gmapexample1.AlertDialog("Неверный формат чиел. Углы должны быть дробными");
-			alert.show(activity.getFragmentManager(), "Ошибка");
-			e.printStackTrace();
-		}
-	}
-}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +70,18 @@ try {
 		setContentView(resViewId);
 		MenuHandler m = new MenuHandler();
 		m.initJsBridge(this,url);
+/*
+		Configuration dbConfiguration = new Configuration.Builder(this)
+        .setDatabaseName("Navi.db")
+        .setDatabaseVersion(1)
+        .addModelClasses(Config.class,Point.class,Trace.class)
+        .addTypeSerializers(UtilePointSerializer.class,UtileTracePointsSerializer.class)
+        .create();
+        ActiveAndroid.initialize(dbConfiguration);
+        Application.initConfig();
+        if (Application.optimizationBellmanFlag.isEmpty ())
+        	Application.optimizationBellmanFlag = getString (R.string.optimizationdata3);
+*/
     }
 
 
@@ -147,15 +137,15 @@ try {
     	  startActivity(intent);
           finish();
       }
-      if (val.contentEquals(COORDINATE_GO)) {
-    	  MyDialog dialog = new MyDialog();
-    	  dialog.activity = this;
-    	  dialog.clGeo = clGeo;
-    	  dialog.show(getFragmentManager(), "Переход");
-      }
       if (val.contentEquals(SETTINGS)) {
     	  intent.setAction(Intent.ACTION_VIEW);
     	  intent.setClass(this.context, SettingsActivity.class);
+    	  startActivity(intent);
+          finish();
+      }
+      if (val.contentEquals(GO)) {
+    	  intent.setAction(Intent.ACTION_VIEW);
+    	  intent.setClass(this.context, AddressActivity.class);
     	  startActivity(intent);
           finish();
       }

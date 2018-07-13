@@ -10,7 +10,8 @@
     <string name="title_activity_edit">Редактирование</string>
     <string name="title_activity_waypointsToTrace">Путевые точки для маршрута</string>
     <string name="title_activity_settings">Настройки</string>
-    
+    <string name="title_activity_address">Переход</string>
+    <string name="title_activity_address_go">Переход по адрессу</string>
     <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU
     AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven
     AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 - new
@@ -22,7 +23,12 @@
     
     <string name="cancel_plot_trace">Нет</string>
     <string name="ok_plot_trace">Да</string>
-    
+
+    <string name="hint_region">страна/регион/-</string>
+    <string name="hint_city">город/село/нас.пункт</string>
+    <string name="hint_street">улица/-</string>
+    <string name="hint_house">дом/стр/кор/-</string>
+
     <string name="hint_latitude">Широта</string>        
     <string name="hint_longitude">Долгота</string>        
     
@@ -37,10 +43,11 @@
     <string name="traces_column_name1">Удаление</string>
     
     <string name="optimization_text">Оптимизация маршрута</string>
-    <string name="update_text">Отображение координат</string>
-    <string name="avoid_text">Игнорирование платных дорог</string> 
+    <string name="update_text">Отображение координат и оценки длины</string>
+    <string name="avoid_text">Игнорирование платных дорог</string>
+    <string name="segment_text">Скорость построения (c)</string>
     <string name="travelmodelabel">Способ прокладки маршрута</string> 
-    <string name="timerlabel">Время обновления местоположения при просмотре</string> 
+    <string name="timerlabel">Время обновления местоположения при просмотре</string>
    
        <string
             name="feedbacktitle">Enter feedback details to send to the developer:
@@ -77,5 +84,5 @@
     <string name="optimizationdata3">bellmanFord</string>
         <string name="optimizationuser1">Нет</string>
         <string name="optimizationuser2">Google</string>
-        <string name="optimizationuser3">Беллман-Форд</string>
+        <string name="optimizationuser3">Бэллман-Форд</string>
 </resources>

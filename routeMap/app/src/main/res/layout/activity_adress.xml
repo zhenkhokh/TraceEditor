@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+    <WebView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/webViewAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText 			android:id="@+id/text_region"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_region"
+        />
+    <EditText 			android:id="@+id/text_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_city"
+        />
+    <EditText 			android:id="@+id/text_street"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_street"
+        />
+    <EditText 			android:id="@+id/text_house"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_house"
+        />
+</LinearLayout>

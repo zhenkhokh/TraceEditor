@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.android.zheka.gmapexample1"
-    android:versionCode="15"
+    android:versionCode="16"
     android:versionName="1.1.13-SNAPSHOT">
 
     <uses-sdk android:minSdkVersion="16"
@@ -35,10 +35,10 @@ android:name="com.activeandroid.app.Application"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <!--provider
+        <provider
             android:name="ru.android.zheka.db.DatabaseContentProvider"
             android:authorities="ru.android.zheka.gmapexample1"
-            android:exported="false" /-->
+            android:exported="false" />
         <!--uses-library android:name="com.google.android.maps" /-->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -87,6 +87,10 @@ android:name="com.activeandroid.app.Application"
         			android:label="@string/title_activity_waypointsToTrace"/>
         <activity android:name=".SettingsActivity" 
         			android:label="@string/title_activity_settings"/>
+        <activity android:name=".AddressActivity"
+        			android:label="@string/title_activity_address"/>
+        <activity android:name=".AddressGoActivity"
+        			android:label="@string/title_activity_address_go"/>
         <!--
             Because android:exported is set to "false",
             the service is only available to this app.

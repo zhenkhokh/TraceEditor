@@ -10,42 +10,47 @@
     <string name="title_activity_edit">Редактирование</string>
     <string name="title_activity_waypointsToTrace">Путевые точки для маршрута</string>
     <string name="title_activity_settings">Настройки</string>
-    
-    <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU -->
-    <!-- AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven-->
-    <!-- AIzaSyDMSQdJ-_asTHWkp-jmmdBJ3YPIkgbTxJw some new-->
-    <!--AIzaSyC_JfwHhRG7vChS_loyaIoL2adp6PPINXs old
-    AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 new
+    <string name="title_activity_address">Переход</string>
+    <string name="title_activity_address_go">Переход по адрессу</string>
+    <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU
+    AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven
+    AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 - new
     -->
-
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA</string>
 
     <string name="cancel_save_point">Отмена</string>
     <string name="ok_save_point">Ok</string>
 
-    <string name="cancel_plot_trace">Нет</string>    <string name="ok_plot_trace">Да</string>
+    <string name="cancel_plot_trace">Нет</string>
+    <string name="ok_plot_trace">Да</string>
+
+    <string name="hint_region">страна/регион/-</string>
+    <string name="hint_city">город/село/нас.пункт</string>
+    <string name="hint_street">улица/-</string>
+    <string name="hint_house">дом/стр/кор/-</string>
 
     <string name="hint_latitude">Широта</string>
-    <string name="hint_longitude">Долгота</string>        
-    
+    <string name="hint_longitude">Долгота</string>
+
     <string name="cancel_choice">Конечная</string>
-    <string name="ok_choice">Путевая</string>    
-    
+    <string name="ok_choice">Путевая</string>
+
     <string name="hint_dialog_point">Имя точки</string>
     <string name="hint_dialog_trace">Имя маршрута</string>
     <string name="points_column_name">Точки</string>
-    <string name="points_column_name1">Удаление</string>    
-    <string name="traces_column_name">Маршруты</string> 
+    <string name="points_column_name1">Удаление</string>
+    <string name="traces_column_name">Маршруты</string>
     <string name="traces_column_name1">Удаление</string>
-    
+
     <string name="optimization_text">Оптимизация маршрута</string>
     <string name="update_text">Отображение координат</string>
-    <string name="avoid_text">Игнорирование платных дорог</string> 
-    <string name="travelmodelabel">Способ прокладки маршрута</string> 
-    <string name="timerlabel">Время обновления местоположения при просмотре</string> 
-   
-       <string
-            name="feedbacktitle">Enter feedback details to send to the developer:
+    <string name="avoid_text">Игнорирование платных дорог</string>
+    <string name="segment_text">Скорость построения (c)</string>
+    <string name="travelmodelabel">Способ прокладки маршрута</string>
+    <string name="timerlabel">Время обновления местоположения при просмотре</string>
+
+    <string
+        name="feedbacktitle">Enter feedback details to send to the developer:
     </string>
     <string name="feedbackname">Your Name</string>
     <string name="feedbackemail">Your Email</string>
@@ -58,26 +63,26 @@
     <string name="feedbacktype2">Gripe</string>
     <string name="feedbacktype3">Suggestion</string>
     <string name="feedbacktype4">Bug</string>
-<!-- see Routing.java -->
+    <!-- see Routing.java -->
     <string name="travelmode1">BIKING</string>
     <string name="travelmode2">DRIVING</string>
     <string name="travelmode3">WALKING</string>
     <string name="travelmode4">TRANSIT</string>
-        <string name="traveluser1">Мотоцикл (Biking)</string>
-        <string name="traveluser2">Авто (Driving)</string>
-        <string name="traveluser3">Пешеход (Walking)</string>
-        <string name="traveluser4">Общественный транспорт (Transit)</string>
+    <string name="traveluser1">Мотоцикл (Biking)</string>
+    <string name="traveluser2">Авто (Driving)</string>
+    <string name="traveluser3">Пешеход (Walking)</string>
+    <string name="traveluser4">Общественный транспорт (Transit)</string>
     <string name="timerdata1">0</string>
     <string name="timerdata2">300000</string>
     <string name="timerdata3">30000</string>
     <string name="timerdata4">3000</string>
-        <string name="timeruser1">Никогда</string>
-        <string name="timeruser2">Редко (раз в 5 минут)</string>
-        <string name="timeruser3">Иногда (раз в пол минуты)</string>
-        <string name="timeruser4">Часто (раз в 3 секунды)</string>
-        <!-- 1 and 2 options use boolean optimization field-->
+    <string name="timeruser1">Никогда</string>
+    <string name="timeruser2">Редко (раз в 5 минут)</string>
+    <string name="timeruser3">Иногда (раз в пол минуты)</string>
+    <string name="timeruser4">Часто (раз в 3 секунды)</string>
+    <!-- 1 and 2 options use boolean optimization field-->
     <string name="optimizationdata3">bellmanFord</string>
-        <string name="optimizationuser1">Нет</string>
-        <string name="optimizationuser2">Google</string>
-        <string name="optimizationuser3">Беллман-Форд</string>
+    <string name="optimizationuser1">Нет</string>
+    <string name="optimizationuser2">Google</string>
+    <string name="optimizationuser3">Бэллман-Форд</string>
 </resources>
