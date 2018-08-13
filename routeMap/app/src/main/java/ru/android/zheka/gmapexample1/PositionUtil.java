@@ -3,6 +3,8 @@ package ru.android.zheka.gmapexample1;
 import java.util.ArrayList;
 
 import ru.android.zheka.db.UtilePointSerializer;
+import ru.android.zheka.route.BellmannFord;
+
 import android.R.bool;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +19,7 @@ public class PositionUtil {
 	public final static float zoomDefault = 10;
 	public final static String titleDefault = "";
 	public static final LatLng LAT_LNG = new LatLng(55.9823964,37.1690829);
+	public static boolean isCenterAddedToTrace = false;
 	LatLng center,start,end;
 	float zoom=0;
 	boolean startPass=false
@@ -109,7 +112,7 @@ public enum TRACE_PLOT_STATE  {END_COMMAND
 			this.zoom = new Float(sZoom);
 		}catch(NumberFormatException e){
 			this.zoom = zoomDefault;
-		}	
+		}
 		titleMarker = getQueryParameter(uri, "title");
 		center = new LatLng(latitude, longitude);
 		if (intent.getStringArrayListExtra(EXTRA_POINTS)!=null)
@@ -290,11 +293,35 @@ public enum TRACE_PLOT_STATE  {END_COMMAND
 				}
 			}
 		}
-		centerPass = getPassParam(uriCenter);
-		startPass = getPassParam(startUri);
-		endPass = getPassParam(endUri);
 		if (intent.getStringArrayListExtra(EXTRA_POINTS)!=null)
 			extraPoints = intent.getStringArrayListExtra(EXTRA_POINTS);
+		centerPass = getPassParam(uriCenter);
+		try {startPass = getPassParam(startUri);}
+		catch (Exception e){startUri = uriCenter; startPass = getPassParam(startUri);}
+		try {endPass = getPassParam(endUri);}
+		catch (Exception e) {/*endUri = startUri; endPass = getPassParam(endUri);*/
+			endPass = false;// do not do CENTER_CONNECT
+			if (extraPoints.size ()>1) {
+				end = (LatLng) new UtilePointSerializer ().deserialize (extraPoints.get (extraPoints.size ()-1));
+			}else {
+				throw new NullPointerException ("end point is undefined");
+			}
+		}
+
+		// construct trace with center=start case, for adding
+		//TODO do not replace some points
+		/*
+		if (center!=null && isCenterAddedToTrace == false
+				&& extraPoints.size () >0) {
+			if (BellmannFord.round ((LatLng) new UtilePointSerializer ().deserialize (extraPoints.get(0))).equals (
+					BellmannFord.round(center)
+			)) 	extraPoints.set (0,(String)new UtilePointSerializer ().serialize (center));
+			else
+				extraPoints.add(0,(String)new UtilePointSerializer ().serialize (center));
+			isCenterAddedToTrace = true;
+		}else if (center!=null && isCenterAddedToTrace == true && extraPoints.size ()>0)
+			extraPoints.set (0,(String)new UtilePointSerializer ().serialize (center));//start
+		*/
     }
     static private String getQueryParameter(Uri uri,String name){
     	String queres = uri.getQuery();
@@ -521,7 +548,7 @@ public enum TRACE_PLOT_STATE  {END_COMMAND
       		  , location.getLongitude());
         else{
         	center = LAT_LNG;
-        	System.out.println("----- location is null get 18.012590,-77.500659 instead");
+        	System.out.println("----- location is null get "+LAT_LNG+" instead");
         }
         return center;
     }

@@ -33,14 +33,16 @@ public class UtileTracePointsSerializer extends TypeSerializer{
 			sb.append(utilePointSerializer.serialize(point))
 				.append(tDelimiter);
 		}
-        sb.deleteCharAt(sb.length()-1);
+		if (sb.length ()>=1)//?
+        	sb.deleteCharAt(sb.length()-1);
         sb.append(eDelimiter);
         
         for (String point : dataTrace.extraPoints) {
 			sb.append(point)
 				.append(tDelimiter);
 		}
-        sb.deleteCharAt(sb.length()-1);
+		if (sb.length ()>=1)//?
+        	sb.deleteCharAt(sb.length()-1);
         
 		return sb.toString();
 	}

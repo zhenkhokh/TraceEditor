@@ -1,7 +1,5 @@
 package ru.android.zheka.gmapexample1;
 
-import java.lang.annotation.Target;
-
 import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.InjectView;
 import ru.android.zheka.db.Config;
@@ -17,15 +15,19 @@ import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
 import ru.android.zheka.route.BellmannFord;
 import ru.android.zheka.route.GoogleParser;
+import ru.android.zheka.route.BellmannFord.MissMatchDataException;
+import ru.android.zheka.route.BellmannFord.NoDirectionException;
 import ru.android.zheka.route.Route;
 import ru.android.zheka.route.Routing;
 import ru.android.zheka.route.RoutingListener;
 import ru.zheka.android.timer.PositionReciever;
 
 import java.lang.InstantiationException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import android.support.v4.app.DialogFragment;
@@ -37,12 +39,9 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
-
+/*
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -52,6 +51,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationRequestCreator;
 import com.google.android.gms.location.LocationServices;
+*/
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -60,6 +60,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 
 import android.app.Activity;
 //import android.app.AlertDialog;
@@ -85,6 +86,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	public static final String SAVE_TRACE = "saveTrace";
 	public static final String GEO = "geo";
 	public static final String HOME = "home";
+	public static final String ADD_POINT = "addPoint";
+	public static final String REMOVE_POINT = "removePoint";
+	public static final String FAKE_START = "fakeStart";
+
 	Context context = this;
     private GoogleMap mMap=null;
     protected Routing routing;
@@ -93,7 +98,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
     WebView webView;
 	protected String url =  "file:///android_asset/map.html";
 	protected int resViewId = R.layout.activity_maps;//R.layout.activity_maps;
-	protected DataTrace dataTrace = new DataTrace();
+	public DataTrace dataTrace = new DataTrace();
 	private boolean onRoutingReady = false;
 	private int cnt=0;
 	private int cntCtrl=0;
@@ -107,6 +112,29 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	private static int failuresCnt = 0;
 	//TimerService timerService=TimerService.getInstance();
 	PositionReciever positionReciever = null;
+	ArrayList<LatLng> wayPoints = new ArrayList <> ();
+	MarkerOptions options;
+	Marker cursorMarker;
+	private static boolean isFakeStart=false;
+
+	public ArrayList<LatLng> getWayPoints() {
+		wayPoints = new ArrayList <> ();
+		if (isFakeStart)
+			wayPoints.add(position.start);
+		else
+			wayPoints.add(position.centerPosition);
+		for (Iterator iterator = position.getExtraPoints ().iterator(); iterator
+				.hasNext();) {
+			String sPoint = (String) iterator.next();
+			LatLng point = (LatLng)(new UtilePointSerializer().deserialize(sPoint));
+			LatLng rPoint = BellmannFord.round (point);
+			if (!rPoint.equals (BellmannFord.round(position.start))
+					&& !rPoint.equals (BellmannFord.round (position.end)))
+				wayPoints.add(point);
+		}
+		wayPoints.add(position.end);
+		return wayPoints;
+	}
 
 	public static class MySaveDialog extends SaveDialog{
 
@@ -169,7 +197,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
         MenuHandler m = new MenuHandler();
         m.initJsBridge(this, url);  
-        position = new PositionInterceptor(this);        
+        position = new PositionInterceptor(this);
         Class[] classes = loadClasses("ru.android.zheka.gmapexample1.MainActivity"
         		,"ru.android.zheka.gmapexample1.GeoPositionActivity"
         		,"ru.android.zheka.gmapexample1.TraceActivity"
@@ -201,7 +229,6 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			//timerService.startService(intent);
 			//timerService.startService(intent);
 		}
-		
 		System.out.println("end onCreate");
 	}
 
@@ -229,6 +256,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+    	if (options==null && googleMap!=null)
+			options = new MarkerOptions ().icon (
+					BitmapDescriptorFactory.fromResource (R.drawable.cursor72_77))
+					.draggable (true);
     	/*
         mMap = googleMap;
 
@@ -244,10 +275,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		    e.printStackTrace();
 		}
     	if(positionReciever==null){
-			positionReciever = new PositionReciever(googleMap, position);
+			positionReciever = new PositionReciever(googleMap, position,this);
 			//LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever
 			//		, new IntentFilter(TimerService.BROADCAST_ACTION));
-			TimerService.mListners.add(positionReciever);
+			if(!TimerService.mListners.contains (positionReciever))
+				TimerService.mListners.add(positionReciever);
     	}
     	//if (this.center==null)
     	//	this.center = PositionUtil.getGeoPosition(this);
@@ -281,10 +313,18 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         //(Routing.TravelMode.WALKING);
         routing.registerListener(this);
         // to know start==end
-		prevPoint = position.start;
+		position.centerPosition = PositionUtil.getGeoPosition (this);// <---?
+		//position.centerPosition = position.getLocation ();
+
+		if (!isFakeStart) {
+			prevPoint = position.centerPosition;//position.start;
+			//position.start = position.centerPosition;// <---?
+		}else{
+			prevPoint =  position.start;
+		}
 		point = position.end;
         if (prevPoint!=null && point!=null){
-        	if (position.extraPoints.size()<=1)
+        	if (position.getExtraPoints ().size()<=1)
         		routing.execute(prevPoint, point);
         	else{
         		//runOnUiThread(new Runnable() {
@@ -297,15 +337,8 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 						boolean isBellman = config.bellmanFord.equals (Application.optimizationBellmanFlag);
 		        		if (config.optimization
 								|| isBellman){
-			        		ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
-			        		wayPoints.add(position.start);
-			        		wayPoints.add(position.end);
-			        		for (Iterator iterator = position.extraPoints.iterator(); iterator
-			        				.hasNext();) {
-								String sPoint = (String) iterator.next();
-								point = (LatLng)(new UtilePointSerializer().deserialize(sPoint));
-								wayPoints.add(point);
-			        		}
+			        		//ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
+							getWayPoints();
 							if (isBellman) {
 			        			bellManPoits = wayPoints;
 								/*int iEnd = bellManPoits.indexOf(position.end);
@@ -347,7 +380,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 								}
 								ArrayList <Integer> order = route.getOrder ();
 								System.out.println ("order is " + order);
-								if (order.size () == position.extraPoints.size () - 1)
+								if (order.size () == position.getExtraPoints ().size () - 1)
 									System.out.println ("order.size() is fine");
 								ArrayList <String> temp = new ArrayList <String> ();
 								for (Iterator iterator = order.iterator (); iterator
@@ -367,9 +400,9 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 									Integer index = (Integer) iterator.next ();
 									System.out.println ("index=" + index + ", index_=" + index_);
 									temp.set (index
-											, position.extraPoints.get (index_++));
+											, position.getExtraPoints ().get (index_++));
 								}
-								position.extraPoints = temp;
+								position.setExtraPoints (temp);
 								//}
 								//add end point
 								//position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
@@ -380,9 +413,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		        		Iterator iterator;
 		        		if (isBellman) {
 							int iStart = bellManPoits.indexOf (position.start);
+							LatLng rStart = BellmannFord.round (position.start);
 							for (int i = 0; i < iStart; i++) {
 								LatLng head = bellManPoits.remove (0);
-								bellManPoits.add (head);
+								if (!rStart.equals (BellmannFord.round (head)))
+									bellManPoits.add (head);
 							}
 							/*LatLng tmp = bellManPoits.get(1);
 		        			bellManPoits.set (1,bellManPoits.get (2));
@@ -393,16 +428,17 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 							iterator = bellManPoits.iterator ();
 							if (iterator.hasNext ())
 								iterator.next ();//miss start
-							position.extraPoints = new ArrayList <String> ();
+							ArrayList<String> tmp = new ArrayList <String> ();
 							Iterator iterator1 = bellManPoits.iterator ();
 							if (iterator1.hasNext ()) // miss start
 								iterator1.next ();
 							for (;iterator1.hasNext ();)
-								position.extraPoints.add ((String)new UtilePointSerializer().serialize(
+								tmp.add ((String)new UtilePointSerializer().serialize(
 										iterator1.next ()
 								));
+							position.setExtraPoints (tmp);
 						}
-						iterator = position.extraPoints.iterator();
+						iterator = position.getExtraPoints ().iterator();
 						failuresCnt = 0;
 		        		final int curCnt=cntRun+1;
 		        		cntRun++;
@@ -572,10 +608,15 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
             Toast.makeText(this.context, "add routed trace", 15);
         }        	
         mMap.addPolyline(polyoptions);
-        dataTrace.allPoints = polyoptions;
-        dataTrace.extraPoints = position.extraPoints;
-        
-        // Start marker
+        int sz = position.getExtraPoints ().size ();
+        if (!position.isWriteExtra) {
+			ArrayList <String> tmp = new ArrayList <> (position.getExtraPoints ().subList (0, sz));
+			if (sz==tmp.size ()) {
+				dataTrace.extraPoints = tmp;
+				dataTrace.allPoints = polyoptions;
+			}
+		}
+		// Start marker
         MarkerOptions options = new MarkerOptions();
         LatLng markerPosition = null;
         if(prevPoint!=null)
@@ -608,7 +649,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
     	//end
         if (cnt==0) 
         	options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
-        if (position.extraPoints!=null&&cnt==position.extraPoints.size()-1)
+        if (position.getExtraPoints ()!=null&&cnt==position.getExtraPoints ().size()-1)
         	options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 //DO NOT write end
         mMap.addMarker(options);
@@ -660,23 +701,99 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	        finish();
 	    }
 	    if (val.contains(GO_POSITION)){
-    		runOnUiThread(new Runnable() {				
-				@Override
-				public void run() {
-					if (mMap!=null){
+			goPosition(false);
+	    }
+	    if (val.contains(ADD_POINT)){
+        	Toast.makeText (this
+					,"Для добавления путевой точки перейдите в местоположение и установите ее по центру, далее вернитесь к просмотру"
+					,25).show ();
+		}
+		if (val.contains(REMOVE_POINT)){
+			while (position.isWriteExtra==true){}
+			System.out.println ("extraPoint before removing "+position.getExtraPoints ());
+			int sz = position.getExtraPoints ().size ();
+        	if (sz<2) {
+				Toast.makeText (this, "Нет путевых точек для удаления", 15).show ();
+				return;
+			}
+        	//String[] temp = Arrays.copyOf (position.getExtraPoints ().toArray (new String[0]),sz);//remove(0)
+			String[] temp = new String[sz-1];
+        	System.arraycopy (position.getExtraPoints ().toArray ()
+				,1,temp,0,sz-1);
+			if (position.isWriteExtra==true || sz!=temp.length+1){
+				Toast.makeText (this, "Ресурс занят, повторите операцию", 15).show ();
+				return;
+			}
+			ArrayList<String> tmp = new ArrayList <String> (Arrays.asList (temp));
+			position.setExtraPoints (tmp);
+			System.out.println ("extraPoint after removing "+position.getExtraPoints ());
+			System.out.println ("extraPoint tmp "+Arrays.asList (temp)+" len="+temp.length);
+			//LatLng end = position.end;
+			setIntent (intent.putStringArrayListExtra (PositionUtil.EXTRA_POINTS,tmp));
+        	intent = position.updatePosition();
+        	//position.end = end;
+        	intent.setClass(this.context, MapsActivity.class);
+        	intent.setAction(Intent.ACTION_VIEW);
+			Toast.makeText (this, "Ближайшая путевая точка удалена", 15).show ();
+
+			startActivity(intent);
+		    finish();
+		}
+		if (val.equals (FAKE_START)){
+        	isFakeStart = isFakeStart?false:true;
+        	if (isFakeStart){
+        		Toast.makeText (this, "Задан псевдо старт", 15).show ();
+			}else {
+        		Toast.makeText (this, "Дан старт из местоположения", 15).show ();
+			}
+			intent.setClass(this.context, MapsActivity.class);
+        	intent.setAction(Intent.ACTION_VIEW);
+        	startActivity(intent);
+		    finish();
+		}
+      }
+
+	public void goPosition(final boolean isBeforeAnimation) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (mMap!=null){
+					if (cursorMarker!=null)
+						cursorMarker.remove ();
+					cursorMarker = mMap.addMarker (options
+							.position (position.getLocation())
+					);
+					try {
+						getWayPoints ();
+						BellmannFord.getBearing ( wayPoints.toArray (new LatLng[0]));
+						while (BellmannFord.bearing==Float.NaN && wayPoints.size ()>2){
+							System.out.println ("try fix bearing");
+							wayPoints.remove (1);
+							BellmannFord.getBearing ( wayPoints.toArray (new LatLng[0]));
+						}
+					} catch (NoDirectionException e) {
+						e.printStackTrace ();
+						Toast.makeText(MapsActivity.this, "Нет направления, задайте маршрут", 15).show();
+					} catch (MissMatchDataException e) {
+						e.printStackTrace ();
+						Toast.makeText(MapsActivity.this, "Все точки маршрута одинаковы, задайте маршрут", 15).show();
+					}/*
 						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition
 							.Builder()
 							.target(position.getLocation())
+							.bearing (BellmannFord.bearing)//(float) (Math.random ()*360.0)
 							.zoom(position.zoom).build()));
 						if (config.uLocation)
 							position.updateUILocation();
-						System.out.println("from geo: move to "+position.getLocation());
-					}
-					//mMap.moveCamera(update);
+							*/
+					if (!isBeforeAnimation)
+						positionReciever.onReceive (MapsActivity.this,MapsActivity.this.getIntent ());
+					System.out.println("from geo: move to "+position.getLocation());
 				}
-			});
-	    }
-      }
+				//mMap.moveCamera(update);
+			}
+		});
+	}
 
 	@Override
 	public WebView getVebWebView() {
@@ -697,7 +814,13 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	 * @see roboguice.activity.RoboFragmentActivity#onStart()
 	 */
 	protected void onStart() {
-	    position.mGoogleApiClient.connect();
+		config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+				, Config.class);
+		if(positionReciever!=null){
+			if(!config.tenMSTime.equals (getString (R.string.timerdata1)))
+				if(!TimerService.mListners.contains (positionReciever))
+					TimerService.mListners.add(positionReciever);
+		}
 	    super.onStart();
 	}
 	/*
@@ -705,10 +828,42 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	 * @see roboguice.activity.RoboFragmentActivity#onStart()
 	 */
 	protected void onStop() {
+		//saveEmergency ();
 	    position.mGoogleApiClient.disconnect();
 	    TimerService.mListners.remove(positionReciever);
 	    super.onStop();
 	}
+	@Override
+	protected void onPause(){
+		//saveEmergency ();
+		TimerService.mListners.remove (positionReciever);
+		super.onPause ();
+	}
+	@Override
+	protected void onDestroy() {
+		//saveEmergency ();
+		super.onDestroy ();
+	}
+	private void saveEmergency(){
+		if (dataTrace!=null && position!=null
+				&& position.start!=null && position.end!=null) {
+			Trace trace = new Trace ();
+			trace.data = dataTrace;
+			trace.start = position.start;
+			trace.end = position.end;
+			trace.name = "emergency_saving";
+			try {
+				DbFunctions.add (trace);
+			} catch (java.lang.InstantiationException e) {
+				e.printStackTrace ();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace ();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace ();
+			}
+		}
+	}
+
 }
 
 

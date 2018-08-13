@@ -22,10 +22,10 @@ com.simpligility.maven.plugins -->
         <android.plugin.version>4.5.0</android.plugin.version>
         <robolectric.version>3.8</robolectric.version>
 	<com.activeandroid.version>3.1.18-SNAPSHOT</com.activeandroid.version>
-	<platform.sdk>16</platform.sdk>
+	<platform.sdk>22</platform.sdk>
 	<!-- 22.2.0 or 18.0.0 depend from play-service version -->
 	<support.version>18.0.0</support.version>
-	<play-services.version>8.1.0</play-services.version>
+	<play-services.version>11.6.0</play-services.version>
     </properties>
     
 <profiles>
@@ -73,6 +73,10 @@ com.simpligility.maven.plugins -->
                 <id>mvn-repo</id>
                 <url>https://mvnrepository.com/artifact</url>
         </repository>
+		<repository>
+			<id>google</id>
+			<url>https://dl.google.com/dl/android/maven2</url>
+		</repository>
     </repositories>
     
 <dependencies>  
@@ -278,15 +282,16 @@ com.simpligility.maven.plugins -->
                     <artifactId>android-maven-plugin</artifactId>
                     <version>${android.plugin.version}</version>
                     <extensions>true</extensions>
-                    <executions>                    
+                    <executions>
                         <execution>
                 			<id>default-process-classes</id>
                 			<phase>process-classes</phase>
    					        <goals>
                 				<goal>proguard</goal>
             				</goals>
-                			<configuration>                			
-                			<proguard>
+                			<configuration>
+
+                			<proguard>maps-license
 								<skip>false</skip>
 								<!-- Unable to create application com.activeandroid.app.Application: java.lang.NullPointerException: -->								
 								<config>${basedir}/proguard-project_ss.txt</config>
@@ -303,7 +308,9 @@ com.simpligility.maven.plugins -->
                 	</executions>                	   
                 	<configuration>
                 	    <release>true</release>                	
-                		<failOnDuplicatePackages>false</failOnDuplicatePackages>                	
+                		<failOnDuplicatePackages>false</failOnDuplicatePackages>
+						<!-- avoid dublicates-->
+<extractDuplicates>true</extractDuplicates>
                	   	<sdk>
                         	<platform>${platform.sdk}</platform>
                         	<path>/home/zheka/Android/Sdk</path>
@@ -337,8 +344,8 @@ com.simpligility.maven.plugins -->
                 	<artifactId>maven-compiler-plugin</artifactId>
                 	<version>3.1</version>
                 	<configuration>
-                    	<source>1.6</source>
-                    	<target>1.6</target>
+                    	<source>1.7</source>
+                    	<target>1.7</target>
                 	</configuration>
             	</plugin>
 	            <plugin>

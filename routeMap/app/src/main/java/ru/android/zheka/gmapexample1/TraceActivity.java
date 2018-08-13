@@ -127,9 +127,10 @@ public MyDialogFragment(){
         position1.start = trace.start;
         position1.end = trace.end;
         position1.centerPosition = trace.end;
-        position1.extraPoints = trace.data.extraPoints;
+        position1.setExtraPoints (trace.data.extraPoints);
         position1.state = TRACE_PLOT_STATE.CENTER_END_COMMAND;
         setIntent(getIntent().putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace.data.extraPoints));
+        PositionUtil.isCenterAddedToTrace  = false;
         Intent intent = position1.getNewIntent();
        /*try{intent = positionUtil.createIntentForExistingCenterEndStart(TRACE_PLOT_STATE.CENTER_END_COMMAND
         		,(String)utilPoint.serialize(trace.end)
@@ -278,7 +279,8 @@ public MyDialogFragment(){
 	        }
 	        //if (val.contentEquals(GEO_CONNECT_POINT)){
 	        if (val.contentEquals(RESET_TRACE)){
-            	Toast.makeText(this, "Текущий маршрут удален, добавьте точку в начало нового маршрута" , 30).show();            
+            	Toast.makeText(this, "Текущий маршрут удален, добавьте точку в начало нового маршрута" , 30).show();
+            	PositionUtil.isCenterAddedToTrace = false;
             	positionUtil.setTitleMarker("Start");
             	positionUtil.setStart(center);
             	positionUtil.setEnd(center);            	
