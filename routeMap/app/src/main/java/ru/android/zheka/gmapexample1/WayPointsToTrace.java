@@ -1,5 +1,6 @@
 package ru.android.zheka.gmapexample1;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -67,12 +68,14 @@ public class WayPointsToTrace extends EditActivity {
             	}
 	            Toast.makeText(this, "Путевые точки успешно добавлены. Добавьте конец маршрута" , 15).show();
             	UtilePointSerializer util = new UtilePointSerializer();
+				ArrayList<String> tmp  = new ArrayList <> ();
             	for (Iterator iterator = names.iterator(); iterator.hasNext();) {
 					String name = (String) iterator.next();
 					Point point = (Point) DbFunctions.getModelByName(name, Point.class);
 					position.centerPosition = point.data;
-					position.extraPoints.add((String)util.serialize(point.data));
+					tmp.add ((String)util.serialize(point.data));
 				}
+				position.setExtraPoints (tmp);
             	intent = position.getNewIntent();
 	        	intent.setClass(this.context,GeoPositionActivity.class);
 	        	intent.setAction(Intent.ACTION_VIEW);

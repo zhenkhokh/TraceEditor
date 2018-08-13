@@ -2,6 +2,7 @@
 apply plugin: 'maven'
 apply plugin: 'com.android.application'
 
+
 group = 'ru.android.zheka.gmapexample1'
 version = '1.1.1-SNAPSHOT'
 
@@ -24,13 +25,14 @@ buildscript {
     repositories {
         jcenter()
         maven { url "file://home/zheka/.m2/repository/" }
-	maven {url "http://repo1.maven.org/maven2"}
+	    maven {url "http://repo1.maven.org/maven2"}
         google()
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
+        classpath 'com.google.gms:google-services:4.0.1'
     }
 }
 
@@ -38,6 +40,7 @@ buildscript {
 //    id 'org.anarres.jarjar.jarjar' version '1.0.0'
 //}
 apply plugin: 'org.anarres.jarjar'
+//apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 27
@@ -56,8 +59,8 @@ sourceSets{
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 16
-        versionName "2.0"
+        versionCode 18
+        versionName "2.1"
         multiDexEnabled = true
     }
     testOptions {
@@ -73,10 +76,10 @@ sourceSets{
         targetCompatibility JavaVersion.VERSION_1_7
     }
     configurations {
-        all*.exclude module: 'support-v4'
-        //all*.exclude module: 'io'
-        //all*.exclude module: 'java'
-        //all*.exclude group: 'java', module: 'io'
+        //all*.exclude module: 'support-v4'
+        all*.exclude module: 'io'
+        all*.exclude module: 'java'
+        all*.exclude group: 'java', module: 'io'
     }
     dexOptions{
         javaMaxHeapSize="9000M"
@@ -144,8 +147,9 @@ dependencies {
     compile(group: 'com.google.android.gms', name: 'play-services', version:'8.1.0') {
 exclude(module: 'play-services-maps')
     }
-    compile (group: 'com.google.android.gms', name: 'play-services-maps', version:'8.1.0')
-    compile (group: 'com.android.support', name: 'appcompat-v7', version:'18.0.0')
+    compile (group: 'com.google.android.gms', name: 'play-services-maps', version:'8.1.0')//11.6.0
+    compile (group: 'com.android.support', name: 'appcompat-v7', version:'18.0.0')//23.0.0//18.0.0
+    //compile (group: 'com.android.support', name: 'support-v4', version:'23.0.0')
     compile(group: 'org.roboguice', name: 'roboguice', version:'2.0') {
 exclude(module: 'guice')
     }
@@ -163,8 +167,11 @@ exclude(module: 'guice')
     compile 'com.android.support:multidex:1.0.3'
     testCompile "org.robolectric:shadows-multidex:3.1.1"
     testCompile group: 'junit', name: 'junit', version:'4.11'
-    compile (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1')
-    compile group: 'com.android.support', name: 'mediarouter-v7', version:'18.0.0'
+    provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
+//exclude(group: 'com.android.support')
+//exclude module: 'support-v4'
+    }
+    //compile group: 'com.android.support', name: 'mediarouter-v7', version:'18.0.0'
 		// Use jarjar.repackage in place of a dependency notation.
 /*		compile jarjar.repackage {
 			from 'android:android:6.0_r3'

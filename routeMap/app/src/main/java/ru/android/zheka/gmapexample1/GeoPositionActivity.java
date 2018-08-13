@@ -2,6 +2,7 @@ package ru.android.zheka.gmapexample1;
 
 import java.nio.file.attribute.PosixFilePermission;
 
+import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.gmapexample1.R;
 import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.InjectView;
@@ -250,8 +251,24 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 				}
 				//else go to map
 	    	}
-	    	
+
 		          Toast.makeText(this, "Map view called: " + val, 15).show();
+				//if (//position.state!=null&&
+				//		TraceActivity.isOtherMode(position.state))
+				//	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
+				  if ( (position.state != TRACE_PLOT_STATE.CENTER_END_COMMAND && position.start.equals (position.end)
+						  || PositionUtil.LAT_LNG.equals (position.end) || position.end==null)
+				  		 && position.getExtraPoints ().size ()>0)//TOOD move to getNewIntent
+				  	position.end = (LatLng) new UtilePointSerializer().deserialize (position.getExtraPoints ().get (position.getExtraPoints ().size ()-1));
+				  if (position.end==null)
+				  	if (position.centerPosition!=null)
+				  		position.end = position.centerPosition;
+				  	else
+				  		position.end = position.start;
+				  position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
+				  intent = position.getNewIntent();
+				  //if (!position.extraPoints.isEmpty()){
+					//	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
 		          intent.setClass(this.context, clMap);
 		          intent.setAction(Intent.ACTION_VIEW);
 		          startActivity(intent);
@@ -342,7 +359,7 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 			position.markerCenter = mMap.addMarker(new MarkerOptions().position(point)
 					.draggable(true));
 	}
-//TODO remove it, do when drags
+
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		if (marker!=null){
@@ -377,8 +394,20 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	 * @see roboguice.activity.RoboFragmentActivity#onStart()
 	 */
 	protected void onStart() {
-	    position.mGoogleApiClient.connect();
-	    super.onStart();
+		config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+				, Config.class);
+		if(positionReciever!=null){
+			if(!config.tenMSTime.equals (getString (R.string.timerdata1)))
+				if(!TimerService.mListners.contains (positionReciever))
+					TimerService.mListners.add(positionReciever);
+		}
+		super.onStart();
+	}
+
+	@Override
+	protected void onPause(){
+		TimerService.mListners.remove (positionReciever);
+		super.onPause ();
 	}
 	/*
 	 * locale

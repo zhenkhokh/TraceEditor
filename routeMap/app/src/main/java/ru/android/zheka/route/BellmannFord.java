@@ -2,11 +2,24 @@ package ru.android.zheka.route;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import ru.android.zheka.gmapexample1.MapsActivity;
+
 public class BellmannFord {
     final static double toRad = Math.PI/180;
     final static double R = 6371;//km
     // !!! use process once
     public static double length = 0;
+    public static float bearing=-1000;
+    static double longitude1;
+    static double longitude;
+    static double latitude1;
+    static double latitude;
+    static double dr;
+    static double dr_tay;
+    static private double eps = 1.0E3;
 
     public static LatLng[] process(LatLng[] latLngs){
         LatLng [] order = fliplr (latLngs);
@@ -53,9 +66,9 @@ public class BellmannFord {
         for (int j = 1; j < n; j++) {
             double latitude1 = latLngs[j].latitude * toRad;
             double longitude1 = latLngs[j].longitude * toRad;
-            double dLambda = -(longitude1 - longitude);
-            double dLat = latitude1 - latitude;
-            double cosArg = Math.cos (dLat) + (Math.cos (dLambda) - 1.0)
+            double dLon = -(longitude1 - longitude);
+            double dLamda = latitude1 - latitude;
+            double cosArg = Math.cos (dLamda) + (Math.cos (dLon) - 1.0)
                     * Math.cos (latitude) * Math.cos (latitude1);
             latitude = latitude1;
             longitude = longitude1;
@@ -74,4 +87,49 @@ public class BellmannFord {
         }
         return inv;
     }
+    static public float getBearing(LatLng[] points) throws NoDirectionException, MissMatchDataException {
+        if (points.length<2)
+            throw new MissMatchDataException ();
+        LatLng point = round (points[0]);
+        LatLng point1 = round (points[1]);
+        if (point.equals (point1)){
+            int i=2;
+            while(point.equals (point1) && i<points.length){
+                point1 = round (points[i++]);
+            }
+            if (point.equals (point1))
+                throw  new NoDirectionException ();
+        }
+        longitude1 = point1.longitude*toRad;
+        longitude = point.longitude*toRad;
+        latitude1 = point1.latitude*toRad;
+        latitude = point.latitude*toRad;
+        double dLon = longitude1 - longitude;
+        double dLambda = latitude1 - latitude;
+        double dr2 = 2.0*(1 + (1.0 - Math.cos (dLon))*Math.cos(latitude1)*Math.cos (latitude)
+            - Math.cos (dLambda));
+        dr = Math.sqrt (dr2);
+        dr_tay = Math.sin(dLambda) - (1 - Math.cos (dLon))*Math.cos (latitude1)*Math.cos (latitude);
+        //if (dr==0)
+        //    throw  new NoDirectionException ();
+        bearing = (float) (Math.acos (dr_tay/dr)/toRad); // 2 roots
+        if (dLon<0)
+            bearing = (float) 360.0 - bearing;
+        System.out.println ("bearing="+bearing+" points="+ Arrays.asList (points));
+        return bearing;
+    }
+    public static LatLng round(LatLng point){
+        double lat = Math.round (point.latitude*eps)/eps;
+        double lon = Math.round (point.longitude*eps)/eps;
+        return new LatLng (lat,lon);
+    }
+    static public class MissMatchDataException extends Exception{
+
+    }
+
+    static public class NoDirectionException extends Exception{
+
+    }
 }
+
+

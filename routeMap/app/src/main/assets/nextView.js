@@ -30,7 +30,19 @@ function setUpMenuEvents() {
     $('#geo').click(function() {
     	//alert("hello geo");
     	menuHandler.nextView("geo");
-    				  });   
+    				  });
+    $('#removePoint').click(function() {
+    	//alert("hello geo");
+    	menuHandler.nextView("removePoint");
+    				  });
+    $('#addPoint').click(function() {
+    	//alert("hello geo");
+    	menuHandler.nextView("addPoint");
+    				  });
+    $('#fakeStart').click(function() {
+    	//alert("hello geo");
+    	menuHandler.nextView("fakeStart");
+    				  });
     // home, map, points, addWaypoints for geo
     $('#home').click(function() {
     	//alert("hello home");
