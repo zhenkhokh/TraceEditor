@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -122,6 +123,14 @@ public class AddressGoActivity extends RoboListActivity implements JsCallable{
 		}catch (InvocationTargetException e){	e.printStackTrace();
 		}catch (NoSuchMethodException e){		e.printStackTrace();
 		}
+
+        if (positionInterceptor==null){
+            positionInterceptor = new PositionInterceptor (this);
+        }
+        if (positionInterceptor==null) {
+            Toast.makeText (this,"positionInterceptor==null, если ошибка повторяется сообщите", 15).show ();
+            throw new NullPointerException ("positionInterceptor==null");
+        }
         positionInterceptor.updatePosition();
         positionInterceptor.centerPosition = point;
         Intent geoIntent = positionInterceptor.getNewIntent();

@@ -8,11 +8,13 @@ import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
 import ru.android.zheka.route.BellmannFord;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -65,6 +67,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 	}
 	public void initLocation(){
 		target.runOnUiThread (new Runnable () {
+			@SuppressLint("MissingPermission")
 			@Override
 			public void run() {
 				if (mGoogleApiClient == null) {
@@ -77,6 +80,8 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 				}
 				if (mGoogleApiClient != null) {
 					mGoogleApiClient.connect();
+					if(!PositionUtil.isAvailablePermissions (target))
+						return;
 					mLastLocation = LocationServices.FusedLocationApi.getLastLocation (
 							mGoogleApiClient);
 				}
@@ -241,9 +246,12 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 	 * location
 	 * @see com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks#onConnected(android.os.Bundle)
 	 */
+	@SuppressLint("MissingPermission")
 	@Override
 	public void onConnected(Bundle arg0) {
 		System.out.println ("start ConnectionCallbacks.onConnected");
+		if (!PositionUtil.isAvailablePermissions (target))
+			return;
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation (
 				mGoogleApiClient);
 		/*LocationServices.getFusedLocationProviderClient (target).getLastLocation ().addOnCompleteListener (new OnCompleteListener <Location> () {
@@ -260,6 +268,9 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 			updateUILocation ();
 		}
 		System.out.println ("mLastConnection is " + mLastLocation);
+		if (!PositionUtil.isAvailablePermissions (target))
+			return;
+
 		LocationServices.FusedLocationApi.requestLocationUpdates (mGoogleApiClient
 				, LocationRequest.create (), this);
 		/*LocationServices.getFusedLocationProviderClient (target).getLastLocation ().addOnCompleteListener (new OnCompleteListener <Location> () {
@@ -274,11 +285,12 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		*/
 		System.out.println ("end ConnectionCallbacks.onConnected");
 	}
-
+	@SuppressLint("MissingPermission")
 	public void updateUILocation() {
 		System.out.println ("call updateUILocation");
 		TextView coordinate = (TextView) target.findViewById (resViewId);
 		if (coordinate != null) {
+			//check permission is alredy done
 			mLastLocation = LocationServices.FusedLocationApi.getLastLocation (
 					mGoogleApiClient);
 			/*LocationServices.getFusedLocationProviderClient (target).getLastLocation ().addOnCompleteListener (new OnCompleteListener <Location> () {
@@ -352,6 +364,8 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 
 	@Override
 	public void onLocationChanged(Location arg0) {
+		if (arg0!=null)
+			mLastLocation = arg0;
 		if (mLastLocation != null) {
 			updateUILocation ();
 			System.out.println ("updateUILocatin called in MapsActivity.onLocationChanged");

@@ -89,6 +89,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	public static final String ADD_POINT = "addPoint";
 	public static final String REMOVE_POINT = "removePoint";
 	public static final String FAKE_START = "fakeStart";
+	public static final String MAP_TYPE = "mapType";
 
 	Context context = this;
     private GoogleMap mMap=null;
@@ -116,6 +117,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	MarkerOptions options;
 	Marker cursorMarker;
 	private static boolean isFakeStart=false;
+	private MapTypeHandler mapType = new MapTypeHandler (MapTypeHandler.userCode);
 
 	public ArrayList<LatLng> getWayPoints() {
 		wayPoints = new ArrayList <> ();
@@ -290,6 +292,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
             mMap = googleMap;
             System.out.println("position.centerPosition:"+position.centerPosition
             		+" position.zoom:"+position.zoom);
+            mMap.setMapType (mapType.getCode ());
 			mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition
 					.Builder()
 					.target(position.centerPosition)
@@ -751,6 +754,37 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         	startActivity(intent);
 		    finish();
 		}
+		if (val.equals (MAP_TYPE)){
+        	//if (mMap==null) {
+        	//	Toast.makeText (this, "Ошибка: карта не определена", 15).show ();
+			//	return;
+			//}
+        	switch (mapType.getType ()){
+				case NORMAL:{
+					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_SATELLITE;
+					Toast.makeText (this, "Изменена на спутниковую, повторите просмотр", 15).show ();
+					break;
+				}
+				case SATELLITE:{
+					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_TERRAIN;
+					Toast.makeText (this, "Изменена на рельефную, повторите просмотр", 15).show ();
+					break;
+				}
+				case TERRAIN:{
+					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_HYBRID;
+					Toast.makeText (this, "Изменена на гибридную, повторите просмотр", 15).show ();
+					break;
+				}
+				case HYBRID:{
+					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_NORMAL;
+					Toast.makeText (this, "Изменена на обычную, повторите просмотр", 15).show ();
+					break;
+				}
+			}
+			mapType = new MapTypeHandler (MapTypeHandler.userCode);
+        	//mMap.setMapType (mapType.getCode ());// setting has no effect
+        	//goPosition (false);//?
+		}
       }
 
 	public void goPosition(final boolean isBeforeAnimation) {
@@ -830,13 +864,15 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	protected void onStop() {
 		//saveEmergency ();
 	    position.mGoogleApiClient.disconnect();
-	    TimerService.mListners.remove(positionReciever);
+	    if (positionReciever!=null)
+	    	TimerService.mListners.remove(positionReciever);
 	    super.onStop();
 	}
 	@Override
 	protected void onPause(){
 		//saveEmergency ();
-		TimerService.mListners.remove (positionReciever);
+		if (positionReciever!=null)
+			TimerService.mListners.remove (positionReciever);
 		super.onPause ();
 	}
 	@Override

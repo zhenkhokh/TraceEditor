@@ -168,6 +168,13 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 		}catch (InvocationTargetException e){	e.printStackTrace();		
 		}catch (NoSuchMethodException e){		e.printStackTrace();			
 		}
+		if (positionInterceptor==null){
+			positionInterceptor = new PositionInterceptor (this);
+		}
+		if (positionInterceptor==null) {
+			Toast.makeText (this, "positionInterceptor==null, если ошибка повторяется сообщите", 15).show ();
+			throw new NullPointerException ("positionInterceptor==null");
+		}
         positionInterceptor.updatePosition();
         positionInterceptor.centerPosition = point.data;
         geoIntent = positionInterceptor.getNewIntent();

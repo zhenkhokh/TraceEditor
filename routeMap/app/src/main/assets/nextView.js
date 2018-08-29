@@ -43,6 +43,10 @@ function setUpMenuEvents() {
     	//alert("hello geo");
     	menuHandler.nextView("fakeStart");
     				  });
+    $('#mapType').click(function() {
+    	//alert("hello geo");
+    	menuHandler.nextView("mapType");
+    				  });
     // home, map, points, addWaypoints for geo
     $('#home').click(function() {
     	//alert("hello home");

@@ -13,7 +13,7 @@
     <string name="title_activity_address">Переход</string>
     <string name="title_activity_address_go">Переход по адрессу</string>
 
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"></string>
+    <!--string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDMSQdJ-_asTHWkp-jmmdBJ3YPIkgbTxJw</string-->
     
     <string name="cancel_save_point">Отмена</string>
     <string name="ok_save_point">Ok</string>

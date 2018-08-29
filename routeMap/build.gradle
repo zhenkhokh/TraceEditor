@@ -59,8 +59,8 @@ sourceSets{
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 18
-        versionName "2.1"
+        versionCode 20
+        versionName "2.3"
         multiDexEnabled = true
     }
     testOptions {
@@ -147,7 +147,7 @@ dependencies {
     compile(group: 'com.google.android.gms', name: 'play-services', version:'8.1.0') {
 exclude(module: 'play-services-maps')
     }
-    compile (group: 'com.google.android.gms', name: 'play-services-maps', version:'8.1.0')//11.6.0
+    compile (group: 'com.google.android.gms', name: 'play-services-maps', version:'8.1.0')//'11.6.0'
     compile (group: 'com.android.support', name: 'appcompat-v7', version:'18.0.0')//23.0.0//18.0.0
     //compile (group: 'com.android.support', name: 'support-v4', version:'23.0.0')
     compile(group: 'org.roboguice', name: 'roboguice', version:'2.0') {

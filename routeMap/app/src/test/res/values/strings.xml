@@ -16,7 +16,7 @@
     AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven
     AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 - new
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA</string>
+    <!--string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDMSQdJ-_asTHWkp-jmmdBJ3YPIkgbTxJw</string-->
 
     <string name="cancel_save_point">Отмена</string>
     <string name="ok_save_point">Ok</string>

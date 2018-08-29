@@ -71,6 +71,8 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	MySaveDialog saveDialog = new MySaveDialog();
 	static Object monitor = new Object();
 	static String msg = "";
+	private MapTypeHandler mapType;
+
 	public static class MyDialog extends SingleChoiceDialog{
 		public MyDialog(){
 			super("Маршрут не закончен. Хотите закончить?"
@@ -326,13 +328,16 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 					+" "+position.centerPosition.longitude);
 			//map.moveCamera(center);
 			//map.animateCamera(zoom);
+			mapType = new MapTypeHandler (MapTypeHandler.userCode);
+			mMap.setMapType (mapType.getCode ());
 			map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition
 					.Builder()
 					.target(position.centerPosition)
 					.zoom(position.zoom).build()));
-			if (mMap.getUiSettings()!=null)
-				mMap.getUiSettings().setZoomControlsEnabled(true);
-			else
+			if (mMap.getUiSettings()!=null) {
+				mMap.getUiSettings ().setZoomControlsEnabled (true);
+				mMap.getUiSettings ().setMapToolbarEnabled (true);
+			}else
         		Toast.makeText(this, "Панель не работает", 15).show();
 			map.setOnCameraChangeListener(this);
 			map.setOnMapLongClickListener(this);
@@ -406,7 +411,8 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 
 	@Override
 	protected void onPause(){
-		TimerService.mListners.remove (positionReciever);
+		if (positionReciever!=null)
+			TimerService.mListners.remove (positionReciever);
 		super.onPause ();
 	}
 	/*
@@ -415,7 +421,8 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	 */
 	protected void onStop() {
 	    position.mGoogleApiClient.disconnect();
-	    TimerService.mListners.remove(positionReciever);
+	    if (positionReciever!=null)
+	    	TimerService.mListners.remove(positionReciever);
 	    super.onStop();
 	}
 }

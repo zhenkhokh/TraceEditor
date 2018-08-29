@@ -68,7 +68,7 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
             mListener.onRoutingFailure();
         }
     }
-
+//TODO dispatch result
     protected void dispatchOnSuccess(PolylineOptions mOptions) {
         for (RoutingListener mListener : _aListeners) {
             mListener.onRoutingSuccess(mOptions);
@@ -142,6 +142,7 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         if (result == null) {
             dispatchOnFailure();
         } else {
+            //TODO remove
             PolylineOptions mOptions = new PolylineOptions();
 
             for (LatLng point : result.getPoints()) {
