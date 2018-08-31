@@ -1,6 +1,5 @@
 package ru.android.zheka.gmapexample1;
 
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,14 +12,11 @@ import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
-import ru.android.zheka.gmapexample1.R;
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
 import ru.android.zheka.jsbridge.JsCallable;
 
 import com.activeandroid.Model;
 
-import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -127,7 +123,7 @@ public MyDialogFragment(){
         position1.start = trace.start;
         position1.end = trace.end;
         position1.centerPosition = trace.end;
-        position1.setExtraPoints (trace.data.extraPoints);
+        position1.setExtraPointsFromCopy (trace.data.extraPoints);
         position1.state = TRACE_PLOT_STATE.CENTER_END_COMMAND;
         setIntent(getIntent().putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace.data.extraPoints));
         PositionUtil.isCenterAddedToTrace  = false;

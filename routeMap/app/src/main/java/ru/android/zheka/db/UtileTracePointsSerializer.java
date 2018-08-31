@@ -9,7 +9,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 public class UtileTracePointsSerializer extends TypeSerializer{
 	public static final String tDelimiter = ";";
 	public static final String eDelimiter = "_";
-	
+	DataTrace dataTrace;
+
 	@Override
 	public Class<?> getDeserializedType() {
 		return DataTrace.class;
@@ -26,7 +27,7 @@ public class UtileTracePointsSerializer extends TypeSerializer{
         if (data == null) {
             return null;
         }
-        DataTrace dataTrace = (DataTrace)data;
+        dataTrace = (DataTrace)data;
         StringBuilder sb = new StringBuilder();
         UtilePointSerializer utilePointSerializer = new UtilePointSerializer();
         for (LatLng point : dataTrace.allPoints.getPoints()) {

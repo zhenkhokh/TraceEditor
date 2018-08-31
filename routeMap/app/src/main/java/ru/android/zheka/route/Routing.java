@@ -68,10 +68,10 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
             mListener.onRoutingFailure();
         }
     }
-//TODO dispatch result
-    protected void dispatchOnSuccess(PolylineOptions mOptions) {
+
+    protected void dispatchOnSuccess(Route route) {
         for (RoutingListener mListener : _aListeners) {
-            mListener.onRoutingSuccess(mOptions);
+            mListener.onRoutingSuccess(route);
         }
     }
 
@@ -142,14 +142,14 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         if (result == null) {
             dispatchOnFailure();
         } else {
-            //TODO remove
-            PolylineOptions mOptions = new PolylineOptions();
+
+            /*PolylineOptions mOptions = new PolylineOptions();
 
             for (LatLng point : result.getPoints()) {
                 mOptions.add(point);
             }
-
-            dispatchOnSuccess(mOptions);
+*/
+            dispatchOnSuccess(result);
         }
     }//end onPostExecute method
 }

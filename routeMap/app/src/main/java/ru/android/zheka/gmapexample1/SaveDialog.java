@@ -59,14 +59,24 @@ public abstract class SaveDialog extends DialogFragment {
 		//builder.setView(R.layout.save_dialog);
 		nameField = (EditText)(view.findViewById(R.id.name_save_text));
 		System.out.println("start getting resId");
-		int resId = getArguments().getInt("hint",0);
-		String hint = getArguments().getString("hint","");
+		int resId = DEFAULT_RES_ID;
+		String hint = DEFAULT_RES_ID_STR;
+		try {
+			resId = getArguments ().getInt ("hint", DEFAULT_RES_ID);
+		}catch (ClassCastException e){
+			try{
+				hint = getArguments().getString("hint",DEFAULT_RES_ID_STR);
+			}catch (ClassCastException ee){
+				throw new ClassCastException ("cant define hint");
+			}
+		}
+
 		System.out.println("start setHint,nameField is "+nameField);
 		if (resId!=DEFAULT_RES_ID)
 			nameField.setHint(resId);
 		else
 			System.out.println("resId is 0, try set string value ...");
-		if (!hint.contentEquals(DEFAULT_RES_ID_STR))
+		if (!hint.equals (DEFAULT_RES_ID_STR))
 			nameField.setHint(hint);
 		else
 			System.out.println("hint is empty, see if resId was set up");

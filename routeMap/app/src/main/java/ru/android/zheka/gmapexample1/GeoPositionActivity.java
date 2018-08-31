@@ -260,7 +260,7 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 				//	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
 				  if ( (position.state != TRACE_PLOT_STATE.CENTER_END_COMMAND && position.start.equals (position.end)
 						  || PositionUtil.LAT_LNG.equals (position.end) || position.end==null)
-				  		 && position.getExtraPoints ().size ()>0)//TOOD move to getNewIntent
+				  		 && position.getExtraPoints ().size ()>0)//TODO move to getNewIntent
 				  	position.end = (LatLng) new UtilePointSerializer().deserialize (position.getExtraPoints ().get (position.getExtraPoints ().size ()-1));
 				  if (position.end==null)
 				  	if (position.centerPosition!=null)

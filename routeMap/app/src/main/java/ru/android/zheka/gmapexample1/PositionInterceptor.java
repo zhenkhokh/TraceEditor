@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.Marker;
 public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 	public Marker markerCenter;
 	public LatLng centerPosition = null;
+	// use if modify collection, use iterator from local copy then existed reader iterators will be fine
 	public volatile boolean isWriteExtra = false;
 	public LatLng start = null;
 	public LatLng end = null;
@@ -49,14 +50,18 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 	Location mLastLocation = null;
 	static final public int resViewId = R.id.coordinateText;
 
-	public ArrayList <String> getExtraPoints() {
+	public ArrayList <String> getExtraPoints() {//TODO add suffix NotSafe
 		while (isWriteExtra){}
+		//if (extraPoints!=null)
+		//	return new ArrayList <String> (extraPoints);
 		return extraPoints;
 	}
 
-	public void setExtraPoints(ArrayList <String> extraPoints) {
+	public void setExtraPointsFromCopy(ArrayList <String> extraPoints) {
 		while (isWriteExtra) {}
 		isWriteExtra = true;
+		//if (extraPoints!=null)
+		//	this.extraPoints = new ArrayList <String> (extraPoints);// double copy
 		this.extraPoints = extraPoints;
 		isWriteExtra = false;
 	}
@@ -304,7 +309,6 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 			});
 			*/
 			String text = null;
-			//TODO reduce pupdateUI coordinateecision add length
 			if (mLastLocation != null) {
 				//LatLng location = new LatLng(mLastLocation.getLatitude()
 				//		, mLastLocation.getLongitude());
@@ -327,17 +331,30 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 						tmp[1] = (LatLng) new UtilePointSerializer ().deserialize (extraPoints.get (0));
 					BellmannFord.process (tmp);
 				}*/
+				double lenAlenka=0;
+				boolean isAlenkaReady = false;
 				if (target!=null && target instanceof MapsActivity) {
 					MapsActivity m = (MapsActivity) target;
-					if (m.position!=null && m.position.getExtraPoints ()!=null
-							&& m.position.start!=null && m.position.end!=null)
+					if (m.results.isAvailable ()) {
+						lenAlenka = m.results.getLength () / 1000.;
+						isAlenkaReady = true;
+					}else if (m.position!=null && m.position.getExtraPoints ()!=null
+							&& m.position.start!=null && m.position.end!=null)//TODO use else
 						BellmannFord.process (m.getWayPoints ().toArray (new LatLng[0]));
 				}
 				StringBuilder sb = new StringBuilder ("ш.д.: ");
-				sb.append (text.replace (",", "."))
-						.append (" длина: ")
-						.append (String.format ("%.2f", BellmannFord.length).replace (",", "."))
-						.append (" км");
+				sb.append (text.replace (",", "."));
+						//.append (" длина: ");
+				if (!isAlenkaReady) {
+					sb.append (" КУЗьМА: ")
+							.append (String.format ("%.2f", BellmannFord.length).replace (",", "."))
+							.append (" ");
+				}else {
+					sb.append (" АЛеНКа: ")
+					.append (String.format ("%.2f", lenAlenka).replace (",", "."))
+							.append (" ");
+				}
+				sb.append ("км");
 				coordinate.setVisibility (View.VISIBLE);
 				coordinate.setText (sb.toString ());
 			}

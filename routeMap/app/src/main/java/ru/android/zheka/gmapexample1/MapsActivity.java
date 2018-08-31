@@ -5,13 +5,9 @@ import roboguice.inject.InjectView;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DataTrace;
 import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
-import ru.android.zheka.gmapexample1.R;
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
-import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
 import ru.android.zheka.route.BellmannFord;
 import ru.android.zheka.route.GoogleParser;
@@ -22,21 +18,13 @@ import ru.android.zheka.route.Routing;
 import ru.android.zheka.route.RoutingListener;
 import ru.zheka.android.timer.PositionReciever;
 
-import java.lang.InstantiationException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.AsyncTask;
@@ -62,16 +50,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Marker;
 
-import android.app.Activity;
 //import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -118,6 +101,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	Marker cursorMarker;
 	private static boolean isFakeStart=false;
 	private MapTypeHandler mapType = new MapTypeHandler (MapTypeHandler.userCode);
+	public ResultRouteHandler results = new ResultRouteHandler (-1);// not available
 
 	public ArrayList<LatLng> getWayPoints() {
 		wayPoints = new ArrayList <> ();
@@ -162,7 +146,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 					return;
 				}
 				if (DbFunctions.getTraceByName(trace.name)!=null){
-					dialog.msg = "Маршрут с таким именем существует";
+					dialog.msg = "Маршрут с таким именем существует, повторите сохранение";
 					dialog.show(getFragmentManager(), "Ошибка");
 					return;
 				}
@@ -175,7 +159,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 					e.printStackTrace();
 				}
 			}else{
-				Toast.makeText(map, "trace is not initialized", 15);
+				Toast.makeText(map, "Маршрут не инициализирован", 15).show ();
 			}
 		}
 
@@ -327,9 +311,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		}
 		point = position.end;
         if (prevPoint!=null && point!=null){
-        	if (position.getExtraPoints ().size()<=1)
-        		routing.execute(prevPoint, point);
-        	else{
+        	if (position.getExtraPoints ().size()<=1) {
+        		results = new ResultRouteHandler (1);
+				routing.execute (prevPoint, point);
+			}else{
         		//runOnUiThread(new Runnable() {
         		Runnable r = new Runnable(){
 					@Override
@@ -405,7 +390,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 									temp.set (index
 											, position.getExtraPoints ().get (index_++));
 								}
-								position.setExtraPoints (temp);
+								position.setExtraPointsFromCopy (temp);
 								//}
 								//add end point
 								//position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
@@ -428,9 +413,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
 							bellManPoits.add (bellManPoits.get(bellManPoits.size ()-2));
 							bellManPoits.add (position.end);*/
-							iterator = bellManPoits.iterator ();
+							/*iterator = bellManPoits.iterator ();
 							if (iterator.hasNext ())
 								iterator.next ();//miss start
+							*/
 							ArrayList<String> tmp = new ArrayList <String> ();
 							Iterator iterator1 = bellManPoits.iterator ();
 							if (iterator1.hasNext ()) // miss start
@@ -439,9 +425,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 								tmp.add ((String)new UtilePointSerializer().serialize(
 										iterator1.next ()
 								));
-							position.setExtraPoints (tmp);
+							position.setExtraPointsFromCopy (tmp);
 						}
-						iterator = position.getExtraPoints ().iterator();
+						ArrayList<String> tmp = position.getExtraPoints ();
+						iterator = tmp.iterator();// be happy it is just read
+						results = new ResultRouteHandler (tmp.size ());
 						failuresCnt = 0;
 		        		final int curCnt=cntRun+1;
 		        		cntRun++;
@@ -588,8 +576,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
 
 	@Override	
-	public void onRoutingSuccess(PolylineOptions mPolyOptions) {
+	public void onRoutingSuccess(Route route) {
     	//cntRun=cnt;
+
+		results.addRouteIgnoreNull (route);
 
 		System.out.println("befor synchronize block in onRoutingSuccess");
 		synchronized (traceDrawMonitor/*this*/) {
@@ -607,7 +597,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         	polyoptions.addAll(p.getPoints());
         	Toast.makeText(this.context, "add trace from db", 15);
         }else{
-            polyoptions.addAll(mPolyOptions.getPoints());
+            polyoptions.addAll(route.getPoints());
             Toast.makeText(this.context, "add routed trace", 15);
         }        	
         mMap.addPolyline(polyoptions);
@@ -652,8 +642,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
     	//end
         if (cnt==0) 
         	options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
-        if (position.getExtraPoints ()!=null&&cnt==position.getExtraPoints ().size()-1)
-        	options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
+        if (position.getExtraPoints ()!=null && cnt==position.getExtraPoints ().size()-1) {
+			options.icon (BitmapDescriptorFactory.fromResource (R.drawable.end_green));
+			position.updateUILocation ();
+			Toast.makeText(this.context, String.format ("КУЗьМА: %.2f км", BellmannFord.length).replace (",", "."), 15).show ();
+		}
 //DO NOT write end
         mMap.addMarker(options);
         onRoutingReady = true;
@@ -712,7 +705,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 					,25).show ();
 		}
 		if (val.contains(REMOVE_POINT)){
-			while (position.isWriteExtra==true){}
+			while (position.isWriteExtra==true){}// or remove, copy, block new writers&readers until finished
 			System.out.println ("extraPoint before removing "+position.getExtraPoints ());
 			int sz = position.getExtraPoints ().size ();
         	if (sz<2) {
@@ -728,7 +721,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 				return;
 			}
 			ArrayList<String> tmp = new ArrayList <String> (Arrays.asList (temp));
-			position.setExtraPoints (tmp);
+			position.setExtraPointsFromCopy (tmp);
 			System.out.println ("extraPoint after removing "+position.getExtraPoints ());
 			System.out.println ("extraPoint tmp "+Arrays.asList (temp)+" len="+temp.length);
 			//LatLng end = position.end;

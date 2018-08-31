@@ -11,12 +11,9 @@ import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
-import ru.android.zheka.jsbridge.JsCallable;
-import android.content.Intent;
-import android.webkit.WebView;
-import android.widget.Toast;
 
-import com.activeandroid.Model;
+import android.content.Intent;
+import android.widget.Toast;
 
 public class WayPointsToTrace extends EditActivity {
 
@@ -75,7 +72,7 @@ public class WayPointsToTrace extends EditActivity {
 					position.centerPosition = point.data;
 					tmp.add ((String)util.serialize(point.data));
 				}
-				position.setExtraPoints (tmp);
+				position.setExtraPointsFromCopy (tmp);
             	intent = position.getNewIntent();
 	        	intent.setClass(this.context,GeoPositionActivity.class);
 	        	intent.setAction(Intent.ACTION_VIEW);
