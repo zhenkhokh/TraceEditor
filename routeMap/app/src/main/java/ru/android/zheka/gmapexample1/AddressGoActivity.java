@@ -114,24 +114,32 @@ public class AddressGoActivity extends RoboListActivity implements JsCallable{
         }
 
         PositionInterceptor positionInterceptor = null;
-        try{positionInterceptor = (PositionInterceptor) clPosIntr.getDeclaredConstructor(clActivity)
-        													.newInstance(this);
-        }catch(IllegalAccessException e){		e.printStackTrace();
-        }catch (InstantiationException e) {		e.printStackTrace();
-        }catch (ExceptionInInitializerError e) {e.printStackTrace();
-		}catch (SecurityException e){			e.printStackTrace();
-		}catch (InvocationTargetException e){	e.printStackTrace();
-		}catch (NoSuchMethodException e){		e.printStackTrace();
-		}
-
         if (positionInterceptor==null){
             positionInterceptor = new PositionInterceptor (this);
         }
+        if (positionInterceptor==null)
+            try{positionInterceptor = (PositionInterceptor) clPosIntr.getDeclaredConstructor(clActivity)
+        													.newInstance(this);
+            }catch(IllegalAccessException e){		e.printStackTrace();
+            }catch (InstantiationException e) {		e.printStackTrace();
+            }catch (ExceptionInInitializerError e) {e.printStackTrace();
+            }catch (SecurityException e){			e.printStackTrace();
+            }catch (InvocationTargetException e){	e.printStackTrace();
+            }catch (NoSuchMethodException e){		e.printStackTrace();
+            }
+
+
         if (positionInterceptor==null) {
             Toast.makeText (this,"positionInterceptor==null, если ошибка повторяется сообщите", 15).show ();
             throw new NullPointerException ("positionInterceptor==null");
         }
-        positionInterceptor.updatePosition();
+        try {
+			positionInterceptor.positioning ();
+		}catch (Exception e) {
+            Toast.makeText(this, "Что то пошло не так ...", 15).show();
+            positionInterceptor.updatePosition();
+            e.printStackTrace ();
+        }
         positionInterceptor.centerPosition = point;
         Intent geoIntent = positionInterceptor.getNewIntent();
 

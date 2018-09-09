@@ -21,6 +21,7 @@ import ru.zheka.android.timer.PositionReciever;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.view.View;
@@ -40,6 +41,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationRequestCreator;
 import com.google.android.gms.location.LocationServices;
 */
+import com.activeandroid.query.Delete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -130,33 +132,24 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
 		@Override
 		protected void positiveProcess() {
-			Trace trace = new Trace();
 			if (dataTrace!=null
 					&& position.start!=null
 					&& position.end!=null){
-				trace.data = dataTrace;
-				trace.start = position.start;
-				trace.end = position.end;
-				trace.name = nameField.getText().toString();
+				String name = nameField.getText().toString();
 				AlertDialog dialog = new AlertDialog("");
-				if (trace.name.isEmpty()){
+				if (name.isEmpty()){
 					//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
 					dialog.msg = "Отсутсвует текст, введите название";
 					dialog.show(getFragmentManager(), "Ошибка");
 					return;
 				}
-				if (DbFunctions.getTraceByName(trace.name)!=null){
+				if (DbFunctions.getTraceByName(name)!=null){
 					dialog.msg = "Маршрут с таким именем существует, повторите сохранение";
 					dialog.show(getFragmentManager(), "Ошибка");
 					return;
 				}
-				try{DbFunctions.add(trace);
-				}catch(java.lang.InstantiationException e){
-					e.printStackTrace();
-				}catch(IllegalAccessException e){
-					e.printStackTrace();
-				}catch(IllegalArgumentException e){
-					e.printStackTrace();
+				if (!map.saveOrReplaceTrace (name)){
+					Toast.makeText(map, "Маршрут не задан, сохранение отменено", 15).show ();
 				}
 			}else{
 				Toast.makeText(map, "Маршрут не инициализирован", 15).show ();
@@ -606,7 +599,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			ArrayList <String> tmp = new ArrayList <> (position.getExtraPoints ().subList (0, sz));
 			if (sz==tmp.size ()) {
 				dataTrace.extraPoints = tmp;
-				dataTrace.allPoints = polyoptions;
+				dataTrace.allPoints = polyoptions;//TODO remove or add all segments
 			}
 		}
 		// Start marker
@@ -855,7 +848,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	 * @see roboguice.activity.RoboFragmentActivity#onStart()
 	 */
 	protected void onStop() {
-		//saveEmergency ();
+		//saveEmergencyUseOnce ();
 	    position.mGoogleApiClient.disconnect();
 	    if (positionReciever!=null)
 	    	TimerService.mListners.remove(positionReciever);
@@ -863,7 +856,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	}
 	@Override
 	protected void onPause(){
-		//saveEmergency ();
+		saveOrReplaceTrace (currentName);
 		if (positionReciever!=null)
 			TimerService.mListners.remove (positionReciever);
 		super.onPause ();
@@ -873,15 +866,45 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		//saveEmergency ();
 		super.onDestroy ();
 	}
-	private void saveEmergency(){
+	private final static String currentName = "last_trace";
+	private final static String currentQuiry = "where name is "+currentName;
+	private List<Trace> traces;
+	//private static Long idTrace = new Long (-1);
+	private boolean saveOrReplaceTrace(String name){// or use id, load and save
 		if (dataTrace!=null && position!=null
 				&& position.start!=null && position.end!=null) {
-			Trace trace = new Trace ();
+			//new UtileTracePointsSerializer ().serialize (dataTrace).toString ().isEmpty ()
+			if (dataTrace.extraPoints.size ()==0)// null entity case
+				return false;
+			Trace traceOld = (Trace) DbFunctions.getTraceByName (name);//back null if add lock
+			//traces = new Select ().from (Trace.class).where ("name = ?",currentName).limit (1).execute ();
+			//traces = SQLiteUtils.rawQuery (Trace.class, "SELECT * from Trace where name LIKE ?", new String[]{'%'+currentName+'%'});
+			Trace trace=new Trace ();
+			new Delete ().from(Trace.class).where("name=?",name).execute();
+			//else if (trace==null)
+				//trace = Model.load (Trace.class, idTrace.longValue ());
 			trace.data = dataTrace;
 			trace.start = position.start;
 			trace.end = position.end;
-			trace.name = "emergency_saving";
-			try {
+			trace.name = name;
+			trace.save ();
+			Trace traceNew = DbFunctions.getTraceByName (name);
+			if(traceNew==null && traceOld!=null){
+				new Delete ().from(Trace.class).where("name=?",name).execute();
+				traceOld.save ();
+				AlertDialog dialog = new AlertDialog("Не удалось сохранить маршрут с именем: \""
+						+name+"\""+". Откатано до прежнего");
+				dialog.show (getFragmentManager (),"Ошибка");
+				return false;
+			}else if (traceNew==null){
+				new Delete ().from(Trace.class).where("name=?",name).execute();
+				AlertDialog dialog = new AlertDialog("Внимание база данных повреждена!!! " +
+						"Для починки маршрут с именем: \""+name+"\""+" был удален");
+				dialog.show (getFragmentManager (),"Ошибка");
+			}
+
+			//idTrace = trace.save ();
+			/*try {
 				DbFunctions.add (trace);
 			} catch (java.lang.InstantiationException e) {
 				e.printStackTrace ();
@@ -890,7 +913,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace ();
 			}
+			*/
+			return true;
 		}
+		return false;
 	}
 
 }

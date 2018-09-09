@@ -46,7 +46,8 @@ public class AddressActivity extends RoboActivity implements JsCallable {
                 Float latitude = new Float(latField.getText().toString());
                 LatLng point  = new LatLng(latitude, longitude);
                 PositionInterceptor position = new PositionInterceptor(activity);
-                position.updatePosition();
+                try{position.positioning ();}
+                catch (Exception e){position.updatePosition();}
                 position.centerPosition = point;
                 Intent intent = position.getNewIntent();
                 intent.setClass(activity, clGeo);

@@ -31,6 +31,7 @@ import ru.android.zheka.jsbridge.JsCallable;
 import com.activeandroid.Configuration;
 
 public class MainActivity extends RoboActivity implements JsCallable{
+    public static String googleKey = "";
 	public static final String SETTINGS = "settings";
 	public static final String EDIT_TRACE = "editTrace";
 	public static final String EDIT_POINT = "editPoint";
@@ -48,6 +49,8 @@ public class MainActivity extends RoboActivity implements JsCallable{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (googleKey.equals (""))
+            googleKey = getResources ().getString (R.string.google_maps_key);
 System.out.println("---------- "+System.getProperty("java.class.path"));
 try {
     clGeo = Class.forName("ru.android.zheka.gmapexample1.GeoPositionActivity");

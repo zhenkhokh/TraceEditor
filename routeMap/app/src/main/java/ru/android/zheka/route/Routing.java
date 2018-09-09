@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.gmapexample1.Application;
+import ru.android.zheka.gmapexample1.MainActivity;
 import ru.android.zheka.gmapexample1.PositionUtil;
 import ru.android.zheka.gmapexample1.R;
 
@@ -128,7 +129,7 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         String avoid  = config.avoid;
         if (!avoid.isEmpty())
         	mBuf.append("&avoid="+avoid);
-        
+        //mBuf.append ("&key=").append ("");//MainActivity.googleKey
         return mBuf.toString();
     }
 
