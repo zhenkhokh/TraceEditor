@@ -54,6 +54,8 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	public static final String SAVE_POINT = "savePoint";
 	public static final String POINTS = "points";
 	public static final String HOME = "home";
+	public static final String OFFLINE = "offline";
+
 	Class clTrace, clMap, clPoints, clMain, clWayPoints;
 	Context context = this;
 	// choose for true statement
@@ -204,18 +206,17 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 		}
 	}
 	
+
 	@Override
 	public void nextView(String val) {
 		Intent intent = position.updatePosition();
 	    if (val.contentEquals(HOME)) {
-	          Toast.makeText(this, "Home view called: " + val, 15).show();
 	          intent.setClass(this.context, clMain);
 	          intent.setAction(Intent.ACTION_VIEW);
 	          startActivity(intent);
 	          finish();
 	    }
 	    if (val.contentEquals(POINTS)) {
-	          Toast.makeText(this, "Points view called: " + val, 15).show();
 	          //back from LatLng to center
 	          if (//position.state!=null&&
 	        		  TraceActivity.isOtherMode(position.state))
@@ -227,7 +228,6 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	          finish();
 	    }
 	    if (val.contentEquals(SAVE_POINT)) {
-	          Toast.makeText(this, "savePoint view called: " + val, 15).show();			  
 	          MySaveDialog dialog = (MySaveDialog)new MySaveDialog().newInstance(R.string.hint_dialog_point);
 	          dialog.position = position;
 			//dialog.show(getSupportFragmentManager(), "dialog");
@@ -254,7 +254,6 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 				//else go to map
 	    	}
 
-		          Toast.makeText(this, "Map view called: " + val, 15).show();
 				//if (//position.state!=null&&
 				//		TraceActivity.isOtherMode(position.state))
 				//	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
@@ -277,7 +276,6 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 		          finish();
 	    }
 	    if (val.contentEquals(TRACE)) {
-	    	Toast.makeText(this, "Trace view called: " + val, 15).show();
 	        intent.setClass(this.context, clTrace);
 	        startActivity(intent);
 	        finish();
@@ -294,6 +292,13 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 	    	startActivity(intent);
 	    	finish();
 	    }
+	    if (val.equals (OFFLINE)){
+	    	MapsActivity.isOffline = MapsActivity.isOffline?false:true;
+	    	if (MapsActivity.isOffline)
+	    		Toast.makeText(this, "Офлайн загрузка включена", 15).show();
+	    	else
+	    		Toast.makeText(this, "Офлайн загрузка отключена", 15).show();
+		}
 	}
 
 	@Override

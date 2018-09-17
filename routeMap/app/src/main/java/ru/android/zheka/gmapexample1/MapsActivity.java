@@ -13,6 +13,7 @@ import ru.android.zheka.route.BellmannFord;
 import ru.android.zheka.route.GoogleParser;
 import ru.android.zheka.route.BellmannFord.MissMatchDataException;
 import ru.android.zheka.route.BellmannFord.NoDirectionException;
+import ru.android.zheka.route.OfflineRouting;
 import ru.android.zheka.route.Route;
 import ru.android.zheka.route.Routing;
 import ru.android.zheka.route.RoutingListener;
@@ -21,9 +22,12 @@ import ru.zheka.android.timer.PositionReciever;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import android.app.Dialog;
+import android.icu.text.Replaceable;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -75,6 +79,9 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	public static final String REMOVE_POINT = "removePoint";
 	public static final String FAKE_START = "fakeStart";
 	public static final String MAP_TYPE = "mapType";
+	public static boolean isOffline = false;
+private DataTrace traceDebugging;
+private String traceDebuggingSer;
 
 	Context context = this;
     private GoogleMap mMap=null;
@@ -104,6 +111,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	private static boolean isFakeStart=false;
 	private MapTypeHandler mapType = new MapTypeHandler (MapTypeHandler.userCode);
 	public ResultRouteHandler results = new ResultRouteHandler (-1);// not available
+	ReplaceDialog replaceDialog = new ReplaceDialog();
 
 	public ArrayList<LatLng> getWayPoints() {
 		wayPoints = new ArrayList <> ();
@@ -129,13 +137,14 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		public MapsActivity map;
 		public PositionInterceptor position;
 		public DataTrace dataTrace;
+		public static String name;
 
 		@Override
 		protected void positiveProcess() {
 			if (dataTrace!=null
 					&& position.start!=null
 					&& position.end!=null){
-				String name = nameField.getText().toString();
+				name = nameField.getText().toString();
 				AlertDialog dialog = new AlertDialog("");
 				if (name.isEmpty()){
 					//Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
@@ -144,8 +153,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 					return;
 				}
 				if (DbFunctions.getTraceByName(name)!=null){
-					dialog.msg = "Маршрут с таким именем существует, повторите сохранение";
-					dialog.show(getFragmentManager(), "Ошибка");
+					//dialog.msg = "Маршрут с таким именем существует, повторите сохранение";
+					//dialog.show(getFragmentManager(), "Ошибка");
+					ReplaceDialog replaceDialog = map.replaceDialog;
+					replaceDialog.map = map;
+					replaceDialog.show (map.getFragmentManager (),"dialog");
 					return;
 				}
 				if (!map.saveOrReplaceTrace (name)){
@@ -162,11 +174,39 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		}
 
 	}
+
+	public static class ReplaceDialog extends SingleChoiceDialog {
+		public MapsActivity map;
+
+		public ReplaceDialog(){
+			super("Заменить существующий маршрут?",R.string.cancel_plot_trace
+					,R.string.ok_plot_trace);
+		}
+
+		@Override
+		public void positiveProcess() {
+			if (!map.saveOrReplaceTrace (MySaveDialog.name)) {
+				Toast.makeText (map, "Маршрут не задан, сохранение отменено", 15).show ();
+			}
+		}
+
+		@Override
+		public void negativeProcess() {}
+	}
+	public static void updateOfflineState(Context ctx){
+		Config config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+		if (config.offline.equals (ctx.getString (R.string.offlineOn)))
+			MapsActivity.isOffline = true;
+		else if (config.offline.equals (ctx.getString (R.string.offlineOff)))
+			MapsActivity.isOffline = false;
+		System.out.println(" config is "+config);
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(resViewId);
+        updateOfflineState (this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -188,7 +228,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 				, Config.class);
 		rateLimit_ms = new Double (config.rateLimit_ms).intValue ();
 		TextView coordinate = (TextView) findViewById(PositionInterceptor.resViewId);
-		System.out.println("get config");
+		System.out.println("get config: "+config);
 		coordinate.setVisibility(View.GONE);
 		//coordinate.setText("");
 		//coordinate.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));		
@@ -306,6 +346,21 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         if (prevPoint!=null && point!=null){
         	if (position.getExtraPoints ().size()<=1) {
         		results = new ResultRouteHandler (1);
+				traceDebuggingSer = getIntent ().getStringExtra (PositionUtil.TITLE);
+        		if (isOffline && traceDebuggingSer==null){
+        			offlineIncorrectData ();
+        			return;
+				}else if (isOffline){
+        			traceDebugging = (DataTrace) new UtileTracePointsSerializer ().deserialize (traceDebuggingSer);
+        			traceDebugging.initSegments ();
+        			if (traceDebugging.hasNext ()) {
+						routing = new OfflineRouting (traceDebugging.nextSegmentArray ());
+						routing.registerListener (this);
+					}else{
+        				offlineIncorrectData ();
+        				return;
+					}
+				}
 				routing.execute (prevPoint, point);
 			}else{
         		//runOnUiThread(new Runnable() {
@@ -316,8 +371,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		        		cntCtrl=0;
 		        		ArrayList<LatLng> bellManPoits = new ArrayList<LatLng> ();
 						boolean isBellman = config.bellmanFord.equals (Application.optimizationBellmanFlag);
-		        		if (config.optimization
-								|| isBellman){
+
+
+		        		if ((config.optimization
+								|| isBellman) && !isOffline){
 			        		//ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
 							getWayPoints();
 							if (isBellman) {
@@ -392,7 +449,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 							}
 		        		}
 		        		Iterator iterator;
-		        		if (isBellman) {
+		        		if (isBellman && !isOffline) {
 							int iStart = bellManPoits.indexOf (position.start);
 							LatLng rStart = BellmannFord.round (position.start);
 							for (int i = 0; i < iStart; i++) {
@@ -423,6 +480,31 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 						ArrayList<String> tmp = position.getExtraPoints ();
 						iterator = tmp.iterator();// be happy it is just read
 						results = new ResultRouteHandler (tmp.size ());
+						DataTrace dataTrace =null;
+						if (isOffline) {
+							//String traceName = getIntent ().getStringExtra(TRACE);
+							//traceDebugging = (Trace) DbFunctions.getTraceByName (traceName);
+							traceDebuggingSer = getIntent ().getStringExtra (PositionUtil.TITLE);
+							if (traceDebuggingSer==null){
+								MapsActivity.this.offlineIncorrectData ();
+								return;
+							}
+							traceDebugging = (DataTrace) new UtileTracePointsSerializer ()
+									.deserialize (traceDebuggingSer);
+							if (traceDebugging==null) {
+								MapsActivity.this.offlineIncorrectData ();
+								return;
+							}
+							dataTrace = traceDebugging;
+							dataTrace.initSegments ();
+							if (dataTrace.hasNext ()) {
+								routing = new OfflineRouting (dataTrace.nextSegmentArray ());
+								routing.registerListener(MapsActivity.this);
+							}else {
+								MapsActivity.this.offlineIncorrectData ();
+								return;
+							}
+						}
 						failuresCnt = 0;
 		        		final int curCnt=cntRun+1;
 		        		cntRun++;
@@ -436,6 +518,14 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 								routing.execute (prevPoint, point);
 							//Cannot execute task: the task is already running
 							routing = new Routing ();
+							if (isOffline) {
+								if (!dataTrace.hasNext ()) {
+									MapsActivity.this.offlineIncorrectData ();
+									return;
+								}
+								LatLng[] segmentPoints = dataTrace.nextSegmentArray ();
+								routing = new OfflineRouting (segmentPoints);
+							}
 							routing.registerListener (MapsActivity.this);
 							synchronized (traceDrawMonitor/*MapsActivity.this*/) {
 								System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
@@ -471,6 +561,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
     	}
         System.out.println("end of onMapReady");
     }
+	private void offlineIncorrectData(){
+		AlertDialog dialog = new AlertDialog ("Неверные данные для офлайн, маршрут не построен");
+		dialog.show (getFragmentManager (),"Ошибка");
+	}
 
 	@Override
 	public void onRoutingFailure() {
@@ -526,6 +620,11 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			Thread t = new Thread (r);
 			t.start();
 */
+	if (isOffline){
+		offlineIncorrectData ();
+		return;
+	}
+
 	if (failuresCnt++<maxFailures) {
 		cntRun++;
 		try {
@@ -567,8 +666,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		System.out.println("onRoutingStart");
 	}
 
-
-	@Override	
+	@Override
 	public void onRoutingSuccess(Route route) {
     	//cntRun=cnt;
 
@@ -579,29 +677,26 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			System.out.println("after synchronize block in onRoutingSuccess");
 
 		
-        PolylineOptions polyoptions = new PolylineOptions();
-        polyoptions.color(Color.BLUE);
-        polyoptions.width(10);
-        if (getIntent().getStringExtra(TRACE)!=null){
+		PolylineOptions polyoptions = DataTrace.configPolyOptions ();
+        /*if (getIntent().getStringExtra(TRACE)!=null){
         	Intent intent = getIntent();
         	String traceData = intent.getStringExtra(TRACE);
         	PolylineOptions p = (PolylineOptions) new UtileTracePointsSerializer().deserialize(traceData);
         	intent.removeExtra(TRACE);// do not load twice
         	polyoptions.addAll(p.getPoints());
         	Toast.makeText(this.context, "add trace from db", 15);
-        }else{
+        }else{*/
             polyoptions.addAll(route.getPoints());
-            Toast.makeText(this.context, "add routed trace", 15);
-        }        	
+            //Toast.makeText(this.context, "add routed trace", 15);
+        //}
         mMap.addPolyline(polyoptions);
-        int sz = position.getExtraPoints ().size ();
-        if (!position.isWriteExtra) {
-			ArrayList <String> tmp = new ArrayList <> (position.getExtraPoints ().subList (0, sz));
-			if (sz==tmp.size ()) {
-				dataTrace.extraPoints = tmp;
-				dataTrace.allPoints = polyoptions;//TODO remove or add all segments
-			}
-		}
+        //int sz = position.getExtraPoints ().size ();
+        //if (!position.isWriteExtra) {
+			//ArrayList <String> tmp = new ArrayList <> (position.getExtraPoints ().subList (0, sz));
+			//if (sz==tmp.size ()) {
+
+			//}
+		//}
 		// Start marker
         MarkerOptions options = new MarkerOptions();
         LatLng markerPosition = null;
@@ -638,6 +733,16 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
         if (position.getExtraPoints ()!=null && cnt==position.getExtraPoints ().size()-1) {
 			options.icon (BitmapDescriptorFactory.fromResource (R.drawable.end_green));
 			position.updateUILocation ();
+			ArrayList<String> tmp = new ArrayList <> (position.getExtraPoints ());
+			dataTrace.extraPoints = tmp;
+			List<LatLng> allPoints = new ArrayList <> ();
+			Iterator<String> it = tmp.iterator ();
+			for (Route route1:results.getRoutes ()) {
+				dataTrace.addPoints (route1.getPoints ());
+				if (it.hasNext ()){
+					dataTrace.addPoint (it.next ());
+				}
+			}
 			Toast.makeText(this.context, String.format ("КУЗьМА: %.2f км", BellmannFord.length).replace (",", "."), 15).show ();
 		}
 //DO NOT write end
@@ -660,14 +765,12 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 
         Intent intent = position.updatePosition();//new Intent();
         if (val.contentEquals(HOME)) {
-            Toast.makeText(this, "Home view called " + val, 15).show();
             intent.setClass(this.context, clMain);
 	        intent.setAction(Intent.ACTION_VIEW);
             startActivity(intent);
             finish();
         }
         if (val.contentEquals(GEO)) {
-            Toast.makeText(this, "Geoposition view called: " + val, 15).show();
         	Intent mapIntent = position.updatePosition();//new Intent(Intent.ACTION_VIEW, geoUri);
         	mapIntent.setAction(Intent.ACTION_VIEW);
         	mapIntent.setClass(this.context, clGeo);
@@ -683,7 +786,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 			//dialog.show(getSupportFragmentManager(), "dialog");
 			dialog.show(getFragmentManager(), "dialog");
          }
-	    if (val.contentEquals(TRACE)) {
+	    if (val.equals (TRACE)) {
 	    	Toast.makeText(this, "Trace view called: " + val, 15).show();
 	        intent.setClass(this.context, clTrace);
 	        startActivity(intent);
@@ -700,11 +803,13 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		if (val.contains(REMOVE_POINT)){
 			while (position.isWriteExtra==true){}// or remove, copy, block new writers&readers until finished
 			System.out.println ("extraPoint before removing "+position.getExtraPoints ());
-			int sz = position.getExtraPoints ().size ();
+			ArrayList<String> tmp = new ArrayList <String>(position.getExtraPoints ());
+			int sz = tmp.size ();
         	if (sz<2) {
 				Toast.makeText (this, "Нет путевых точек для удаления", 15).show ();
 				return;
 			}
+			LatLng newStart = (LatLng) new UtilePointSerializer ().deserialize (tmp.get (0));
         	//String[] temp = Arrays.copyOf (position.getExtraPoints ().toArray (new String[0]),sz);//remove(0)
 			String[] temp = new String[sz-1];
         	System.arraycopy (position.getExtraPoints ().toArray ()
@@ -713,13 +818,35 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 				Toast.makeText (this, "Ресурс занят, повторите операцию", 15).show ();
 				return;
 			}
-			ArrayList<String> tmp = new ArrayList <String> (Arrays.asList (temp));
+			tmp = new ArrayList <String> (Arrays.asList (temp));
 			position.setExtraPointsFromCopy (tmp);
 			System.out.println ("extraPoint after removing "+position.getExtraPoints ());
 			System.out.println ("extraPoint tmp "+Arrays.asList (temp)+" len="+temp.length);
 			//LatLng end = position.end;
 			setIntent (intent.putStringArrayListExtra (PositionUtil.EXTRA_POINTS,tmp));
+			if (MapsActivity.isOffline) {
+				//Trace trace = (Trace)DbFunctions.getModelByName (currentNameOffline,Trace.class);
+				DataTrace dataTrace = traceDebugging.copy (false);
+				if (dataTrace!=null) {
+					if (dataTrace.removeFirstSegment ()==null){
+						Toast.makeText (this, "Данные сегмента не доступны", 15).show ();
+						return;
+					}
+					dataTrace.extraPoints = tmp;
+					dataTrace = dataTrace.copy (true);
+					position.title = (String) new UtileTracePointsSerializer ().serialize (dataTrace);
+				}else{
+					Toast.makeText (this, "Данные маршрута не доступны", 15).show ();
+					return;
+				}
+			}
+			position.start = newStart;
+			System.out.println ("from remove way-point:position.end "+position.end+" position.start: "+position.start);
+			//if (position.end==null && point!=null )
+			//	position.end = point;
+			setIntent (position.getNewIntent ());
         	intent = position.updatePosition();
+
         	//position.end = end;
         	intent.setClass(this.context, MapsActivity.class);
         	intent.setAction(Intent.ACTION_VIEW);
@@ -856,7 +983,10 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 	}
 	@Override
 	protected void onPause(){
-		saveOrReplaceTrace (currentName);
+		if (!isOffline)
+			saveOrReplaceTrace (currentName);
+		else
+			saveOrReplaceTrace (currentNameOffline);
 		if (positionReciever!=null)
 			TimerService.mListners.remove (positionReciever);
 		super.onPause ();
@@ -867,6 +997,7 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		super.onDestroy ();
 	}
 	private final static String currentName = "last_trace";
+	private final static String currentNameOffline = "last_offline_trace";
 	private final static String currentQuiry = "where name is "+currentName;
 	private List<Trace> traces;
 	//private static Long idTrace = new Long (-1);
@@ -918,7 +1049,6 @@ public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCall
 		}
 		return false;
 	}
-
 }
 
 

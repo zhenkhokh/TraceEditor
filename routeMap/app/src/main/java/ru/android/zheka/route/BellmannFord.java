@@ -58,9 +58,11 @@ public class BellmannFord {
         return reOrder;
     }
 
-    private static double getPathLength(LatLng[] latLngs){
+    public static double getPathLength(LatLng[] latLngs){
         int n = latLngs.length;
         double pathLen = 0;
+        if (n==0)
+            return pathLen;
         double longitude = latLngs[0].longitude * toRad;
         double latitude = latLngs[0].latitude * toRad;
         for (int j = 1; j < n; j++) {

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import roboguice.activity.RoboListActivity;
 import roboguice.inject.InjectView;
+import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.UtilePointSerializer;
@@ -51,6 +52,10 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 	@Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
+	        Config config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+					, Config.class);
+	        if (!config.tenMSTime.equals ("0"))
+	        	Toast.makeText (this,"Определение местоположения станет помехой, лучше его отключить",30).show ();
 	        name = getResources().getString(R.string.points_column_name);
 	        geoIntent = getIntent();
 	         setContentView(R.layout.activity_points);
@@ -217,7 +222,6 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 	public void nextView(String val) {
 		Intent intent = getIntent();
 		if (val.contentEquals(HOME)) {
-            Toast.makeText(this, "Home view called " + val, 15).show();
             intent.setClass(this.context, clMain);
 	        intent.setAction(Intent.ACTION_VIEW);
             startActivity(intent);

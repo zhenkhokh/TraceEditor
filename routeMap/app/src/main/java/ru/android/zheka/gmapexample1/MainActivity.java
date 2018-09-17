@@ -1,6 +1,7 @@
 package ru.android.zheka.gmapexample1;
 
 import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Delete;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
@@ -49,6 +50,12 @@ public class MainActivity extends RoboActivity implements JsCallable{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+        if (Application.isFieldNull (config)){
+            new Delete ().from(Trace.class).where("name=?",DbFunctions.DEFAULT_CONFIG_NAME).execute();
+            Application.initConfig ();
+        }
+
         if (googleKey.equals (""))
             googleKey = getResources ().getString (R.string.google_maps_key);
 System.out.println("---------- "+System.getProperty("java.class.path"));
@@ -89,11 +96,8 @@ try {
 
 
 	public void nextView(String val) {
-		Config config  = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME,Config.class);
-		System.out.println(" config is "+config);
       Intent intent = getIntent();
       if (val.contentEquals(GEO)) {
-          Toast.makeText(this, "Map view called: " + val, 15).show();
           PositionInterceptor position = new PositionInterceptor(this);
           intent = position.updatePosition();
       	  intent.setClass(this.context, clGeo);
@@ -104,7 +108,6 @@ try {
           finish();
       }
       if (val.contentEquals(POINTS)) {
-          Toast.makeText(this, "Points view called: " + val, 15).show();
           intent.setClass(this.context, clLatLng);
       	  intent.setAction(Intent.ACTION_VIEW);
           startActivity(intent);

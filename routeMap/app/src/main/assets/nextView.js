@@ -68,6 +68,10 @@ function setUpMenuEvents() {
     	//alert("hello addWaypoints");
     	menuHandler.nextView("addWaypoints");
     				  });
+    $('#offline').click(function() {
+    	//alert("hello addWaypoints");
+    	menuHandler.nextView("offline");
+    				  });
     // home, trace, geo for latLng ...
     // home, geo,saveTrace, trace, goPosition for map     
     $('#saveTrace').click(function() {

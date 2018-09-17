@@ -23,8 +23,10 @@ public class Config extends Model{
 	public String address;
 	@Column(name = "reserved3")
 	public String rateLimit_ms;
-	//@Column(name = "reserved3")
-	//public String reserved4;
+	@Column(name = "reserved4")
+	public String offline;
+	//@Column(name = "reserved5")
+	//public String reserved5;
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
@@ -37,7 +39,7 @@ public class Config extends Model{
 				.append(" bellmanFord:"+bellmanFord)
 				.append(" address:"+address)
 				.append(" rateLimit_ms:"+rateLimit_ms)
-				//.append(" reserved4:"+reserved4)
+				.append(" offline:"+offline)
 				.toString();
 	}
 }

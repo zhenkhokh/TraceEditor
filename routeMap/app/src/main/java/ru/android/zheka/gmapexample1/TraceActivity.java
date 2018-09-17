@@ -126,6 +126,10 @@ public MyDialogFragment(){
         position1.setExtraPointsFromCopy (trace.data.extraPoints);
         position1.state = TRACE_PLOT_STATE.CENTER_END_COMMAND;
         setIntent(getIntent().putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace.data.extraPoints));
+        MapsActivity.updateOfflineState (this);
+		if (MapsActivity.isOffline)
+			position1.title = (String) utilTrace.serialize (trace.data);
+			//setIntent(getIntent().putExtra (PositionUtil.TITLE,(String) utilTrace.serialize (trace.data)));
         PositionUtil.isCenterAddedToTrace  = false;
         Intent intent = position1.getNewIntent();
        /*try{intent = positionUtil.createIntentForExistingCenterEndStart(TRACE_PLOT_STATE.CENTER_END_COMMAND
@@ -172,8 +176,6 @@ public MyDialogFragment(){
 	       	}
         }
 	        if (val.contentEquals(MAP)){
-	            Toast.makeText(this, "Maps view called: " , 15).show();            
-	
 	        	try{intent = positionUtil.createIntentForExistingCenterEndStart(TRACE_PLOT_STATE.CENTER_START_COMMAND
 	            		,PositionUtil.latLngToString(positionUtil.getStart())
 	            		,intent);
@@ -188,7 +190,6 @@ public MyDialogFragment(){
 	        }
 	        //if (val.contentEquals(GEO_START_POINT)){
 	        if (val.contentEquals(GEO_ADD_POINT)){
-	        	Toast.makeText(this, "geoAddPoint view called: " , 15).show();            
 	            boolean isStartCmd = false;
 	            boolean isEndCmd = false;
 	            TRACE_PLOT_STATE state=null;
@@ -291,7 +292,6 @@ public MyDialogFragment(){
                 System.out.println((Uri)geoIntent.getParcelableExtra("end"));
 	        }
 	        if (val.contentEquals(HOME)){
-	            Toast.makeText(this, "Home view called ", 15).show();
 	            intent.setClass(this.context, MainActivity.class);
 		        intent.setAction(Intent.ACTION_VIEW);
 	            startActivity(intent);

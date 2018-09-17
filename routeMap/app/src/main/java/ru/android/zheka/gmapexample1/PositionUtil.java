@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class PositionUtil {
 	public static final String EXTRA_POINTS = "extraPoints";
+	public static final String TITLE = "title";
 	public final static float zoomDefault = 10;
 	public final static String titleDefault = "";
 	public static final LatLng LAT_LNG = new LatLng (55.9823964, 37.1690829);
@@ -77,6 +78,9 @@ public class PositionUtil {
 		if (!extraPoints.isEmpty ()) {
 			intent.putStringArrayListExtra (EXTRA_POINTS, extraPoints);
 		}
+		if (titleMarker!=null)
+			intent.putExtra (TITLE,titleMarker);
+
 		return intent;
 	}
 
@@ -158,7 +162,7 @@ public class PositionUtil {
 		} catch (NumberFormatException e) {
 			this.zoom = zoomDefault;
 		}
-		titleMarker = getQueryParameter (uri, "title");
+		titleMarker = getQueryParameter (uri, TITLE);
 		center = new LatLng (latitude, longitude);
 		if (intent.getStringArrayListExtra (EXTRA_POINTS) != null)
 			extraPoints = intent.getStringArrayListExtra (EXTRA_POINTS);
@@ -247,7 +251,7 @@ public class PositionUtil {
 				.append (zommAndTitle[0])
 				.append ("?pass=false");
 		if (zommAndTitle.length > 1) {
-			sb.append ("?title=")
+			sb.append ("?").append (TITLE).append ("=")
 					.append (zommAndTitle[1]);
 		}
 		return sb.toString ();
@@ -350,7 +354,7 @@ public class PositionUtil {
 						this.zoom = zoomDefault;
 					}
 					try {
-						titleMarker = getQueryParameter (uri, "title");
+						titleMarker = getQueryParameter (uri, TITLE);
 					} catch (Exception e) {
 						titleMarker = titleDefault;
 					}

@@ -30,7 +30,7 @@ public class UtileTracePointsSerializer extends TypeSerializer{
         dataTrace = (DataTrace)data;
         StringBuilder sb = new StringBuilder();
         UtilePointSerializer utilePointSerializer = new UtilePointSerializer();
-        for (LatLng point : dataTrace.allPoints.getPoints()) {
+        for (LatLng point : dataTrace.getAllPoints ().getPoints()) {
 			sb.append(utilePointSerializer.serialize(point))
 				.append(tDelimiter);
 		}
@@ -63,7 +63,7 @@ public class UtileTracePointsSerializer extends TypeSerializer{
 			String[] s = points[i].split(UtilePointSerializer.pDelimiter);
 			Double latitude = new Double(s[0]);
 			Double longitude = new Double(s[1]);
-			out.allPoints.add(new LatLng(latitude, longitude));
+			out.getAllPoints ().add(new LatLng(latitude, longitude));
 		}
 		for (int i = 0; i < ePoints.length; i++) {
 			out.extraPoints.add(ePoints[i]);

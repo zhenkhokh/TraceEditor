@@ -16,6 +16,7 @@ public class DbFunctions {
 	public static final String AVOID_HIGHWAYS = "highways";
 	public static final String AVOID_FERRIES = "ferries";
 	public static final String AVOID_INDOR = "indoor";
+	public static final String DEFAULT_CONFIG_OFFLINE="false";
 
 	@Deprecated
 	public static Trace getTraceByName(String name){

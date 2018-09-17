@@ -81,7 +81,6 @@
 		</Spinner>
 		</LinearLayout>
 
-
 		<Switch
 	        android:id="@+id/avoid"
 	        android:layout_width="match_parent"
@@ -91,6 +90,17 @@
 	        android:layout_marginTop="20dp"
 	        android:text="@string/avoid_text"
 	        android:textSize="8pt"/>
+
+		<Switch
+			android:id="@+id/offline"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_marginTop="20dp"
+			android:text="@string/offline_text"
+			android:textSize="8pt"/>
+
 	     <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/head"

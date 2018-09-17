@@ -192,6 +192,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		positionUtil.setTitleMarker (title);
 		extraPoints = positionUtil.getExtraPoints ();
 		end = lEnd;
+		positionUtil.setEnd (end);
 		return positionUtil.getIntent ();
 	}
 
@@ -244,6 +245,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		util.setZoom (zoom);
 		util.setTitleMarker (tracePointName);
 		util.setExtraPoints (extraPoints);
+		util.setTitleMarker (title);
 		return util.getIntent ();
 	}
 

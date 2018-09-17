@@ -48,6 +48,7 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 	final int optimViewId = R.id.optimizationRadio;
 	final int updateViewId = R.id.update;
 	final int avoidId = R.id.avoid;
+	final int offsetId = R.id.offline;
 
 	final static int fragmentResId = R.layout.fragment_list;
 	final static int rowResID = R.layout.row_single_choise;	 
@@ -102,6 +103,8 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 		});
 		final Switch update = (Switch)findViewById(updateViewId);
 		Switch avoidTolls = (Switch)findViewById(avoidId);
+		Switch offline = (Switch)findViewById(offsetId);
+
 	    Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
 	    //optimization.setChecked(config.optimization);
 		int radioId = 0;
@@ -115,8 +118,9 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 		radioButton.setChecked (true);
 	    update.setChecked(config.uLocation);
 	    avoidTolls.setChecked(config.avoid.contains(DbFunctions.AVOID_TOLLS));
+	    offline.setChecked (config.offline.equals (getString (R.string.offlineOn)));
 	    int pos=0;
-	    String[] choose = getResources().getStringArray(R.array.speedList);
+	    final String[] choose = getResources().getStringArray(R.array.speedList);
 	    String value = config.rateLimit_ms;
 		value = new Double (Double.valueOf (value)/1000.0).toString ();
 		while(pos<choose.length)
@@ -189,6 +193,23 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 			}
 		});
 
+		offline.setOnCheckedChangeListener (new OnCheckedChangeListener () {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+				if (buttonView.isChecked ())
+					config.offline = getString (R.string.offlineOn);
+				else
+					config.offline = getString (R.string.offlineOff);
+				System.out.println("offset is set as "+config.offline);
+				try{DbFunctions.add(config);
+			    }catch(IllegalAccessException e){			e.printStackTrace();
+			    }catch (InstantiationException e) {			e.printStackTrace();
+				}catch (IllegalArgumentException e) {		e.printStackTrace();
+				}catch (Exception e) {	e.printStackTrace();
+				}
+			}
+		});
 		spinner.setOnItemSelectedListener (new AdapterView.OnItemSelectedListener (){
 			@Override
 			public void onItemSelected(AdapterView <?> parent, View view, int position, long id) {
@@ -217,7 +238,6 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 	public void nextView(String val) {
 		Intent intent = getIntent();
 		if (val.contentEquals(HOME)) {
-            Toast.makeText(this, "Home view called " + val, 15).show();
             intent.setClass(this, MainActivity.class);
 	        intent.setAction(Intent.ACTION_VIEW);
             startActivity(intent);

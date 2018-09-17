@@ -1,2 +1,1 @@
-ALTER TABLE Config ADD COLUMN reserved4 TEXT;
-
+--ALTER TABLE Config ADD COLUMN reserved4 TEXT;

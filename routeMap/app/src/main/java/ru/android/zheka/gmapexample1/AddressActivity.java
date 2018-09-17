@@ -7,6 +7,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -166,6 +167,8 @@ public class AddressActivity extends RoboActivity implements JsCallable {
         street = (TextView)findViewById (R.id.text_street);
         house = (TextView)findViewById (R.id.text_house);
         Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+        if (!config.tenMSTime.equals ("0"))
+            Toast.makeText (this,"Определение местоположения станет помехой, лучше его отключить",30).show ();
         String address = config.address;
         if (!address.isEmpty ()) {
             int endpos = address.indexOf (aDelimiter);

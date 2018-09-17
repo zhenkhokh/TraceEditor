@@ -55,7 +55,7 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 			//config.reserved2 = "";
 			config.address = AddressActivity.aDelimiter+AddressActivity.aDelimiter+AddressActivity.aDelimiter;
 			config.rateLimit_ms = "800";
-			//config.reserved4 = "";
+			config.offline = DbFunctions.DEFAULT_CONFIG_OFFLINE;
 			
 			Routing.TravelMode w =Enum.valueOf(Routing.TravelMode.class,config.travelMode);
 			System.out.println("init "+config.toString());
