@@ -101,7 +101,7 @@ private String traceDebuggingSer;
 	private Class clMain, clGeo, clTrace;
 	private Config config=null;
 	private static int cntRun = 0;
-	private static final int maxFailures = 1;
+	private static final int maxFailures = 3;
 	private static int failuresCnt = 0;
 	//TimerService timerService=TimerService.getInstance();
 	PositionReciever positionReciever = null;
@@ -511,6 +511,9 @@ private String traceDebuggingSer;
 		        		for (//Iterator iterator = position.extraPoints.iterator(); iterator
 								; iterator
 								.hasNext();) {
+							if(failuresCnt>=maxFailures) {
+								return;
+							}
 							String sPoint = (String) iterator.next ();
 							point = (LatLng) (new UtilePointSerializer ().deserialize (sPoint));
 //do {
@@ -529,7 +532,7 @@ private String traceDebuggingSer;
 							routing.registerListener (MapsActivity.this);
 							synchronized (traceDrawMonitor/*MapsActivity.this*/) {
 								System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
-								int goFromDad = 3;
+								int goFromDad = maxFailures+2;
 								while (!onRoutingReady && goFromDad-->0) {
 									try {
 										traceDrawMonitor.wait (rateLimit_ms);/*MapsActivity.this.wait(rateLimit_ms);*/
@@ -539,6 +542,7 @@ private String traceDebuggingSer;
 								}
 								onRoutingReady = false;
 							}
+
 //}while(cnt<cntRun);
 //							if (curCnt<cntRun)//do not touch prevPoint
 //								break;
@@ -647,8 +651,17 @@ private String traceDebuggingSer;
 		routing = new Routing ();
 		routing.registerListener (MapsActivity.this);
 		cntRun--;
+		if (failuresCnt==1) {
+			try {
+				AlertDialog dialog = new AlertDialog ("Возможно высокая скорость построения. Получен неожиданный ответ от maps.googleapis.com:" + GoogleParser.result);
+				dialog.show (getFragmentManager (), "Ошибка");
+			} catch (IllegalStateException e) {
+				e.printStackTrace ();
+			}
+		}
+	}else{
 		try {
-			AlertDialog dialog = new AlertDialog ("Возможно высокая скорость построения. Получен неожиданный ответ от maps.googleapis.com:" + GoogleParser.result);
+			AlertDialog dialog = new AlertDialog ("Маршрут не построен, проверьте интернет соединение");
 			dialog.show (getFragmentManager (), "Ошибка");
 		} catch (IllegalStateException e) {
 			e.printStackTrace ();
@@ -875,7 +888,7 @@ private String traceDebuggingSer;
         	switch (mapType.getType ()){
 				case NORMAL:{
 					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_SATELLITE;
-					Toast.makeText (this, "Изменена на спутниковую, повторите просмотр", 15).show ();
+					Toast.makeText (this, "Изменена на спутниковую, поверните экран", 15).show ();
 					break;
 				}
 				case SATELLITE:{
@@ -885,7 +898,7 @@ private String traceDebuggingSer;
 				}
 				case TERRAIN:{
 					MapTypeHandler.userCode = GoogleMap.MAP_TYPE_HYBRID;
-					Toast.makeText (this, "Изменена на гибридную, повторите просмотр", 15).show ();
+					Toast.makeText (this, "Изменена на гибридную, поверните экран", 15).show ();
 					break;
 				}
 				case HYBRID:{

@@ -39,7 +39,9 @@ public class GeoParserImpl extends GeoParser {
             out = new GeoCoderImpl (/*URLEncoder.encode(sb.toString (),encode)*/sb.toString ());
         } catch (JSONException e) {
             e.printStackTrace ();
+            throw new YandexGeoCoderException ();
         }
         return out;
     }
+    public class YandexGeoCoderException extends RuntimeException{}
 }

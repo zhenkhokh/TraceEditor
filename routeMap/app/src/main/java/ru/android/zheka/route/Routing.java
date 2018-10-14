@@ -94,7 +94,7 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
     protected String constructURL(LatLng... points) {
         LatLng start = points[0];
         LatLng dest = points[1];
-        String sJsonURL = "http://maps.googleapis.com/maps/api/directions/json?";
+        String sJsonURL = "https://maps.googleapis.com/maps/api/directions/json?";
 
         final StringBuffer mBuf = new StringBuffer(sJsonURL);
         mBuf.append("origin=");
@@ -129,7 +129,7 @@ public class Routing extends AsyncTask<LatLng, Void, Route> {
         String avoid  = config.avoid;
         if (!avoid.isEmpty())
         	mBuf.append("&avoid="+avoid);
-        //mBuf.append ("&key=").append ("");//MainActivity.googleKey
+        mBuf.append ("&key=").append (MainActivity.googleKey);//
         return mBuf.toString();
     }
 

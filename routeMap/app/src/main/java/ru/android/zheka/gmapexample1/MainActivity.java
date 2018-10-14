@@ -57,7 +57,7 @@ public class MainActivity extends RoboActivity implements JsCallable{
         }
 
         if (googleKey.equals (""))
-            googleKey = getResources ().getString (R.string.google_maps_key);
+            googleKey = getResources ().getString (R.string.google_api_key);
 System.out.println("---------- "+System.getProperty("java.class.path"));
 try {
     clGeo = Class.forName("ru.android.zheka.gmapexample1.GeoPositionActivity");

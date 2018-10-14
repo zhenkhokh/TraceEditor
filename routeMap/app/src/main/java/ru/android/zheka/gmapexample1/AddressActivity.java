@@ -81,10 +81,15 @@ public class AddressActivity extends RoboActivity implements JsCallable {
         }
         if (val.contentEquals(ADDRESS_GO)){
             if (isAllFieldCorrect()){
-                geoCoder = new GeoParserImpl (region.getText ().toString ()
-                        ,city.getText ().toString ()
-                        ,street.getText ().toString ()
-                        ,house.getText ().toString ()).parse ();
+                try {
+                    geoCoder = new GeoParserImpl (region.getText ().toString ()
+                            , city.getText ().toString ()
+                            , street.getText ().toString ()
+                            , house.getText ().toString ()).parse ();
+                }catch (GeoParserImpl.YandexGeoCoderException e){
+                    Toast.makeText (this,"Данные не получены, проверьте интернет соединение",30).show ();
+                    return;
+                }
                 Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
                 StringBuilder sb = new StringBuilder ();
                 sb.append (region.getText ().toString ()).append (aDelimiter)

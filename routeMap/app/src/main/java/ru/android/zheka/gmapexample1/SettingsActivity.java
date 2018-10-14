@@ -124,7 +124,7 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 	    String value = config.rateLimit_ms;
 		value = new Double (Double.valueOf (value)/1000.0).toString ();
 		while(pos<choose.length)
-			if (choose[pos++].equals (value))
+			if (new Double (value).equals(Double.valueOf (choose[pos++])))
 				break;
 	    spinner.setSelection (pos-1);
 		optimization.setOnCheckedChangeListener (new RadioGroup.OnCheckedChangeListener () {

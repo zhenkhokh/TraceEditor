@@ -32,6 +32,8 @@ public class GeoCoderImpl extends XMLParser implements GeoCoder {
     public GeoCoderImpl(String feedUrl) throws JSONException {
         super (feedUrl);
         InputStream is = getInputStream ();
+        if (is==null)
+            throw new JSONException("io exception");
         Scanner scanner = new Scanner (is);
         StringBuilder sb = new StringBuilder ();
         while (scanner.hasNext ())
