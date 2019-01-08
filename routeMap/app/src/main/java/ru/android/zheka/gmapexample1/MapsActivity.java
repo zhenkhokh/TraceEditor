@@ -347,7 +347,7 @@ private String traceDebuggingSer;
         	if (position.getExtraPoints ().size()<=1) {
         		results = new ResultRouteHandler (1);
 				traceDebuggingSer = getIntent ().getStringExtra (PositionUtil.TITLE);
-        		if (isOffline && traceDebuggingSer==null){
+        		if (isOffline && (traceDebuggingSer==null || traceDebuggingSer.equals (GeoPositionActivity.OFFLINE))){
         			offlineIncorrectData ();
         			return;
 				}else if (isOffline){

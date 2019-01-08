@@ -275,7 +275,6 @@ com.simpligility.maven.plugins -->
 
 	<build>
 	 <finalName>${project.artifactId}</finalName>
-        
             <plugins>
                 <plugin>
                     <groupId>${android.plugin.groupId}</groupId>
@@ -296,7 +295,7 @@ com.simpligility.maven.plugins -->
 								<!-- Unable to create application com.activeandroid.app.Application: java.lang.NullPointerException: -->								
 								<config>${basedir}/proguard-project_ss.txt</config>
                 			</proguard>
-                 			</configuration>                				
+	            			</configuration> 
                 		</execution>
                 		<execution>
 				            <id>alignApk</id>
@@ -384,6 +383,40 @@ com.simpligility.maven.plugins -->
 		                </execution>
 		            </executions>
 		        </plugin>
-            </plugins>        
+	            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+	            <plugin>
+	            	<groupId>org.eclipse.m2e</groupId>
+	            	<artifactId>lifecycle-mapping</artifactId>
+	            	<version>1.0.0</version>
+	            	<configuration>
+	            		<lifecycleMappingMetadata>
+	            			<pluginExecutions>
+	            				<pluginExecution>
+	            					<pluginExecutionFilter>
+	            						<groupId>
+	            							com.simpligility.maven.plugins
+	            						</groupId>
+	            						<artifactId>
+	            							android-maven-plugin
+	            						</artifactId>
+	            						<versionRange>
+	            							[4.5.0,)
+	            						</versionRange>
+	            						<goals>
+	            							<goal>proguard</goal>
+	            							<goal>
+	            								generate-sources
+	            							</goal>
+	            						</goals>
+	            					</pluginExecutionFilter>
+	            					<action>
+	            						<ignore></ignore>
+	            					</action>
+	            				</pluginExecution>
+	            			</pluginExecutions>
+	            		</lifecycleMappingMetadata>
+	            	</configuration>
+	            </plugin>
+            </plugins>
  	</build>
 </project>

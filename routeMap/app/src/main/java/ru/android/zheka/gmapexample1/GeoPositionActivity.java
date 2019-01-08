@@ -146,6 +146,7 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
         mapFragment.getMapAsync(this);
 		MenuHandler m = new MenuHandler();
 		m.initJsBridge(this,url);
+		MapsActivity.updateOfflineState (this);
 		//getCenter(getIntent()); //do not try init marker<= marker is null
         position = new PositionInterceptor(this);
         //TODO remove print
@@ -272,6 +273,8 @@ public class GeoPositionActivity extends RoboFragmentActivity implements OnMapRe
 					//	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
 		          intent.setClass(this.context, clMap);
 		          intent.setAction(Intent.ACTION_VIEW);
+		          if (MapsActivity.isOffline)
+		          	intent.putExtra (PositionUtil.TITLE,OFFLINE);
 		          startActivity(intent);
 		          finish();
 	    }
