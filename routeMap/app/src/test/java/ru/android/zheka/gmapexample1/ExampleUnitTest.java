@@ -14,6 +14,7 @@ import com.activeandroid.Model;
 //import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 //import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 //import org.robolectric.shadows.ShadowActivity;
 //import org.robolectric.shadows.ShadowCamera;
@@ -51,8 +53,9 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-@Config(manifest = "app/src/main/AndroidManifest.xml"
-//,shadows = {
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = "AndroidManifest.xml", sdk=28
+		//,shadows = {
 //		ShadowActivity.class
 		//ShadowSupportMapFragment.class
 		//ShadowCamera.class
@@ -60,8 +63,6 @@ import com.google.android.gms.maps.model.LatLng;
 //		ShadowMapsActivity.class
 //}
 		)
-//@RunWith(RobolectricTestRunner.class)
-@RunWith(MyTestRunner.class)
 public class ExampleUnitTest {
 	MapsActivity mapsActivity=null;
 	GeoPositionActivity geoPositionActivity = null;
