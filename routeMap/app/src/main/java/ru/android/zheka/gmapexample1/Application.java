@@ -20,7 +20,6 @@ import ru.android.zheka.route.Routing;
 
 //TODO use it for activeandroid
 public class Application extends com.activeandroid.app.Application {//extends MultiDexApplication{
-	private static Config config=null;
 	public static String optimizationBellmanFlag = "";
 	@Override
 	public void onCreate(){
@@ -40,10 +39,9 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 	}
 	public static void initConfig(){
 		System.out.println("initConfig");
-		config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
-		Config tmp = config;
+		Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
 		System.out.println("config is "+config);
-		if (tmp ==null || isFieldNull(config) || config.rateLimit_ms.isEmpty ()){
+		if (isFieldNull(config) || config.rateLimit_ms.isEmpty ()){
 			config = new Config();
 			config.name = DbFunctions.DEFAULT_CONFIG_NAME;
 			config.optimization = false;
@@ -69,7 +67,7 @@ public class Application extends com.activeandroid.app.Application {//extends Mu
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (ConcurrentModificationException e){
-				DbFunctions.delete (tmp);
+				DbFunctions.delete (config);
 				initConfig ();
 			}
 		}else

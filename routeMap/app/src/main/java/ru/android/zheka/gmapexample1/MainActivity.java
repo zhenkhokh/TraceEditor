@@ -17,9 +17,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -31,6 +35,9 @@ import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
 import com.activeandroid.Configuration;
 
+import java.io.InputStream;
+import java.util.Scanner;
+
 public class MainActivity extends RoboActivity implements JsCallable{
     public static String googleKey = "";
 	public static final String SETTINGS = "settings";
@@ -40,6 +47,7 @@ public class MainActivity extends RoboActivity implements JsCallable{
 	public static final String TO_TRACE = "toTrace";
 	public static final String POINTS = "points";
 	public static final String GO = "address";
+	public static final String INFO = "info";
 	protected String url =  "file:///android_asset/home.html";
 	protected int resViewId = R.layout.activity_home;
 	@InjectView(R.id.webView)
@@ -154,6 +162,27 @@ try {
     	  intent.setClass(this.context, AddressActivity.class);
     	  startActivity(intent);
           finish();
+      }
+      if (val.equals (INFO)){
+          LayoutInflater inflater= LayoutInflater.from(this);
+          View view = inflater.inflate (R.layout.scrolable_dialog,null);
+         TextView tv = view.findViewById (R.id.textmsg);//new TextView (this);
+         InputStream is = this.getResources ().openRawResource (R.raw.info);
+         Scanner scanner = new Scanner (is);
+         scanner.useDelimiter ("\n");
+         StringBuilder sb = new StringBuilder ();
+         while (scanner.hasNextLine ())
+             sb.append (scanner.nextLine ());
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+              tv.setText(Html.fromHtml(sb.toString (),Html.FROM_HTML_MODE_LEGACY));
+         } else
+              tv.setText(Html.fromHtml(sb.toString ()));
+         new AlertDialog.Builder(context)
+                        .setView (view)
+                        .setTitle("Помощь")
+                        .setCancelable(true)
+                        .create()
+                        .show();
       }
     }
 
