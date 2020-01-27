@@ -1,7 +1,6 @@
 package ru.android.zheka.gmapexample1;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
 //import android.support.multidex.MultiDexApplication;
 
 import java.lang.reflect.Field;
@@ -10,6 +9,7 @@ import java.util.ConcurrentModificationException;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 
+import androidx.multidex.MultiDex;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;

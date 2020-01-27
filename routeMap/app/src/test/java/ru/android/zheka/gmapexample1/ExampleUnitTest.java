@@ -133,6 +133,7 @@ public class ExampleUnitTest {
 	}
 	@Test
 	public void testNextView() {
+		org.junit.Assert.assertTrue(false);
 		System.out.println("----- mapsActivity.nextView(vals[i]):");
 		String[] vals = {MapsActivity.HOME,MapsActivity.GEO
 				,MapsActivity.SAVE_TRACE, MapsActivity.GO_POSITION};

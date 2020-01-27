@@ -1,0 +1,34 @@
+ext {
+    daggerVersion = '2.24'
+    appcompatVersion = '1.1.0-alpha04'
+    junitVersion = '4.12'
+    constraintLayoutVersion = '2.0.0-alpha4'
+    checkstyleVersion = '8.19'
+    androidxCoreVersion = '1.0.2'
+    robolectricVersion='4.3'//3.8
+	rxJavaVersion = '2.2.10'
+	rxAndroidVersion = '2.1.1'
+
+    test = [
+            junit: "junit:junit:${junitVersion}",
+            robolectric: "org.robolectric:robolectric:${robolectricVersion}",
+            resources: "org.robolectric:resources:${robolectricVersion}",
+            sandbox: "org.robolectric:sandbox:${robolectricVersion}",
+            utils: "org.robolectric:utils:${robolectricVersion}"
+    ]
+    androidx = [
+            appcompat       : "androidx.appcompat:appcompat:${appcompatVersion}",
+            constraintLayout: "com.android.support.constraint:constraint-layout:${constraintLayoutVersion}",
+            core            : "androidx.core:core:${androidxCoreVersion}"
+    ]
+    di = [
+            daggerApi             : "com.google.dagger:dagger:${daggerVersion}",
+            daggerSupport         : "com.google.dagger:dagger-android-support:${daggerVersion}",
+            daggerProcessor       : "com.google.dagger:dagger-compiler:${daggerVersion}",
+            daggerAndroidProcessor: "com.google.dagger:dagger-android-processor:${daggerVersion}",
+    ]
+    rx = [
+		java   : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
+		android: "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
+	]
+}
