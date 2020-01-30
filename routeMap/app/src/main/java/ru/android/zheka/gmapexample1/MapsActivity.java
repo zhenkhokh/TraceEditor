@@ -1,5 +1,6 @@
 package ru.android.zheka.gmapexample1;
 
+import androidx.appcompat.app.AppCompatActivity;
 import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.InjectView;
 import ru.android.zheka.db.Config;
@@ -64,7 +65,9 @@ import android.graphics.Color;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsActivity extends RoboFragmentActivity implements OnMapReadyCallback
+public class MapsActivity //extends AppCompatActivity
+		extends RoboFragmentActivity
+		implements OnMapReadyCallback
 , RoutingListener
 , JsCallable
 , OnCameraChangeListener {

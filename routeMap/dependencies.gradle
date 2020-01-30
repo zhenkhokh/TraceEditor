@@ -2,6 +2,8 @@ ext {
     daggerVersion = '2.24'
     appcompatVersion = '1.1.0-alpha04'
     junitVersion = '4.12'
+    androidxTestRunnerVersion = '1.1.1'
+    espressoCoreVersion = '3.1.1'
     constraintLayoutVersion = '2.0.0-alpha4'
     checkstyleVersion = '8.19'
     androidxCoreVersion = '1.0.2'
@@ -19,7 +21,9 @@ ext {
     androidx = [
             appcompat       : "androidx.appcompat:appcompat:${appcompatVersion}",
             constraintLayout: "com.android.support.constraint:constraint-layout:${constraintLayoutVersion}",
-            core            : "androidx.core:core:${androidxCoreVersion}"
+            core            : "androidx.core:core:${androidxCoreVersion}",
+            testRunner      : "androidx.test:runner:${androidxTestRunnerVersion}",
+            testEspressoCore: "androidx.test.espresso:espresso-core:${espressoCoreVersion}"
     ]
     di = [
             daggerApi             : "com.google.dagger:dagger:${daggerVersion}",

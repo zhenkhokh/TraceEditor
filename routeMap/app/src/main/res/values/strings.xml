@@ -85,4 +85,6 @@
         <string name="optimizationuser3">Бэллман-Форд</string>
     <string name="offlineOff">false</string>
     <string name="offlineOn">true</string>
+<!--    home buttons-->
+    <string name="home_settings_btn">Настройки</string>
 </resources>

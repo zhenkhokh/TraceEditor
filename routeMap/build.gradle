@@ -188,12 +188,15 @@ dependencies {
     testImplementation test.junit
     testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 
+//    androidTestImplementation androidx.testRunner
+//    androidTestImplementation androidx.testEspressoCore
+
     implementation di.daggerApi
 
     annotationProcessor di.daggerProcessor
     annotationProcessor di.daggerAndroidProcessor
 
-    implementation androidx.appcompat
+    api androidx.appcompat
 //    api androidx.constraintLayout
     api 'androidx.constraintlayout:constraintlayout:1.1.3'//2.0.0-alpha4'
     api rx.android

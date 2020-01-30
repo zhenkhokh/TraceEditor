@@ -6,8 +6,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
+import androidx.databinding.ViewDataBinding;
+import ru.android.zheka.coreUI.AbstractActivity;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
+import ru.android.zheka.fragment.Home;
 import ru.android.zheka.gmapexample1.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,7 +41,10 @@ import com.activeandroid.Configuration;
 import java.io.InputStream;
 import java.util.Scanner;
 
-public class MainActivity extends RoboActivity implements JsCallable{
+public class MainActivity extends
+        AbstractActivity
+        //RoboActivity
+        implements JsCallable{
     public static String googleKey = "";
 	public static final String SETTINGS = "settings";
 	public static final String EDIT_TRACE = "editTrace";
@@ -56,6 +62,31 @@ public class MainActivity extends RoboActivity implements JsCallable{
 	Class clGeo, clLatLng, clPtoTr;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.activity_home;
+    }
+
+    @Override
+    protected void initComponent() {
+
+    }
+
+    @Override
+    protected void onInitBinding(ViewDataBinding binding) {
+
+    }
+
+    @Override
+    protected void onResumeBinding(ViewDataBinding binding) {
+
+    }
+
+    @Override
+    protected void onDestroyBinding(ViewDataBinding binding) {
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
@@ -63,6 +94,8 @@ public class MainActivity extends RoboActivity implements JsCallable{
             new Delete ().from(Trace.class).where("name=?",DbFunctions.DEFAULT_CONFIG_NAME).execute();
             Application.initConfig ();
         }
+
+        switchToFragment (R.id.settingsFragment, new Home ());
 
         if (googleKey.equals (""))
             googleKey = getResources ().getString (R.string.google_api_key);
@@ -88,7 +121,9 @@ try {
 		setContentView(resViewId);
 		MenuHandler m = new MenuHandler();
 		m.initJsBridge(this,url);
-/*
+
+
+		/*
 		Configuration dbConfiguration = new Configuration.Builder(this)
         .setDatabaseName("Navi.db")
         .setDatabaseVersion(1)

@@ -34,6 +34,7 @@ import org.robolectric.annotation.Config;
 //import org.robolectric.shadows.gms.ShadowGooglePlayServicesUtil;
 //import org.robolectric.shadows.gms.common.ShadowGoogleApiAvailability;
 
+import androidx.fragment.app.Fragment;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
@@ -42,6 +43,8 @@ import ru.android.zheka.db.UtileTracePointsSerializer;
 //
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 //import org.robolectric.shadows.ShadowActivity;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -70,7 +73,7 @@ public class ExampleUnitTest {
 	MainActivity mainActivity = null;
 	TraceActivity traceActivity = null;
 	SettingsActivity settingsActivity = null;
-	android.support.v4.app.Fragment fragment;
+	Fragment fragment;
 	Point point;
 	Trace trace;
 	
@@ -133,7 +136,6 @@ public class ExampleUnitTest {
 	}
 	@Test
 	public void testNextView() {
-		org.junit.Assert.assertTrue(false);
 		System.out.println("----- mapsActivity.nextView(vals[i]):");
 		String[] vals = {MapsActivity.HOME,MapsActivity.GEO
 				,MapsActivity.SAVE_TRACE, MapsActivity.GO_POSITION};
@@ -351,8 +353,9 @@ public class ExampleUnitTest {
 	public void testFragment() {
 		//assertNull(null);
 		//mapsActivity.setContentView(R.layout.activity_maps);
-		fragment = (SupportMapFragment)mapsActivity.getSupportFragmentManager().findFragmentById(R.id.map);
-		assertThat(fragment).isNotNull();
+		fragment = mapsActivity.getSupportFragmentManager().findFragmentById(R.id.map);
+		assertNotNull(fragment);
+		//assertThat(fragment).isNotNull();
 		//assertThat(activity).isNull();
 	}
 	@Test

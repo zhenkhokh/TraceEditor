@@ -2,6 +2,7 @@ package ru.android.zheka.gmapexample1;
 
 import java.nio.file.attribute.PosixFilePermission;
 
+import androidx.appcompat.app.AppCompatActivity;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.gmapexample1.R;
 import roboguice.activity.RoboFragmentActivity;
@@ -40,7 +41,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class GeoPositionActivity extends RoboFragmentActivity implements OnMapReadyCallback
+public class GeoPositionActivity extends
+		RoboFragmentActivity
+		//AppCompatActivity
+		implements OnMapReadyCallback
 	,JsCallable
 	,OnMapLongClickListener
 	,OnCameraChangeListener
