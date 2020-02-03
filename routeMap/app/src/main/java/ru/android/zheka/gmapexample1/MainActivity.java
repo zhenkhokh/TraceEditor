@@ -225,6 +225,11 @@ try {
 	public WebView getVebWebView() {
 		return webViewHome;
 	}
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
 }
 class MenuHandler{
 	

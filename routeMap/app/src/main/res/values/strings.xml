@@ -86,5 +86,12 @@
     <string name="offlineOff">false</string>
     <string name="offlineOn">true</string>
 <!--    home buttons-->
-    <string name="home_settings_btn">Настройки</string>
+		<string name="home_settings_btn">Настройки</string>
+		<string name="home_toTrace_btn">Создать маршрут</string>
+		<string name="home_points_btn">Навигация по точкам</string>
+		<string name="home_editTrace_btn">Правка маршрутов</string>
+		<string name="home_editPoint_btn">Правка точек</string>
+		<string name="home_address_btn">Переход</string>
+		<string name="home_geo_btn">Местоположение</string>
+		<string name="home_info_btn">Помощь</string>
 </resources>
