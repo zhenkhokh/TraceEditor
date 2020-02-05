@@ -1,7 +1,6 @@
 package ru.android.zheka.gmapexample1;
 
-	import java.lang.reflect.Field;
-import java.util.ArrayList;
+	import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,38 +10,26 @@ import java.util.concurrent.ConcurrentHashMap;
 	import roboguice.activity.RoboListActivity;
 import roboguice.inject.InjectView;
 import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Point;
-import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.gmapexample1.R;
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
-import ru.android.zheka.jsbridge.JsCallable;
+	import ru.android.zheka.gmapexample1.edit.EditModel;
+	import ru.android.zheka.gmapexample1.edit.Editable;
+	import ru.android.zheka.jsbridge.JsCallable;
 
 	import com.activeandroid.Model;
 
-	import android.app.Activity;
-import android.app.ListActivity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
+	import android.content.Context;
+	import android.content.Intent;
+	import android.os.Bundle;
+	import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+	import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
-	public class EditActivity extends RoboListActivity implements JsCallable{
+public class EditActivity extends RoboListActivity implements JsCallable{
 			public static final String EDIT_MODEL = "editModel";
 			public static final String RENAME = "rename";
 			public static final String REMOVE = "remove";
@@ -299,87 +286,5 @@ import com.google.android.gms.maps.model.LatLng;
 				return view;
 			}			
 		}
-}
-class Editable{
-	private String name;
-	Model model;
-	public Editable(Model model){
-		this.model = model;
-		try{name = (String) getField().get(model);
-		}catch(IllegalAccessException e){
-			e.printStackTrace();
-		}catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		try{getField().set(model, name);
-		}catch(IllegalAccessException e){
-			e.printStackTrace();
-		}catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-		this.name = name;
-	}
-	private Field getField(){
-		Field field=null;		
-		try{field = model.getClass().getField("name");			
-		}catch(NoSuchFieldException e){
-			e.printStackTrace();
-		}catch (SecurityException e) {
-			e.printStackTrace();
-		}
-		return field;
-	}
-}
-class EditModel implements Parcelable{
-	int nameId=0,name1Id=0;
-	//Class <? extends Model> cls;
-	String clsName=null;
-	String clsPkg=null;
-
-	private EditModel(Parcel in) {
-		nameId = in.readInt();
-		name1Id = in.readInt();
-		clsName = in.readString();
-		clsPkg = in.readString();
-	}
-	public EditModel() {}
-	@Override
-	public int describeContents() {
-		if (clsName==null||nameId==0||name1Id==0)
-			return -1;
-		return 0;
-	}
-	@Override
-	public void writeToParcel(Parcel dest, int arg1) {
-		dest.writeInt(nameId);
-		dest.writeInt(name1Id);
-		dest.writeString(clsName);
-		dest.writeString(clsPkg);
-		//dest.writeTypedObject(cls, 0);
-	}
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public EditModel createFromParcel(Parcel in) {
-            return new EditModel(in);
-        }
-
-        public EditModel[] newArray(int size) {
-            return new EditModel[size];
-        }
-    };
-	public Class<? extends Model> getClassTable(){
-		String clsName = this.clsPkg+"."+this.clsName;
-		clsName = clsName.replace("..", ".");
-		Class<? extends Model> cls = null;
-		try{cls = (Class<? extends Model>) Class.forName(clsName);		
-		}catch (ClassNotFoundException e){
-			e.printStackTrace();				
-		}
-		return  cls;
-	}
 }
 

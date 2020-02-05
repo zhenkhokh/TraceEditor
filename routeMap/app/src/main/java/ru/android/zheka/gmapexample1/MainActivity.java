@@ -1,42 +1,31 @@
 package ru.android.zheka.gmapexample1;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 
 import androidx.databinding.ViewDataBinding;
 import ru.android.zheka.coreUI.AbstractActivity;
-import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.db.UtileTracePointsSerializer;
 import ru.android.zheka.fragment.Home;
-import ru.android.zheka.gmapexample1.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import roboguice.activity.RoboActivity;
+
 import roboguice.inject.InjectView;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
+import ru.android.zheka.gmapexample1.edit.EditModel;
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
-import com.activeandroid.Configuration;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -44,7 +33,7 @@ import java.util.Scanner;
 public class MainActivity extends
         AbstractActivity
         //RoboActivity
-        implements JsCallable{
+        {
     public static String googleKey = "";
 	public static final String SETTINGS = "settings";
 	public static final String EDIT_TRACE = "editTrace";
@@ -56,9 +45,6 @@ public class MainActivity extends
 	public static final String INFO = "info";
 	protected String url =  "file:///android_asset/home.html";
 	protected int resViewId = R.layout.activity_home;
-	@InjectView(R.id.webView)
-	WebView webViewHome;
-	Context context = this;
 	Class clGeo, clLatLng, clPtoTr;
 
     @Override
@@ -119,112 +105,7 @@ try {
     System.out.println("---------- from MainActivity "+e.getMessage());
 }
 		setContentView(resViewId);
-		MenuHandler m = new MenuHandler();
-		m.initJsBridge(this,url);
-
-
-		/*
-		Configuration dbConfiguration = new Configuration.Builder(this)
-        .setDatabaseName("Navi.db")
-        .setDatabaseVersion(1)
-        .addModelClasses(Config.class,Point.class,Trace.class)
-        .addTypeSerializers(UtilePointSerializer.class,UtileTracePointsSerializer.class)
-        .create();
-        ActiveAndroid.initialize(dbConfiguration);
-        Application.initConfig();
-        if (Application.optimizationBellmanFlag.isEmpty ())
-        	Application.optimizationBellmanFlag = getString (R.string.optimizationdata3);
-*/
     }
-
-
-	public void nextView(String val) {
-      Intent intent = getIntent();
-      if (val.contentEquals(GEO)) {
-          PositionInterceptor position = new PositionInterceptor(this);
-          intent = position.updatePosition();
-      	  intent.setClass(this.context, clGeo);
-      	  intent.setAction(Intent.ACTION_VIEW);
-      	  //explicit activity
-      	  startActivity(intent);
-      	  System.out.println("finish");
-          finish();
-      }
-      if (val.contentEquals(POINTS)) {
-          intent.setClass(this.context, clLatLng);
-      	  intent.setAction(Intent.ACTION_VIEW);
-          startActivity(intent);
-          finish();
-       }
-      if (val.contentEquals(TO_TRACE)) {
-          intent.setClass(this.context, clPtoTr);
-      	  intent.setAction(Intent.ACTION_VIEW);
-          startActivity(intent);
-          finish();
-      }
-      EditModel model = new EditModel();
-      if (val.contentEquals(EDIT_POINT)) {
-    	  model.clsName = "Point";
-    	  model.clsPkg = "ru.android.zheka.db";
-    	  model.name1Id = R.string.points_column_name1;
-    	  model.nameId = R.string.points_column_name;
-    	  intent.putExtra(EditActivity.EDIT_MODEL, model);
-    	  intent.setAction(Intent.ACTION_VIEW);
-    	  intent.setClass(this.context, EditActivity.class);
-    	  startActivity(intent);
-    	  //editActivity.startActivity(intent);
-          finish();
-      }
-      if (val.contentEquals(EDIT_TRACE)) {
-    	  model.clsName = "Trace";
-    	  model.clsPkg = "ru.android.zheka.db";
-    	  model.name1Id = R.string.traces_column_name1;
-    	  model.nameId = R.string.traces_column_name;
-    	  intent.putExtra(EditActivity.EDIT_MODEL, model);
-    	  intent.setAction(Intent.ACTION_VIEW);
-    	  intent.setClass(this.context, EditActivity.class);
-    	  startActivity(intent);
-          finish();
-      }
-      if (val.contentEquals(SETTINGS)) {
-    	  intent.setAction(Intent.ACTION_VIEW);
-    	  intent.setClass(this.context, SettingsActivity.class);
-    	  startActivity(intent);
-          finish();
-      }
-      if (val.contentEquals(GO)) {
-    	  intent.setAction(Intent.ACTION_VIEW);
-    	  intent.setClass(this.context, AddressActivity.class);
-    	  startActivity(intent);
-          finish();
-      }
-      if (val.equals (INFO)){
-          LayoutInflater inflater= LayoutInflater.from(this);
-          View view = inflater.inflate (R.layout.scrolable_dialog,null);
-         TextView tv = view.findViewById (R.id.textmsg);//new TextView (this);
-         InputStream is = this.getResources ().openRawResource (R.raw.info);
-         Scanner scanner = new Scanner (is);
-         scanner.useDelimiter ("\n");
-         StringBuilder sb = new StringBuilder ();
-         while (scanner.hasNextLine ())
-             sb.append (scanner.nextLine ());
-         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-              tv.setText(Html.fromHtml(sb.toString (),Html.FROM_HTML_MODE_LEGACY));
-         } else
-              tv.setText(Html.fromHtml(sb.toString ()));
-         new AlertDialog.Builder(context)
-                        .setView (view)
-                        .setTitle("Помощь")
-                        .setCancelable(true)
-                        .create()
-                        .show();
-      }
-    }
-
-	@Override
-	public WebView getVebWebView() {
-		return webViewHome;
-	}
 
     @Override
     public Activity getActivity() {

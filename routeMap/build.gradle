@@ -192,6 +192,7 @@ dependencies {
 //    androidTestImplementation androidx.testEspressoCore
 
     implementation di.daggerApi
+    implementation di.daggerSupport
 
     annotationProcessor di.daggerProcessor
     annotationProcessor di.daggerAndroidProcessor
@@ -201,6 +202,9 @@ dependencies {
     api 'androidx.constraintlayout:constraintlayout:1.1.3'//2.0.0-alpha4'
     api rx.android
     api rx.java
+    testImplementation test.mockito
+    implementation test.fragment
+
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
 //exclude module: 'support-v4'
