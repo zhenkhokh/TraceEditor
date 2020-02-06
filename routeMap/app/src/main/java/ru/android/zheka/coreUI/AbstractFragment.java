@@ -13,8 +13,9 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import dagger.android.support.DaggerFragment;
 
-public abstract class AbstractFragment<B extends ViewDataBinding> extends Fragment implements IBaseFragment {
+public abstract class AbstractFragment<B extends ViewDataBinding> extends DaggerFragment implements IBaseFragment {
     private ErrorControl error;
     private B binding;
 
