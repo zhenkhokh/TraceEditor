@@ -1,6 +1,8 @@
 package ru.android.zheka.core;
 
-public interface IInfoModel {
+import ru.android.zheka.coreUI.IPanelModel;
+
+public interface IInfoModel extends IPanelModel {
     String getInput();
 
     AktionMessage getAction();

@@ -33,6 +33,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import it.cosenonjaviste.daggermock.DaggerMockRule;
+import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
@@ -44,6 +45,8 @@ import ru.android.zheka.di.DaggerAppComponent;
 import ru.android.zheka.di.HomeModule;
 import ru.android.zheka.fragment.Home;
 
+import ru.android.zheka.model.HomeModel;
+import ru.android.zheka.model.IHomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
@@ -90,7 +93,23 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
     Trace trace;
 //    @Rule
 //    public MockitoRule mockitoRule = MockitoJUnit.rule ();
-@Rule public final DaggerMockRule <AppComponent> mockitoRule = new DaggerMockRule<> (AppComponent.class, new HomeModule ())
+@Rule public final DaggerMockRule <AppComponent> mockitoRule = new DaggerMockRule<> (AppComponent.class, new HomeModule () {
+    @Override
+    public IPanelHomeVM bindHome(PanelHomeVM vm) {
+        IActivity view = bindActivity (null);
+        return new PanelHomeVM ( view, new HomeModel (view));
+    }
+
+    @Override
+    public IActivity bindActivity(Home fragment) {
+        return new Home ();
+    }
+
+    @Override
+    public IHomeModel bindHomeModel(HomeModel view) {
+        return view;
+    }
+})
         .set(new DaggerMockRule.ComponentSetter<AppComponent>() {
             @Override public void setComponent(AppComponent component) {
 //                 androidx.test.core.app.ApplicationProvider.getApplicationContext()

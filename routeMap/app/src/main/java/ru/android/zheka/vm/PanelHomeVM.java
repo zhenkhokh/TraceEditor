@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import io.reactivex.functions.Consumer;
 import ru.android.zheka.coreUI.ButtonHandler;
 import ru.android.zheka.coreUI.IActivity;
+import ru.android.zheka.coreUI.IPanelModel;
 import ru.android.zheka.gmapexample1.AddressActivity;
 import ru.android.zheka.gmapexample1.EditActivity;
 import ru.android.zheka.gmapexample1.GeoPositionActivity;
@@ -27,18 +28,19 @@ import ru.android.zheka.gmapexample1.R;
 import ru.android.zheka.gmapexample1.SettingsActivity;
 import ru.android.zheka.gmapexample1.edit.EditModel;
 import ru.android.zheka.model.HomeModel;
+import ru.android.zheka.model.IHomeModel;
 
 public class PanelHomeVM implements IPanelHomeVM {
 
     private final IActivity view;
     private final Activity activity;
-    private HomeModel model;
+    private IHomeModel model;
 
     @Inject
-    public PanelHomeVM(IActivity view) {
+    public PanelHomeVM(IActivity view, IHomeModel model) {
         this.view = view;
         activity = view.getActivity ();
-        model = new HomeModel (view);
+        this.model = model;
         model.getStartButton ().set (getButton (a -> settingsAction (),R.string.home_settings_btn));
         model.getStopButton ().set (getButton (a -> address (), R.string.home_address_btn));
         model.getNextButton ().set (getButton (a -> pointNavigate (), R.string.home_points_btn));
@@ -50,7 +52,8 @@ public class PanelHomeVM implements IPanelHomeVM {
         model.inputVisible ().set (View.GONE);
     }
 
-    private void info() {
+    @Override
+    public void info() {
         LayoutInflater inflater = LayoutInflater.from (activity);
         View view = inflater.inflate (R.layout.scrolable_dialog, null);
         TextView tv = view.findViewById (R.id.textmsg);//new TextView (this);
@@ -72,6 +75,7 @@ public class PanelHomeVM implements IPanelHomeVM {
                 .show ();
     }
 
+    @Override
     public void address() {
 
         Intent intent = activity.getIntent ();
@@ -81,7 +85,8 @@ public class PanelHomeVM implements IPanelHomeVM {
         activity.finish ();
     }
 
-    private void geo() {
+    @Override
+    public void geo() {
         PositionInterceptor position = new PositionInterceptor (activity);
         Intent intent = position.updatePosition ();
         intent.setClass (view.getContext (), GeoPositionActivity.class);
@@ -91,10 +96,12 @@ public class PanelHomeVM implements IPanelHomeVM {
         activity.finish ();
     }
 
-    private void editPoints() {
+    @Override
+    public void editPoints() {
         editItem ("Point", R.string.points_column_name, R.string.points_column_name1);
     }
 
+    @Override
     public void editTraces() {
         editItem ("Trace", R.string.traces_column_name, R.string.traces_column_name1);
     }
@@ -114,7 +121,8 @@ public class PanelHomeVM implements IPanelHomeVM {
         return 0;
     }
 
-    private void pointNavigate() {
+    @Override
+    public void pointNavigate() {
         Intent intent = activity.getIntent ();
         intent.setClass (view.getContext (), LatLngActivity.class);
         intent.setAction (Intent.ACTION_VIEW);
@@ -122,7 +130,8 @@ public class PanelHomeVM implements IPanelHomeVM {
         activity.finish ();
     }
 
-    private void createTrace() {
+    @Override
+    public void createTrace() {
         Intent intent = activity.getIntent ();
         intent.setClass (activity, PointToTraceActivity.class);
         intent.setAction (Intent.ACTION_VIEW);
@@ -130,7 +139,8 @@ public class PanelHomeVM implements IPanelHomeVM {
         activity.finish ();
     }
 
-    private void settingsAction() {
+    @Override
+    public void settingsAction() {
         Intent intent = view.getActivity ().getIntent ();
         intent.setAction (Intent.ACTION_VIEW);
         intent.setClass (view.getContext (), SettingsActivity.class);
@@ -154,7 +164,7 @@ public class PanelHomeVM implements IPanelHomeVM {
     }
 
     @Override
-    public HomeModel model() {
+    public IHomeModel model() {
         return model;
     }
 }

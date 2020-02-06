@@ -4,6 +4,8 @@ import dagger.Binds;
 import dagger.Module;
 import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.fragment.Home;
+import ru.android.zheka.model.HomeModel;
+import ru.android.zheka.model.IHomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
@@ -14,6 +16,10 @@ public abstract class HomeModule {
     public abstract IPanelHomeVM bindHome(PanelHomeVM vm);
 
     @Binds
-    @ActivityScope
+    @ActivityScope//TODO
     public abstract IActivity bindActivity(Home fragment);
+
+    @Binds
+    @ActivityScope//TODO
+    public abstract IHomeModel bindHomeModel(HomeModel view);
 }

@@ -10,7 +10,7 @@
 
         <variable
             name="vm"
-            type="ru.android.zheka.vm.PanelHomeVM" />
+            type="ru.android.zheka.vm.IPanelHomeVM" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
