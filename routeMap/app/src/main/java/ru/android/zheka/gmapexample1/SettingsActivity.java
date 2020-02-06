@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import androidx.appcompat.app.AppCompatActivity;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.gmapexample1.R;
@@ -40,7 +41,9 @@ import roboguice.activity.RoboListActivity;
 import roboguice.inject.InjectView;
 import ru.android.zheka.jsbridge.JsCallable;
 
-public class SettingsActivity extends RoboActivity implements JsCallable{
+public class SettingsActivity extends AppCompatActivity
+		//RoboActivity
+		implements JsCallable{
 	public static final String HOME = "home";
 	@InjectView(R.id.webViewSettings)
 	WebView vebViewHome;
@@ -230,8 +233,8 @@ public class SettingsActivity extends RoboActivity implements JsCallable{
 			}
 		});
 
-        MenuHandler m = new MenuHandler();
-        m.initJsBridge(this, url);
+//        MenuHandler m = new MenuHandler();
+//        m.initJsBridge(this, url);
 	};
 	
 	@Override

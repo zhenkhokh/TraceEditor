@@ -46,7 +46,8 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     sourceSets {
-        androidTest.setRoot('tests')
+        main.root = 'app/src/main'
+        androidTest.setRoot('app/src/test')
     }
     configurations.all {
 //    resolutionStrategy.force 'com.android.support:support-annotations:22.1.0'
@@ -151,6 +152,7 @@ repositories {
     maven { url "file://home/zheka/.m2/repository/" }
     jcenter()
     maven { url "https://repo1.maven.org/maven2" }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -196,6 +198,9 @@ dependencies {
 
     annotationProcessor di.daggerProcessor
     annotationProcessor di.daggerAndroidProcessor
+
+    testImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
+    androidTestImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
 
     api androidx.appcompat
 //    api androidx.constraintLayout

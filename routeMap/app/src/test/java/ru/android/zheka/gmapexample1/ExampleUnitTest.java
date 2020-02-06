@@ -1,56 +1,50 @@
 package ru.android.zheka.gmapexample1;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Cache;
 import com.activeandroid.Configuration;
-import com.activeandroid.Model;
 
 //import android.app.Activity;
-import android.app.Activity;
-import android.content.Context;
+;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.util.Log;
-import android.view.View;
-import android.widget.ListView;
+import android.providers.settings.GlobalSettingsProto;
 
-import org.junit.Assert;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 //
 
 
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 //import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 //import org.robolectric.shadows.ShadowActivity;
 //import org.robolectric.shadows.ShadowCamera;
 //import org.robolectric.shadows.gms.ShadowGooglePlayServicesUtil;
 //import org.robolectric.shadows.gms.common.ShadowGoogleApiAvailability;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
-import ru.android.zheka.coreUI.IActivity;
+import it.cosenonjaviste.daggermock.DaggerMockRule;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
 //
+import ru.android.zheka.di.AppComponent;
+import ru.android.zheka.di.DaggerAppComponent;
+import ru.android.zheka.di.HomeModule;
 import ru.android.zheka.fragment.Home;
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
+
+import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -63,22 +57,19 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 //import org.robolectric.shadows.ShadowActivity;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.inject.Inject;
+
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest = "AndroidManifest.xml", sdk = 28
         //,shadows = {
 //		ShadowActivity.class
         //ShadowSupportMapFragment.class
@@ -86,8 +77,8 @@ import org.mockito.MockitoAnnotations;
         //,ShadowGooglePlayServicesUtil.class
 //		ShadowMapsActivity.class
 //}
-)
-public class ExampleUnitTest {
+
+public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnitTest {
     MapsActivity mapsActivity = null;
     GeoPositionActivity geoPositionActivity = null;
     LatLngActivity latLngActivity = null;
@@ -97,15 +88,36 @@ public class ExampleUnitTest {
     Fragment fragment;
     Point point;
     Trace trace;
+//    @Rule
+//    public MockitoRule mockitoRule = MockitoJUnit.rule ();
+@Rule public final DaggerMockRule <AppComponent> mockitoRule = new DaggerMockRule<> (AppComponent.class, new HomeModule ())
+        .set(new DaggerMockRule.ComponentSetter<AppComponent>() {
+            @Override public void setComponent(AppComponent component) {
+//                 androidx.test.core.app.ApplicationProvider.getApplicationContext()
+//                        .setComponent(component);
+                FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
+                launcher.moveToState (Lifecycle.State.RESUMED);
+                launcher.onFragment (fragment1 -> {
+                    home = fragment1;
+                });
+            }
+        });
     @Mock
     PanelHomeVM panelHomeVM;
+
+    Home home;
 
 //    @Mock
 //    Activity activity;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks (this);
+//         TestComponent component = DaggerTestComponent.builder()
+//            .build();
+//        component.inject(this);
+        super.setUp ();
+        getAppComponent ().inject (this);
+//        MockitoAnnotations.initMocks (this);
         point = new Point ();
         trace = new Trace ();
         Configuration dbConfiguration = new Configuration.Builder (Cache.getContext ())
@@ -137,35 +149,34 @@ public class ExampleUnitTest {
                 System.out.println ("adding " + namePoint);
             }
         }
-        mapsActivity = Robolectric.buildActivity (MapsActivity.class)
-                .create ()
-                .start () // no activity
-                .get ();
-        geoPositionActivity = Robolectric.buildActivity (GeoPositionActivity.class)
-                .create ()
-                .start ()
-                .get ();
-        latLngActivity = Robolectric.buildActivity (LatLngActivity.class)
-                .create ()
-                .start ()
-                .get ();
-        mainActivity = Robolectric.buildActivity (MainActivity.class)
-                .create ()
-                .start ()
-                .get ();
-        traceActivity = Robolectric.buildActivity (TraceActivity.class)
-                .create ()
-                .start ()
-                .get ();
-        settingsActivity = Robolectric.buildActivity (SettingsActivity.class)
-                .create ()
-                .start ()
-                .get ();
+//        mapsActivity = Robolectric.buildActivity (MapsActivity.class)
+//                .create ()
+//                .start () // no activity
+//                .get ();
+//        geoPositionActivity = Robolectric.buildActivity (GeoPositionActivity.class)
+//                .create ()
+//                .start ()
+//                .get ();
+//        latLngActivity = Robolectric.buildActivity (LatLngActivity.class)
+//                .create ()
+//                .start ()
+//                .get ();
+//        mainActivity = Robolectric.buildActivity (MainActivity.class)
+//                .create ()
+//                .start ()
+//                .get ();
+//        traceActivity = Robolectric.buildActivity (TraceActivity.class)
+//                .create ()
+//                .start ()
+//                .get ();
+//        settingsActivity = Robolectric.buildActivity (SettingsActivity.class)
+//                .create ()
+//                .start ()
+//                .get ();
     }
 
 
-
-//    @Test
+    //    @Test
 //    public void testNextView() {
 //        System.out.println ("----- mapsActivity.nextView(vals[i]):");
 //        String[] vals = {MapsActivity.HOME, MapsActivity.GEO
@@ -459,21 +470,14 @@ public class ExampleUnitTest {
 //            return intent[0];
 //        }).when (activity).startActivity (any ());
 
+        String[] name = new String[1];
+        when (panelHomeVM.editItem (anyString (), anyByte (), anyByte ()))
+                .thenAnswer (invocation -> {
+                    name[0] = invocation.getArgumentAt (0, String.class);
+                    return 0;
+                });
 
-        FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
-        launcher.moveToState (Lifecycle.State.RESUMED);
-        launcher.onFragment (fragment1 -> {
-            String[] name = new String[1];
-            fragment1.viewModel.editTraces ();
-//fragment1.getLayoutInflater ().inflate (R.id.baseScanBarcode_startButton, null).callOnClick ();
-            when (panelHomeVM.editItem (anyString (),anyByte (),anyByte ()))
-                    .thenAnswer (invocation -> {
-                        name[0] = invocation.getArgumentAt (0, String.class);
-                        return null;
-                    });
-                    System.out.println ("String :"+name[0]);
-
-        });
+        System.out.println ("String :" + name[0]);
 
 //        new PanelHomeVM (new IActivity () {
 //            @Override
@@ -501,6 +505,7 @@ public class ExampleUnitTest {
 //                return null;
 //            }
 //        }).editTraces ();
+        home.viewModel.editTraces ();
         System.out.println ("initComponent:" + intent[0]);
 //        System.out.println ("initComponent:" + intent[0].getComponent ());
 
