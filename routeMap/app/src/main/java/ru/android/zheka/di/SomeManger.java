@@ -1,4 +1,4 @@
 package ru.android.zheka.di;
 
-class SomeManger {
+public class SomeManger {
 }

@@ -6,6 +6,7 @@ import com.activeandroid.Configuration;
 
 //import android.app.Activity;
 ;
+import android.app.Activity;
 import android.content.Intent;
 import android.providers.settings.GlobalSettingsProto;
 
@@ -32,7 +33,7 @@ import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
-import it.cosenonjaviste.daggermock.DaggerMockRule;
+import androidx.test.platform.app.InstrumentationRegistry;
 import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Point;
@@ -40,13 +41,8 @@ import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
 //
-import ru.android.zheka.di.AppComponent;
-import ru.android.zheka.di.DaggerAppComponent;
-import ru.android.zheka.di.HomeModule;
 import ru.android.zheka.fragment.Home;
 
-import ru.android.zheka.model.HomeModel;
-import ru.android.zheka.model.IHomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
@@ -63,6 +59,8 @@ import static org.mockito.Mockito.when;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import junit.framework.Assert;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -73,11 +71,11 @@ import javax.inject.Inject;
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
 @RunWith(RobolectricTestRunner.class)
-        //,shadows = {
+//,shadows = {
 //		ShadowActivity.class
-        //ShadowSupportMapFragment.class
-        //ShadowCamera.class
-        //,ShadowGooglePlayServicesUtil.class
+//ShadowSupportMapFragment.class
+//ShadowCamera.class
+//,ShadowGooglePlayServicesUtil.class
 //		ShadowMapsActivity.class
 //}
 
@@ -91,40 +89,54 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
     Fragment fragment;
     Point point;
     Trace trace;
+    @Inject
+    PanelHomeVM panelHomeVM;
+IActivity view;
+@Inject
+IPanelHomeVM ipanelHomeVM;
+@Inject
+    Home home;
+
+//    {
+//        view = new Home ();
+//
+//        realObj = new PanelHomeVM (view, new HomeModel (view));
+//    }
+
 //    @Rule
 //    public MockitoRule mockitoRule = MockitoJUnit.rule ();
-@Rule public final DaggerMockRule <AppComponent> mockitoRule = new DaggerMockRule<> (AppComponent.class, new HomeModule () {
-    @Override
-    public IPanelHomeVM bindHome(PanelHomeVM vm) {
-        IActivity view = bindActivity (null);
-        return new PanelHomeVM ( view, new HomeModel (view));
-    }
+//    @Rule public final DaggerMockRule <TestAppComponent> mockitoRule = new DaggerMockRule<> (TestAppComponent.class, new TestApplicationModule (panelHomeVM) )
+//        .set (component -> {
+//
+//        });
 
-    @Override
-    public IActivity bindActivity(Home fragment) {
-        return new Home ();
-    }
-
-    @Override
-    public IHomeModel bindHomeModel(HomeModel view) {
-        return view;
-    }
-})
-        .set(new DaggerMockRule.ComponentSetter<AppComponent>() {
-            @Override public void setComponent(AppComponent component) {
-//                 androidx.test.core.app.ApplicationProvider.getApplicationContext()
-//                        .setComponent(component);
-                FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
-                launcher.moveToState (Lifecycle.State.RESUMED);
-                launcher.onFragment (fragment1 -> {
-                    home = fragment1;
-                });
-            }
-        });
-    @Mock
-    PanelHomeVM panelHomeVM;
-
-    Home home;
+//    @Override
+//    public IPanelHomeVM bindHome(PanelHomeVM vm) {
+//        IActivity view = bindActivity (null);
+//        return new PanelHomeVM ( view, new HomeModel (view));
+//    }
+//
+//    @Override
+//    public IActivity bindActivity(Home fragment) {
+//        return new Home ();
+//    }
+//
+//    @Override
+//    public IHomeModel bindHomeModel(HomeModel view) {
+//        return view;
+//    }
+//})
+//        .set(new DaggerMockRule.ComponentSetter<AppComponent>() {
+//            @Override public void setComponent(AppComponent component) {
+////                 androidx.test.core.app.ApplicationProvider.getApplicationContext()
+////                        .setComponent(component);
+//                FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
+//                launcher.moveToState (Lifecycle.State.RESUMED);
+//                launcher.onFragment (fragment1 -> {
+//                    home = fragment1;
+//                });
+//            }
+//        });
 
 //    @Mock
 //    Activity activity;
@@ -135,10 +147,19 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
 //            .build();
 //        component.inject(this);
         super.setUp ();
-        getAppComponent ().inject (this);
+
+//        getAppComponent ().inject (this)
+
 //        MockitoAnnotations.initMocks (this);
-        point = new Point ();
-        trace = new Trace ();
+        RobolectricMainApp app = (RobolectricMainApp) InstrumentationRegistry.getInstrumentation ().getTargetContext ();
+        TestAppComponent appComponent = DaggerTestAppComponent.builder ()
+                .appModule (new TestApplicationModule ((PanelHomeVM) ipanelHomeVM))
+                .application(app)
+                .build();
+//                .create (app)
+//                .inject (app);
+        appComponent.inject (this);
+
         Configuration dbConfiguration = new Configuration.Builder (Cache.getContext ())
                 .setDatabaseName ("Navi.db")
                 .addModelClasses (ru.android.zheka.db.Config.class, Point.class, Trace.class)
@@ -146,6 +167,8 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
                 .create ();
         ActiveAndroid.initialize (dbConfiguration);
         Application.initConfig ();
+        point = new Point ();
+        trace = new Trace ();
         String[] names = {"1", "2"};
         for (int i = 0; i < names.length; i++) {
             String namePoint = names[i];
@@ -194,6 +217,57 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
 //                .get ();
     }
 
+    @Test
+    public void testPanelSettings() {
+        String[] name = new String[1];
+        when (panelHomeVM.editItem (anyString (), anyByte (), anyByte ()))
+                .thenAnswer (invocation -> {
+                    name[0] = invocation.getArgumentAt (0, String.class);
+                    return 0;
+                });
+        Boolean[] catcher = new Boolean[1];
+        catcher[0]=false;
+        doAnswer (invocation -> {
+            catcher[0]=true;
+            return null;
+        }).when (ipanelHomeVM).editTraces();
+
+//fragment scenario is not work
+            home.viewModel.editTraces ();
+//        realObj.editTraces ();
+        System.out.println ("String :" + name[0]);
+        Assert.assertTrue (catcher[0]);
+        System.out.println ("Home :"+home);
+        System.out.println ("panelHomeVM :"+panelHomeVM);
+        System.out.println ("ipanelHomeVM :"+ ipanelHomeVM);
+    }
+//        @Test
+//        public void testPanelSettings() {
+//            Intent[] intent = new Intent[1];
+////        doAnswer (invocation -> {
+////            intent[0] = invocation.getArgumentAt (0, Intent.class);
+////            return intent[0];
+////        }).when (activity).startActivity (any ());
+//
+//            String[] name = new String[1];
+//            when (panelHomeVM.editItem (anyString (), anyByte (), anyByte ()))
+//                    .thenAnswer (invocation -> {
+//                        name[0] = invocation.getArgumentAt (0, String.class);
+//                        return 0;
+//                    });
+//            FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
+//            launcher.moveToState (Lifecycle.State.RESUMED);
+//            launcher.onFragment (fragment1 -> {
+//                home = fragment1;
+//            });
+//            home.viewModel.editTraces ();
+//            System.out.println ("home :"+home);
+//            System.out.println ("String :" + name[0]);
+//            System.out.println ("initComponent:" + intent[0]);
+////        System.out.println ("initComponent:" + intent[0].getComponent ());
+//
+////        Assert.assertEquals ("AddressActivity", intent[0].getComponent ().getClassName ());
+//        }
 
     //    @Test
 //    public void testNextView() {
@@ -481,53 +555,5 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
 //        org.junit.Assert.assertTrue (SettingsActivity.pull (pipeline5, cmd2)
 //                .contentEquals (""));
 //    }
-    @Test
-    public void testPanelSettings() {
-        Intent[] intent = new Intent[1];
-//        doAnswer (invocation -> {
-//            intent[0] = invocation.getArgumentAt (0, Intent.class);
-//            return intent[0];
-//        }).when (activity).startActivity (any ());
 
-        String[] name = new String[1];
-        when (panelHomeVM.editItem (anyString (), anyByte (), anyByte ()))
-                .thenAnswer (invocation -> {
-                    name[0] = invocation.getArgumentAt (0, String.class);
-                    return 0;
-                });
-
-        System.out.println ("String :" + name[0]);
-
-//        new PanelHomeVM (new IActivity () {
-//            @Override
-//            public Activity getActivity() {
-//                return mainActivity;
-//            }
-//
-//            @Override
-//            public void showError(Throwable throwable) {
-//
-//            }
-//
-//            @Override
-//            public Context getContext() {
-//                return mainActivity;
-//            }
-//
-//            @Override
-//            public void switchToFragment(int fragmentId, @NonNull Fragment fragment) {
-//
-//            }
-//
-//            @Override
-//            public FragmentManager getManager() {
-//                return null;
-//            }
-//        }).editTraces ();
-        home.viewModel.editTraces ();
-        System.out.println ("initComponent:" + intent[0]);
-//        System.out.println ("initComponent:" + intent[0].getComponent ());
-
-//        Assert.assertEquals ("AddressActivity", intent[0].getComponent ().getClassName ());
-    }
 }

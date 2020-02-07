@@ -11,6 +11,11 @@ import ru.android.zheka.vm.PanelHomeVM;
 public final class Home extends AbstractFragment <HomeFragmentBinding> {
 
     @Inject
+    public Home() {
+
+    }
+
+    @Inject
     public IPanelHomeVM viewModel;
 
     @Override
