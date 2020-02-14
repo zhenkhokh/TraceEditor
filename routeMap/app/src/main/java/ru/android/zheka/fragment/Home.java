@@ -2,18 +2,12 @@ package ru.android.zheka.fragment;
 
 import javax.inject.Inject;
 
-import ru.android.zheka.gmapexample1.databinding.HomeFragmentBinding;
 import ru.android.zheka.coreUI.AbstractFragment;
 import ru.android.zheka.gmapexample1.R;
+import ru.android.zheka.gmapexample1.databinding.HomeFragmentBinding;
 import ru.android.zheka.vm.IPanelHomeVM;
-import ru.android.zheka.vm.PanelHomeVM;
 
 public final class Home extends AbstractFragment <HomeFragmentBinding> {
-
-    @Inject
-    public Home() {
-
-    }
 
     @Inject
     public IPanelHomeVM viewModel;

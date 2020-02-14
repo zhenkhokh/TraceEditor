@@ -1,10 +1,7 @@
 package ru.android.zheka.gmapexample1;
 
 import org.junit.Before;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import ru.android.zheka.di.DaggerAppComponent;
 
 @Config(manifest = "AndroidManifest.xml", sdk = 28,application = RobolectricMainApp.class)
 public class BaseRobolectricTest {

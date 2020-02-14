@@ -1,13 +1,12 @@
 package ru.android.zheka.gmapexample1;
 
 import android.content.Context;
-//import android.support.multidex.MultiDexApplication;
-
-import java.lang.reflect.Field;
-import java.util.ConcurrentModificationException;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
+
+import java.lang.reflect.Field;
+import java.util.ConcurrentModificationException;
 
 import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
@@ -18,11 +17,10 @@ import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
-import ru.android.zheka.di.AppComponent;
 import ru.android.zheka.di.DaggerAppComponent;
-import ru.android.zheka.di.HomeModule;
-import ru.android.zheka.fragment.Home;
 import ru.android.zheka.route.Routing;
+
+//import android.support.multidex.MultiDexApplication;
 
 //TODO use it for activeandroid
 public class Application extends //android.app.Application
@@ -116,6 +114,7 @@ public class Application extends //android.app.Application
     protected AndroidInjector <? extends DaggerApplication> applicationInjector() {
         return DaggerAppComponent.builder ()
                 .application (this)
+                .appModule ()
                 .build ();
     }
 }

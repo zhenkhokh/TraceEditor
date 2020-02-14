@@ -17,7 +17,7 @@ public interface AppComponent extends AndroidInjector <Application> {
     interface Builder {
         @BindsInstance
         AppComponent.Builder application(Application application);
-        Builder appModule(AppModule appModule);
+        AppComponent.Builder appModule(AppModule appModule);
 //        Builder homeModule(HomeModule appModule);
 
         AppComponent build();

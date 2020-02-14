@@ -1,39 +1,34 @@
 package ru.android.zheka.gmapexample1;
 
+import org.mockito.Mockito;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.android.zheka.coreUI.IActivity;
-import ru.android.zheka.di.AppModule;
-import ru.android.zheka.di.HomeBinding;
-import ru.android.zheka.fragment.Home;
+import ru.android.zheka.model.IHomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
-import org.mockito.Mockito;
 
 @Module
-public class TestApplicationModule extends AppModule {
-    private final PanelHomeVM panelHomeVM;
+public class TestApplicationModule  {
+    //    private IActivity view = Mockito.mock(IActivity.class);
 
-    public TestApplicationModule(PanelHomeVM panelHomeVM) {
-        this.panelHomeVM = panelHomeVM;
-    }
-    @Provides
-    @Singleton
-    public PanelHomeVM provideVM(){
-        return Mockito.mock(PanelHomeVM.class);//panelHomeVM;
-    }
+    private IHomeModel model = Mockito.mock(IHomeModel.class);
 
     @Provides
     @Singleton
-    public IPanelHomeVM provideIVM(){
-        return Mockito.mock(IPanelHomeVM.class);//panelHomeVM
+    public IPanelHomeVM bindHome() {
+        return new PanelHomeVM(model);
     }
+
+//    @Binds
+//    @ActivityScope//TODO
+//    public abstract IActivity bindActivity(Home fragment);
 
     @Provides
     @Singleton
-    public IActivity provideHome(){
-        return Mockito.mock(Home.class);//panelHomeVM;
+    public IHomeModel bindHomeModel() {
+        return model;
     }
 }

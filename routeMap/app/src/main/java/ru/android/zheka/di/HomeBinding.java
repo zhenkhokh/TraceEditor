@@ -6,7 +6,7 @@ import ru.android.zheka.fragment.Home;
 @Module
 public abstract class HomeBinding {
         @ActivityScope
-        @ContributesAndroidInjector(modules = { HomeModule.class//AppModule.class
+        @ContributesAndroidInjector(modules = { HomeBindingModule.class
         })
         abstract Home homeFragment();
 

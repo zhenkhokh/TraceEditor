@@ -1,71 +1,35 @@
 package ru.android.zheka.gmapexample1;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Cache;
-import com.activeandroid.Configuration;
-
-//import android.app.Activity;
-;
-import android.app.Activity;
-import android.content.Intent;
-import android.providers.settings.GlobalSettingsProto;
-
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-//
-
-
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-//import org.robolectric.RobolectricTestRunner;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
+
+import ru.android.zheka.coreUI.IActivity;
+import ru.android.zheka.db.Point;
+import ru.android.zheka.db.Trace;
+import ru.android.zheka.fragment.Home;
+import ru.android.zheka.gmapexample1.gmapexample1.IExampleUnitTest;
+import ru.android.zheka.vm.IPanelHomeVM;
+import ru.android.zheka.vm.PanelHomeVM;
+
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
+
+//import android.app.Activity;
+;
+//
+//import org.robolectric.RobolectricTestRunner;
 //import org.robolectric.shadows.ShadowActivity;
 //import org.robolectric.shadows.ShadowCamera;
 //import org.robolectric.shadows.gms.ShadowGooglePlayServicesUtil;
 //import org.robolectric.shadows.gms.common.ShadowGoogleApiAvailability;
-
-import androidx.fragment.app.Fragment;
-
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.platform.app.InstrumentationRegistry;
-import ru.android.zheka.coreUI.IActivity;
-import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Point;
-import ru.android.zheka.db.Trace;
-import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.db.UtileTracePointsSerializer;
 //
-import ru.android.zheka.fragment.Home;
-
-import ru.android.zheka.vm.IPanelHomeVM;
-import ru.android.zheka.vm.PanelHomeVM;
-
-import static org.fest.assertions.api.ANDROID.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyByte;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
 //import org.robolectric.shadows.ShadowActivity;
-
-
-import com.google.android.gms.maps.model.LatLng;
-
-import junit.framework.Assert;
-
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import javax.inject.Inject;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -80,21 +44,21 @@ import javax.inject.Inject;
 //}
 
 public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnitTest {
-    MapsActivity mapsActivity = null;
-    GeoPositionActivity geoPositionActivity = null;
-    LatLngActivity latLngActivity = null;
-    MainActivity mainActivity = null;
-    TraceActivity traceActivity = null;
-    SettingsActivity settingsActivity = null;
-    Fragment fragment;
+//    MapsActivity mapsActivity = null;
+//    GeoPositionActivity geoPositionActivity = null;
+//    LatLngActivity latLngActivity = null;
+//    MainActivity mainActivity = null;
+//    TraceActivity traceActivity = null;
+//    SettingsActivity settingsActivity = null;
+//    Fragment fragment;
     Point point;
     Trace trace;
-    @Inject
+    @Mock
     PanelHomeVM panelHomeVM;
 IActivity view;
-@Inject
+@Mock
 IPanelHomeVM ipanelHomeVM;
-@Inject
+//@InjectFromComponent
     Home home;
 
 //    {
@@ -105,10 +69,7 @@ IPanelHomeVM ipanelHomeVM;
 
 //    @Rule
 //    public MockitoRule mockitoRule = MockitoJUnit.rule ();
-//    @Rule public final DaggerMockRule <TestAppComponent> mockitoRule = new DaggerMockRule<> (TestAppComponent.class, new TestApplicationModule (panelHomeVM) )
-//        .set (component -> {
-//
-//        });
+    @Rule public final RobolectricMockTestRule mockitoRule = new RobolectricMockTestRule();
 
 //    @Override
 //    public IPanelHomeVM bindHome(PanelHomeVM vm) {
@@ -151,46 +112,48 @@ IPanelHomeVM ipanelHomeVM;
 //        getAppComponent ().inject (this)
 
 //        MockitoAnnotations.initMocks (this);
-        RobolectricMainApp app = (RobolectricMainApp) InstrumentationRegistry.getInstrumentation ().getTargetContext ();
-        TestAppComponent appComponent = DaggerTestAppComponent.builder ()
-                .appModule (new TestApplicationModule ((PanelHomeVM) ipanelHomeVM))
-                .application(app)
-                .build();
+
+//        RobolectricMainApp app = (RobolectricMainApp) InstrumentationRegistry.getInstrumentation ().getTargetContext ();
+//        TestAppComponent appComponent = DaggerTestAppComponent.builder ()
+//                .appModule (new TestApplicationModule ((PanelHomeVM) ipanelHomeVM))
+//                .application(app)
+//                .build();
 //                .create (app)
 //                .inject (app);
-        appComponent.inject (this);
+//        appComponent.inject (this);
 
-        Configuration dbConfiguration = new Configuration.Builder (Cache.getContext ())
-                .setDatabaseName ("Navi.db")
-                .addModelClasses (ru.android.zheka.db.Config.class, Point.class, Trace.class)
-                .addTypeSerializers (UtilePointSerializer.class, UtileTracePointsSerializer.class)
-                .create ();
-        ActiveAndroid.initialize (dbConfiguration);
-        Application.initConfig ();
-        point = new Point ();
-        trace = new Trace ();
-        String[] names = {"1", "2"};
-        for (int i = 0; i < names.length; i++) {
-            String namePoint = names[i];
-            //dataTmp.add(map);
-            Point p = new Point ();
-            p.name = namePoint;
-            p.data = (LatLng) new UtilePointSerializer ().deserialize ("55.9896291,37.2334412");
-            //p.save();
-            System.out.println ("add point in latlng");
-            if (!DbFunctions.exsistPoint (namePoint)) {
-                try {
-                    DbFunctions.add (p);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace ();
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace ();
-                } catch (InstantiationException e) {
-                    e.printStackTrace ();
-                }
-                System.out.println ("adding " + namePoint);
-            }
-        }
+//        Configuration dbConfiguration = new Configuration.Builder (RobolectricMockTestRule.getApplication ())
+//                .setDatabaseName ("Navi.db")
+//                .addModelClasses (ru.android.zheka.db.Config.class, Point.class, Trace.class)
+//                .addTypeSerializers (UtilePointSerializer.class, UtileTracePointsSerializer.class)
+//                .create ();
+//        ActiveAndroid.initialize (dbConfiguration);
+//        Application.initConfig ();
+//        point = new Point ();
+//        trace = new Trace ();
+//        String[] names = {"1", "2"};
+//        for (int i = 0; i < names.length; i++) {
+//            String namePoint = names[i];
+//            //dataTmp.add(map);
+//            Point p = new Point ();
+//            p.name = namePoint;
+//            p.data = (LatLng) new UtilePointSerializer ().deserialize ("55.9896291,37.2334412");
+//            //p.save();
+//            System.out.println ("add point in latlng");
+//            if (!DbFunctions.exsistPoint (namePoint)) {
+//                try {
+//                    DbFunctions.add (p);
+//                } catch (IllegalAccessException e) {
+//                    e.printStackTrace ();
+//                } catch (IllegalArgumentException e) {
+//                    e.printStackTrace ();
+//                } catch (InstantiationException e) {
+//                    e.printStackTrace ();
+//                }
+//                System.out.println ("adding " + namePoint);
+//            }
+//        }
+
 //        mapsActivity = Robolectric.buildActivity (MapsActivity.class)
 //                .create ()
 //                .start () // no activity
@@ -216,27 +179,19 @@ IPanelHomeVM ipanelHomeVM;
 //                .start ()
 //                .get ();
     }
+    @Test
+    public void testInjectFromComponent() {
+        assert mockitoRule.vm.equals (ipanelHomeVM);
+    }
 
     @Test
     public void testPanelSettings() {
-        String[] name = new String[1];
-        when (panelHomeVM.editItem (anyString (), anyByte (), anyByte ()))
-                .thenAnswer (invocation -> {
-                    name[0] = invocation.getArgumentAt (0, String.class);
-                    return 0;
-                });
-        Boolean[] catcher = new Boolean[1];
-        catcher[0]=false;
-        doAnswer (invocation -> {
-            catcher[0]=true;
-            return null;
-        }).when (ipanelHomeVM).editTraces();
-
+        CatchAnswer<Boolean> catcher = null;
+        doAnswer (invocation->null).when (ipanelHomeVM).editTraces();
 //fragment scenario is not work
-            home.viewModel.editTraces ();
-//        realObj.editTraces ();
-        System.out.println ("String :" + name[0]);
-        Assert.assertTrue (catcher[0]);
+        mockitoRule.vm.editTraces ();
+        //        realObj.editTraces ();
+        verify (ipanelHomeVM).editTraces ();
         System.out.println ("Home :"+home);
         System.out.println ("panelHomeVM :"+panelHomeVM);
         System.out.println ("ipanelHomeVM :"+ ipanelHomeVM);
@@ -556,4 +511,17 @@ IPanelHomeVM ipanelHomeVM;
 //                .contentEquals (""));
 //    }
 
+    class CatchAnswer<T> implements Answer<T> {
+        private T result;
+
+        @Override
+        public T answer(InvocationOnMock invocation) throws Throwable {
+            result = (T) invocation.callRealMethod ();
+            return result;
+        }
+
+        public T getResult(){
+            return result;
+        }
+    }
 }

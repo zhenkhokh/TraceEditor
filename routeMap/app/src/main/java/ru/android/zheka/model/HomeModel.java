@@ -14,7 +14,7 @@ public class HomeModel extends PanelModel implements IHomeModel {
 
     @Inject
     public HomeModel(IActivity view) {
-        super (view.getContext ());
+        super (view);
     }
 
 //    @Override

@@ -1,15 +1,28 @@
 package ru.android.zheka.di;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.android.zheka.gmapexample1.Application;
 
-@Module//(includes = {HomeModule.class})
+@Module(includes = {HomeModule.class})
 public class AppModule {
+    private final Context context;
+
+    public AppModule(Application app) {
+        this.context = app.getApplicationContext ();
+    }
+
     @Singleton
     @Provides
     public SomeManger bindSomeManger() {
-        return new SomeManger();
+        return new SomeManger ();
     }
+
+    @Singleton
+    @Provides
+    public Context provideContext() {return context;}
 }
