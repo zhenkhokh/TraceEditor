@@ -13,10 +13,4 @@ public class BaseRobolectricTest {
 //        application = androidx.test.core.app.ApplicationProvider.getApplicationContext ();
 //        application.provider.init(this);
     }
-
-    public RobolectricAppComponent getAppComponent() {
-        return null;//((RobolectricAppComponent)application.component)
-                //.testModule(new TestModule ())
-    //            .build();//(RobolectricAppComponent) application.applicationInjector ();
-    }
 }

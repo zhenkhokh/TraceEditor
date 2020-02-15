@@ -17,6 +17,7 @@ import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
 import ru.android.zheka.db.UtilePointSerializer;
 import ru.android.zheka.db.UtileTracePointsSerializer;
+import ru.android.zheka.di.AppModule;
 import ru.android.zheka.di.DaggerAppComponent;
 import ru.android.zheka.route.Routing;
 
@@ -114,7 +115,7 @@ public class Application extends //android.app.Application
     protected AndroidInjector <? extends DaggerApplication> applicationInjector() {
         return DaggerAppComponent.builder ()
                 .application (this)
-                .appModule ()
+                .appModule (new AppModule (this))
                 .build ();
     }
 }

@@ -10,8 +10,6 @@ import android.widget.TextView;
 import java.io.InputStream;
 import java.util.Scanner;
 
-import javax.inject.Inject;
-
 import io.reactivex.functions.Consumer;
 import ru.android.zheka.coreUI.ButtonHandler;
 import ru.android.zheka.coreUI.IActivity;
@@ -32,13 +30,11 @@ import static ru.android.zheka.gmapexample1.R.string;
 
 public class PanelHomeVM implements IPanelHomeVM {
 
-    @Inject
     IActivity view;
-
-    @Inject
     IHomeModel model;
 
-    public PanelHomeVM(IHomeModel model) {
+    public PanelHomeVM(IActivity view, IHomeModel model) {
+        this.view = view;
         this.model = model;
     }
 

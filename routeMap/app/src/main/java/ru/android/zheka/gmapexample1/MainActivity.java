@@ -1,39 +1,43 @@
 package ru.android.zheka.gmapexample1;
 
-import com.activeandroid.query.Delete;
-
-import androidx.databinding.ViewDataBinding;
-import ru.android.zheka.coreUI.AbstractActivity;
-import ru.android.zheka.fragment.Home;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.TextView;
 
-import roboguice.inject.InjectView;
+import com.activeandroid.query.Delete;
+
+import javax.inject.Inject;
+
+import androidx.databinding.ViewDataBinding;
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
+import ru.android.zheka.coreUI.AbstractActivity;
 import ru.android.zheka.db.Config;
 import ru.android.zheka.db.DbFunctions;
 import ru.android.zheka.db.Trace;
-import ru.android.zheka.gmapexample1.edit.EditModel;
+import ru.android.zheka.fragment.Home;
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler;
 import ru.android.zheka.jsbridge.JsCallable;
 
-import java.io.InputStream;
-import java.util.Scanner;
-
 public class MainActivity extends
         AbstractActivity
+    implements HasAndroidInjector
         //RoboActivity
         {
+            @Inject
+            DispatchingAndroidInjector <Object> androidInjector;
+
+            @Override
+            public AndroidInjector <Object> androidInjector() {
+                return androidInjector;
+            }
+
     public static String googleKey = "";
 	public static final String SETTINGS = "settings";
 	public static final String EDIT_TRACE = "editTrace";
@@ -74,6 +78,7 @@ public class MainActivity extends
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject (this);//TODO
         super.onCreate(savedInstanceState);
         Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
         if (Application.isFieldNull (config)){

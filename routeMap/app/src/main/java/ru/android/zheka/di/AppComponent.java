@@ -9,8 +9,10 @@ import dagger.android.support.AndroidSupportInjectionModule;
 import ru.android.zheka.gmapexample1.Application;
 
 @Singleton
-@Component(modules = {AndroidSupportInjectionModule.class
-        , HomeBinding.class, AppModule.class
+@Component(modules = {AndroidSupportInjectionModule.class,
+        AppModule.class,
+        HomeBinding.class,
+        MainBinding.class
 })
 public interface AppComponent extends AndroidInjector <Application> {
     @Component.Builder

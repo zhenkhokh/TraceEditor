@@ -7,7 +7,7 @@ import ru.android.zheka.gmapexample1.R;
 import ru.android.zheka.gmapexample1.databinding.HomeFragmentBinding;
 import ru.android.zheka.vm.IPanelHomeVM;
 
-public final class Home extends AbstractFragment <HomeFragmentBinding> {
+public class Home extends AbstractFragment <HomeFragmentBinding> {
 
     @Inject
     public IPanelHomeVM viewModel;

@@ -3,8 +3,6 @@ package ru.android.zheka.coreUI;
 import android.content.Context;
 import android.os.Bundle;
 
-import javax.inject.Inject;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -12,12 +10,13 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import roboguice.activity.RoboFragmentActivity;
 
-public abstract class AbstractActivity <B extends ViewDataBinding> extends
+public abstract class AbstractActivity<B extends ViewDataBinding> extends
         AppCompatActivity
         //RoboFragmentActivity
-    implements IActivity {
+        implements IActivity {
+
+
     private ErrorControl error;
     private B binding;
 
@@ -34,28 +33,28 @@ public abstract class AbstractActivity <B extends ViewDataBinding> extends
     @Override
     protected void onCreate(Bundle savedState) {
         super.onCreate (savedState);
-        error = new ErrorControl(this);
-        binding = DataBindingUtil.setContentView(this, getLayoutId());
+        error = new ErrorControl (this);
+        binding = DataBindingUtil.setContentView (this, getLayoutId ());
     }
 
     @Override
     protected void onStart() {
-        super.onStart();
-        initComponent();
-        onInitBinding(binding);
+        super.onStart ();
+        initComponent ();
+        onInitBinding (binding);
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-        onResumeBinding(binding);
+        super.onResume ();
+        onResumeBinding (binding);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        onDestroyBinding(binding);
-        binding.unbind();
+        super.onDestroy ();
+        onDestroyBinding (binding);
+        binding.unbind ();
     }
 
     @Override

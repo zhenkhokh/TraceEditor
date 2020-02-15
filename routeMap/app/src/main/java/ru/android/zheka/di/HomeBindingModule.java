@@ -1,7 +1,6 @@
 package ru.android.zheka.di;
 
-import android.content.Context;
-
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import ru.android.zheka.coreUI.IActivity;
@@ -11,16 +10,12 @@ import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
 @Module
-public class HomeBindingModule {
-    @Provides
-    @ActivityScope
-    public IActivity bindActivity(Context context) {
-        return new Home ();
-    }
+public abstract class HomeBindingModule {
+    @Binds
+    public abstract IActivity bindActivity(Home context);
 
     @Provides
-    @ActivityScope
-    public IPanelHomeVM bindHome(HomeModel model) {
-        return new PanelHomeVM (model);
+    public static IPanelHomeVM bindHome(HomeModel model, IActivity view) {
+        return new PanelHomeVM (view, model);
     }
 }

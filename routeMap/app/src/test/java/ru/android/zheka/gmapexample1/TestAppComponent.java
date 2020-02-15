@@ -4,17 +4,18 @@ import javax.inject.Singleton;
 
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.android.AndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
-import ru.android.zheka.di.HomeBinding;
+import ru.android.zheka.fragment.Home;
 import ru.android.zheka.vm.IPanelHomeVM;
 
 @Singleton
 @Component(modules = {AndroidSupportInjectionModule.class,
-        HomeBinding.class,
+        TestHomeBinding.class,
         TestApplicationModule.class,
 //        AppModule.class
 })
-public interface TestAppComponent {
+public interface TestAppComponent extends AndroidInjector<RobolectricMainApp> {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -27,4 +28,5 @@ public interface TestAppComponent {
     }
     void inject(ExampleUnitTest app);
     IPanelHomeVM homeVM();
+    Home homeFragment();
 }

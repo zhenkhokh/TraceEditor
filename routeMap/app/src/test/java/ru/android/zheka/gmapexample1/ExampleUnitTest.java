@@ -9,6 +9,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.lifecycle.Lifecycle;
 import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
@@ -179,6 +181,16 @@ IPanelHomeVM ipanelHomeVM;
 //                .start ()
 //                .get ();
     }
+    @Test
+    public void testFragment() {
+        FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
+        launcher.moveToState (Lifecycle.State.RESUMED);
+        launcher.onFragment (fragment1 -> {
+            home = fragment1;
+        });
+        assert home.viewModel.equals (ipanelHomeVM);
+    }
+
     @Test
     public void testInjectFromComponent() {
         assert mockitoRule.vm.equals (ipanelHomeVM);

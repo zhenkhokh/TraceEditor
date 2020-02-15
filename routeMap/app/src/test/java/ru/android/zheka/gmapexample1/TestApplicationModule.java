@@ -6,20 +6,21 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.android.zheka.fragment.Home;
 import ru.android.zheka.model.IHomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
 @Module
 public class TestApplicationModule  {
-    //    private IActivity view = Mockito.mock(IActivity.class);
+        private Home view = Mockito.mock(Home.class);
 
     private IHomeModel model = Mockito.mock(IHomeModel.class);
 
     @Provides
     @Singleton
     public IPanelHomeVM bindHome() {
-        return new PanelHomeVM(model);
+        return new PanelHomeVM(view, model);
     }
 
 //    @Binds
@@ -31,4 +32,10 @@ public class TestApplicationModule  {
     public IHomeModel bindHomeModel() {
         return model;
     }
+
+//    @Provides
+//    public Home provideHome(){
+//        return view;
+//    }
+
 }
