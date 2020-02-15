@@ -199,6 +199,7 @@ dependencies {
     annotationProcessor di.daggerProcessor
     testAnnotationProcessor di.daggerProcessor
     annotationProcessor di.daggerAndroidProcessor
+    testAnnotationProcessor di.daggerAndroidProcessor
 
     testImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
     androidTestImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'

@@ -193,7 +193,7 @@ IPanelHomeVM ipanelHomeVM;
 
     @Test
     public void testInjectFromComponent() {
-        assert mockitoRule.vm.equals (ipanelHomeVM);
+        assert ipanelHomeVM != null && ipanelHomeVM.equals (mockitoRule.vm);
     }
 
     @Test

@@ -12,10 +12,12 @@ import ru.android.zheka.vm.IPanelHomeVM;
 @Singleton
 @Component(modules = {AndroidSupportInjectionModule.class,
         TestHomeBinding.class,
-        TestApplicationModule.class,
+        TestApplicationModule.class
 //        AppModule.class
 })
-public interface TestAppComponent extends AndroidInjector<RobolectricMainApp> {
+public interface TestAppComponent extends //AppComponent
+        AndroidInjector <RobolectricMainApp>
+{
     @Component.Builder
     interface Builder {
         @BindsInstance
