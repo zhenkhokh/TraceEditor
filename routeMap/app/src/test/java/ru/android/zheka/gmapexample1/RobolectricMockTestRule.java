@@ -15,13 +15,11 @@ public class RobolectricMockTestRule  extends DaggerMockRule <TestAppComponent> 
             public TestAppComponent.Builder customize(TestAppComponent.Builder builder) {
                 return builder.application (getApplication());
             }
-        }).set (new ComponentSetter <TestAppComponent> () {
-            @Override
-            public void setComponent(TestAppComponent component) {
+        }).set (component -> {
 //                component.inject (getApplication ());//TODO
                 vm = component.homeVM ();
             }
-        });
+        );
     }
 
     static public RobolectricMainApp getApplication() {

@@ -2,23 +2,13 @@ package ru.android.zheka.gmapexample1;
 
 import dagger.Module;
 
-@Module(includes = TestModule.class)
+@Module
 public class TestApplicationModule  {
-//    private Home view = Mockito.mock(Home.class);
-//    private IHomeModel model = Mockito.mock(IHomeModel.class);
-//
+
+
+//TODO
 //    @Provides
-//    public IPanelHomeVM bindHome(IActivity view) {
-//        return new PanelHomeVM(view, model);
+//    public Home provideHome(){
+//        return view;
 //    }
-//
-//    @Provides
-//    public IHomeModel bindHomeModel() {
-//        return model;
-//    }
-//
-////    @Provides
-////    public Home provideHome(){
-////        return new Home ();
-////    }
 }

@@ -8,7 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import ru.android.zheka.gmapexample1.Application;
 
-@Module(includes = {HomeModule.class})
+@Module
 public class AppModule {
     private final Context context;
 
