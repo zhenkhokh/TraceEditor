@@ -188,12 +188,14 @@ IPanelHomeVM ipanelHomeVM;
         launcher.onFragment (fragment1 -> {
             home = fragment1;
         });
-        assert home.viewModel.equals (ipanelHomeVM);
+        assert home.viewModel != null;
+        assert !home.viewModel.equals (ipanelHomeVM);
     }
 
     @Test
     public void testInjectFromComponent() {
-        assert ipanelHomeVM != null && ipanelHomeVM.equals (mockitoRule.vm);
+        assert ipanelHomeVM != null;
+        assert ipanelHomeVM.equals (mockitoRule.vm);
     }
 
     @Test

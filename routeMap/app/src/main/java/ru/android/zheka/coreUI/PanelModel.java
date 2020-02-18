@@ -1,5 +1,6 @@
 package ru.android.zheka.coreUI;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -34,8 +35,8 @@ public class PanelModel implements IPanelModel {
         return keyListener;
     }
 
-    public PanelModel(IActivity view) {
-        resources = view.getActivity ().getResources ();
+    public PanelModel(Context view) {
+        resources = view.getResources ();
         input = new ObservableField <> ("");
         keyListener = new ObservableField <> ();
         success = new ObservableField ();
