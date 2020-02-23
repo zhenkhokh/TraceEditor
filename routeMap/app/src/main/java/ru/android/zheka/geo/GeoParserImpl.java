@@ -12,8 +12,8 @@ public class GeoParserImpl extends GeoParser {
     }
 
     @Override
-    public GeoCoder parse() {
-        String url = "https://geocode-maps.yandex.ru/1.x/?geocode=";
+    public GeoCoder parse(String key) {
+        String url = "https://geocode-maps.yandex.ru/1.x/?apikey="+key+"&geocode=";
         StringBuilder sb = new StringBuilder ();
         sb.append (url);
         try {

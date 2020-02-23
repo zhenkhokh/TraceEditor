@@ -85,7 +85,7 @@ public class AddressActivity extends RoboActivity implements JsCallable {
                     geoCoder = new GeoParserImpl (region.getText ().toString ()
                             , city.getText ().toString ()
                             , street.getText ().toString ()
-                            , house.getText ().toString ()).parse ();
+                            , house.getText ().toString ()).parse (getString (R.string.yandex_geo_codec));
                 }catch (GeoParserImpl.YandexGeoCoderException e){
                     Toast.makeText (this,"Данные не получены, проверьте интернет соединение",30).show ();
                     return;
