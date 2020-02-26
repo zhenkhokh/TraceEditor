@@ -65,8 +65,8 @@ android {
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 26
-        versionName "2.9"
+        versionCode 26//27 next is 28
+        versionName "2.9"//2.9.1
         multiDexEnabled = true
         //robolectric
         javaCompileOptions {
@@ -210,6 +210,7 @@ dependencies {
     api rx.android
     api rx.java
     testImplementation test.mockito
+    androidTestImplementation test.mockito
     implementation test.fragment
 
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){

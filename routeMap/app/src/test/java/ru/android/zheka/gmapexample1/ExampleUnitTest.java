@@ -1,26 +1,12 @@
 package ru.android.zheka.gmapexample1;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.Lifecycle;
-import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.db.Point;
 import ru.android.zheka.db.Trace;
-import ru.android.zheka.fragment.Home;
-import ru.android.zheka.gmapexample1.gmapexample1.IExampleUnitTest;
-import ru.android.zheka.vm.IPanelHomeVM;
-import ru.android.zheka.vm.PanelHomeVM;
-
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
 
 //import android.app.Activity;
 ;
@@ -45,7 +31,7 @@ import static org.mockito.Mockito.verify;
 //		ShadowMapsActivity.class
 //}
 
-public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnitTest {
+public class ExampleUnitTest extends BaseRobolectricTest {
 //    MapsActivity mapsActivity = null;
 //    GeoPositionActivity geoPositionActivity = null;
 //    LatLngActivity latLngActivity = null;
@@ -55,13 +41,6 @@ public class ExampleUnitTest extends BaseRobolectricTest implements IExampleUnit
 //    Fragment fragment;
     Point point;
     Trace trace;
-    @Mock
-    PanelHomeVM panelHomeVM;
-IActivity view;
-@Mock
-IPanelHomeVM ipanelHomeVM;
-//@InjectFromComponent
-    Home home;
 
 //    {
 //        view = new Home ();
@@ -71,7 +50,6 @@ IPanelHomeVM ipanelHomeVM;
 
 //    @Rule
 //    public MockitoRule mockitoRule = MockitoJUnit.rule ();
-    @Rule public final RobolectricMockTestRule mockitoRule = new RobolectricMockTestRule();
 
 //    @Override
 //    public IPanelHomeVM bindHome(PanelHomeVM vm) {
@@ -182,34 +160,10 @@ IPanelHomeVM ipanelHomeVM;
 //                .get ();
     }
     @Test
-    public void testFragment() {
-        FragmentScenario <Home> launcher = FragmentScenario.launchInContainer (Home.class);
-        launcher.moveToState (Lifecycle.State.RESUMED);
-        launcher.onFragment (fragment1 -> {
-            home = fragment1;
-        });
-        assert home.viewModel != null;
-        assert !home.viewModel.equals (ipanelHomeVM);
+    public void someTest() {
+
     }
 
-    @Test
-    public void testInjectFromComponent() {
-        assert ipanelHomeVM != null;
-        assert ipanelHomeVM.equals (mockitoRule.vm);
-    }
-
-    @Test
-    public void testPanelSettings() {
-        CatchAnswer<Boolean> catcher = null;
-        doAnswer (invocation->null).when (ipanelHomeVM).editTraces();
-//fragment scenario is not work
-        mockitoRule.vm.editTraces ();
-        //        realObj.editTraces ();
-        verify (ipanelHomeVM).editTraces ();
-        System.out.println ("Home :"+home);
-        System.out.println ("panelHomeVM :"+panelHomeVM);
-        System.out.println ("ipanelHomeVM :"+ ipanelHomeVM);
-    }
 //        @Test
 //        public void testPanelSettings() {
 //            Intent[] intent = new Intent[1];
@@ -525,17 +479,4 @@ IPanelHomeVM ipanelHomeVM;
 //                .contentEquals (""));
 //    }
 
-    class CatchAnswer<T> implements Answer<T> {
-        private T result;
-
-        @Override
-        public T answer(InvocationOnMock invocation) throws Throwable {
-            result = (T) invocation.callRealMethod ();
-            return result;
-        }
-
-        public T getResult(){
-            return result;
-        }
-    }
 }

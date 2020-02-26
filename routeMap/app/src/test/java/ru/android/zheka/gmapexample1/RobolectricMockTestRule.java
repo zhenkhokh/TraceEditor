@@ -4,7 +4,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import it.cosenonjaviste.daggermock.DaggerMockRule;
 import ru.android.zheka.fragment.Home;
-import ru.android.zheka.gmapexample1.di.TestHomeBindingModule;
+import ru.android.zheka.gmapexample1.home.TestHomeBindingModule;
 import ru.android.zheka.vm.IPanelHomeVM;
 
 public class RobolectricMockTestRule  extends DaggerMockRule <TestAppComponent> {

@@ -1,4 +1,4 @@
-package ru.android.zheka.gmapexample1.di;
+package ru.android.zheka.gmapexample1.home;
 
 import android.content.Context;
 

@@ -7,7 +7,7 @@ import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
 import dagger.android.support.DaggerApplication;
 import ru.android.zheka.di.AppComponent;
-import ru.android.zheka.gmapexample1.di.TestHomeBindingModule;
+import ru.android.zheka.gmapexample1.home.TestHomeBindingModule;
 
 //TODO remove
 public class RobolectricMainApp extends //Application
