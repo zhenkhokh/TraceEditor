@@ -88,7 +88,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     configurations {
-        all*.exclude module: 'support-v4'
+//        all*.exclude module: 'support-v4'
         all*.exclude module: 'io'
         all*.exclude module: 'java'
         all*.exclude group: 'java', module: 'io'
@@ -158,16 +158,24 @@ repositories {
 dependencies {
     //robolectric
     api 'com.google.guava:guava:28.2-android'
-    implementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'
+    testImplementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'
 
+    testImplementation (group: 'com.activeandroid', name: 'activeandroid', version: '3.1.18-SNAPSHOT')
     implementation (group: 'com.activeandroid', name: 'activeandroid', version: '3.1.18-SNAPSHOT')
-    compile(group: 'com.google.android.gms', name: 'play-services', version: '8.1.0') {
+    implementation(group: 'com.google.android.gms', name: 'play-services', version: '8.1.0')
+
+    testImplementation(group: 'com.google.android.gms', name: 'play-services', version: '8.1.0') {
         exclude(module: 'play-services-maps')
     }
-    compile(group: 'com.google.android.gms', name: 'play-services-maps', version: '8.1.0')//'11.6.0'
+    implementation(group: 'com.google.android.gms', name: 'play-services-maps', version: '8.1.0')//'11.6.0'
+    testImplementation(group: 'com.google.android.gms', name: 'play-services-maps', version: '8.1.0')//'11.6.0'
+
+    implementation group: 'com.android.support', name: 'appcompat-v7' //23.0.0//18.0.0
     testImplementation group: 'com.android.support', name: 'appcompat-v7' //23.0.0//18.0.0
-//    testImplementation (group: 'com.android.support', name: 'support-v4')
-    compile(group: 'org.roboguice', name: 'roboguice', version: '2.0')
+    androidTestImplementation (group: 'com.android.support', name: 'support-v4',version: '25.2.0')
+    testImplementation (group: 'com.android.support', name: 'support-v4',version: '25.2.0')
+
+    implementation(group: 'org.roboguice', name: 'roboguice', version: '2.0')
 //            {
 //exclude(module: 'guice')
 //    }
@@ -182,13 +190,16 @@ dependencies {
     //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'
     testImplementation test.utils
     testImplementation group: 'org.robolectric', name: 'shadows-core-v16', version: '3.1.3'
+        androidTestImplementation group: 'org.robolectric', name: 'shadows-core-v16', version: '3.1.3'
     testImplementation group: 'org.robolectric', name: 'shadows-play-services', version: '3.1'
+
     provided(group: 'android', name: 'android', version: '6.0_r3')//6.0_r3
     //testCompile (group: 'android', name: 'android', version:'5.1.1_r2')
     implementation 'com.android.support:multidex:1.0.3'
     testImplementation "org.robolectric:shadows-multidex:3.1.1"
     testImplementation test.junit
     testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
+//        androidTestImplementation  group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 
 //    androidTestImplementation androidx.testRunner
 //    androidTestImplementation androidx.testEspressoCore
@@ -205,8 +216,13 @@ dependencies {
     androidTestImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
 
     implementation androidx.appcompat
+    // auto size text
+    androidTestImplementation androidx.appcompat
 //    api androidx.constraintLayout
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'//2.0.0-alpha4'
+    // layout constraints
+    androidTestImplementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
     api rx.android
     api rx.java
     testImplementation test.mockito

@@ -2,11 +2,6 @@ package ru.android.zheka.gmapexample1;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-
-import ru.android.zheka.db.Point;
-import ru.android.zheka.db.Trace;
 
 //import android.app.Activity;
 ;
@@ -22,7 +17,7 @@ import ru.android.zheka.db.Trace;
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-@RunWith(RobolectricTestRunner.class)
+//@RunWith(RobolectricTestRunner.class)
 //,shadows = {
 //		ShadowActivity.class
 //ShadowSupportMapFragment.class
@@ -31,7 +26,7 @@ import ru.android.zheka.db.Trace;
 //		ShadowMapsActivity.class
 //}
 
-public class ExampleUnitTest extends BaseRobolectricTest {
+public class ExampleUnitTest {//extends BaseRobolectricTest {
 //    MapsActivity mapsActivity = null;
 //    GeoPositionActivity geoPositionActivity = null;
 //    LatLngActivity latLngActivity = null;
@@ -39,8 +34,6 @@ public class ExampleUnitTest extends BaseRobolectricTest {
 //    TraceActivity traceActivity = null;
 //    SettingsActivity settingsActivity = null;
 //    Fragment fragment;
-    Point point;
-    Trace trace;
 
 //    {
 //        view = new Home ();
@@ -87,7 +80,8 @@ public class ExampleUnitTest extends BaseRobolectricTest {
 //         TestComponent component = DaggerTestComponent.builder()
 //            .build();
 //        component.inject(this);
-        super.setUp ();
+
+//        super.setUp ();
 
 //        getAppComponent ().inject (this)
 
