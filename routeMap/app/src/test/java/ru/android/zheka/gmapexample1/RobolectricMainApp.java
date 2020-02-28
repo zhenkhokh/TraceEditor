@@ -19,7 +19,6 @@ import ru.android.zheka.gmapexample1.home.TestHomeBindingModule;
 //TODO remove
 public class RobolectricMainApp extends //Application
         DaggerApplication {
-
     @Override
     public void onCreate() {
         super.onCreate ();

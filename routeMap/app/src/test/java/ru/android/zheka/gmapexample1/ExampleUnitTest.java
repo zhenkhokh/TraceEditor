@@ -2,6 +2,8 @@ package ru.android.zheka.gmapexample1;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 //import android.app.Activity;
 ;
@@ -17,7 +19,7 @@ import org.junit.Test;
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-//@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 //,shadows = {
 //		ShadowActivity.class
 //ShadowSupportMapFragment.class
@@ -26,7 +28,7 @@ import org.junit.Test;
 //		ShadowMapsActivity.class
 //}
 
-public class ExampleUnitTest {//extends BaseRobolectricTest {
+public class ExampleUnitTest extends BaseRobolectricTest {
 //    MapsActivity mapsActivity = null;
 //    GeoPositionActivity geoPositionActivity = null;
 //    LatLngActivity latLngActivity = null;

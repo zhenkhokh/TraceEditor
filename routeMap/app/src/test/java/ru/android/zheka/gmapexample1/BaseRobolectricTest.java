@@ -41,6 +41,8 @@ public class BaseRobolectricTest {
             //p.save();
             System.out.println ("add point in latlng");
             if (!DbFunctions.exsistPoint (namePoint)) {
+                                System.out.println ("not exsistPoint:"+namePoint);
+
                 try {
                     DbFunctions.add (p);
                 } catch (IllegalAccessException e) {

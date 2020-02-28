@@ -1,13 +1,12 @@
 package ru.android.zheka.db;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-
 import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.lang.reflect.Field;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 
 public class DbFunctions {
 	public static final String DEFAULT_CONFIG_NAME = "defy";

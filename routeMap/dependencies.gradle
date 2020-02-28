@@ -20,7 +20,10 @@ ext {
             sandbox: "org.robolectric:sandbox:${robolectricVersion}",
             utils: "org.robolectric:utils:${robolectricVersion}",
             mockito: "org.mockito:mockito-core:${mockitoVersion}",
-            fragment: "androidx.fragment:fragment-testing:${fragmentVersion}"
+            fragment: "androidx.fragment:fragment-testing:${fragmentVersion}",
+            shadowPlay: "org.robolectric:shadows-play-services:3.1.3",//3.1
+            shadowCore: "org.robolectric:shadows-core-v16:3.1.3",//3.1.3
+
     ]
     androidx = [
             appcompat       : "androidx.appcompat:appcompat:${appcompatVersion}",
