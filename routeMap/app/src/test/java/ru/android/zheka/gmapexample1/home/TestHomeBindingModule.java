@@ -16,9 +16,8 @@ public class TestHomeBindingModule {
 
     @Provides
     public IPanelHomeVM bindHomeVM(HomeModel model, IActivity view) {
-        return mockVM;//new PanelHomeVM (view, model);// Mockito.mock (IPanelHomeVM.class)
+        return mockVM;//new PanelHomeVM (Mockito.mock(IActivity.class), Mockito.mock(HomeModel.class));//mockVM;// Mockito.mock (IPanelHomeVM.class)
     }
-
     @Provides
     public HomeModel provideHomeModel(Context view) {
         return new HomeModel (view);

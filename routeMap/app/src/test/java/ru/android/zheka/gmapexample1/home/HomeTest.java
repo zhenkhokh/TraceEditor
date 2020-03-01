@@ -1,5 +1,8 @@
 package ru.android.zheka.gmapexample1.home;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.activeandroid.ActiveAndroid;
 
 import org.junit.After;
@@ -7,14 +10,18 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
+import ru.android.zheka.coreUI.IActivity;
 import ru.android.zheka.fragment.Home;
 import ru.android.zheka.gmapexample1.BaseRobolectricTest;
 import ru.android.zheka.gmapexample1.RobolectricMockTestRule;
+import ru.android.zheka.model.HomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
@@ -24,10 +31,19 @@ import static org.mockito.Mockito.verify;
 public class HomeTest extends BaseRobolectricTest {
     @Mock
     PanelHomeVM panelHomeVM;
+
+    @InjectMocks
+    PanelHomeVM homeVM;
+
     @Mock
     IPanelHomeVM ipanelHomeVM;
     //@InjectFromComponent
     Home home;
+    @Mock
+    HomeModel homeModel;
+
+    @Mock
+    IActivity view;
 
     @Rule
     public final RobolectricMockTestRule mockitoRule = new RobolectricMockTestRule ();
@@ -56,11 +72,15 @@ public class HomeTest extends BaseRobolectricTest {
 
     @Test
     public void testPanelSettings() {
-        mockitoRule.vm.editTraces ();
-        verify (ipanelHomeVM).editTraces ();
-        System.out.println ("Home :" + home);
-        System.out.println ("panelHomeVM :" + panelHomeVM);
-        System.out.println ("ipanelHomeVM :" + ipanelHomeVM);
+        Activity activity = Mockito.mock (Activity.class);
+        Mockito.when (view.getActivity ()).thenReturn (activity);
+        Intent intent = new Intent ();
+        Mockito.when (activity.getIntent ()).thenReturn (intent);
+        Mockito.when (view.getContext ()).thenReturn (activity);
+        homeVM.editTraces ();
+//        panelHomeVM.editTraces ();
+//        verify (panelHomeVM).editItem (anyString (),anyByte (),anyByte ());//("Trace", string.traces_column_name, string.traces_column_name1);
+        verify (activity).startActivity (intent);
     }
 
     @After

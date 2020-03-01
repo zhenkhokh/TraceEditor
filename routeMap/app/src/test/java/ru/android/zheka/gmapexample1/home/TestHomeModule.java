@@ -15,4 +15,7 @@ public abstract class TestHomeModule {
 
     @Binds
     public abstract IActivity bindActivity(Home context);
+
+//    @Binds
+//    public abstract IPanelHomeVM bindHomeVM(PanelHomeVM vm);
 }
