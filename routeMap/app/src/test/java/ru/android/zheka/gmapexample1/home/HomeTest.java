@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
 import androidx.fragment.app.testing.FragmentScenario;
@@ -25,7 +24,9 @@ import ru.android.zheka.model.HomeModel;
 import ru.android.zheka.vm.IPanelHomeVM;
 import ru.android.zheka.vm.PanelHomeVM;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 public class HomeTest extends BaseRobolectricTest {
@@ -72,11 +73,11 @@ public class HomeTest extends BaseRobolectricTest {
 
     @Test
     public void testPanelSettings() {
-        Activity activity = Mockito.mock (Activity.class);
-        Mockito.when (view.getActivity ()).thenReturn (activity);
+        Activity activity = mock (Activity.class);
+        when (view.getActivity ()).thenReturn (activity);
         Intent intent = new Intent ();
-        Mockito.when (activity.getIntent ()).thenReturn (intent);
-        Mockito.when (view.getContext ()).thenReturn (activity);
+        when (activity.getIntent ()).thenReturn (intent);
+        when (view.getContext ()).thenReturn (activity);
         homeVM.editTraces ();
 //        panelHomeVM.editTraces ();
 //        verify (panelHomeVM).editItem (anyString (),anyByte (),anyByte ());//("Trace", string.traces_column_name, string.traces_column_name1);

@@ -1,5 +1,6 @@
 package ru.android.zheka.vm;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.text.Html;
@@ -40,7 +41,8 @@ public class PanelHomeVM implements IPanelHomeVM {
 
     @Override
     public void info() {
-        LayoutInflater inflater = LayoutInflater.from (view.getActivity ());
+        Activity activity = view.getActivity ();
+        LayoutInflater inflater = LayoutInflater.from (activity);
         View view = inflater.inflate (layout.scrolable_dialog, null);
         TextView tv = view.findViewById (id.textmsg);//new TextView (this);
         InputStream is = this.view.getActivity ().getResources ().openRawResource (raw.info);
@@ -53,9 +55,9 @@ public class PanelHomeVM implements IPanelHomeVM {
             tv.setText (Html.fromHtml (sb.toString (), Html.FROM_HTML_MODE_LEGACY));
         } else
             tv.setText (Html.fromHtml (sb.toString ()));
-        new AlertDialog.Builder (this.view.getActivity ())
+        new AlertDialog.Builder (activity)
                 .setView (view)
-                .setTitle ("Помощь")
+                .setTitle (activity.getResources ().getString (string.home_info_btn))
                 .setCancelable (true)
                 .create ()
                 .show ();
@@ -135,10 +137,9 @@ public class PanelHomeVM implements IPanelHomeVM {
     }
 
     private ButtonHandler getButton(Consumer <Boolean> consumer, int nameId) {
-        ButtonHandler b = new ButtonHandler (consumer
+        return new ButtonHandler (consumer
                 , nameId
                 , view);
-        return b;
     }
 
     @Override
