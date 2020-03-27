@@ -1,19 +1,66 @@
-package android.support.v4.util
+package android.support.v4
 
 import java.util.*
 
-// use for androidAStudio tests only
-class LruCache<K, V> constructor(maxSize: Int) {
+/**
+ * BEGIN LAYOUTLIB CHANGE
+ * This is a custom version that doesn't use the non standard LinkedHashMap#eldest.
+ * END LAYOUTLIB CHANGE
+ *
+ * A cache that holds strong references to a limited number of values. Each time
+ * a value is accessed, it is moved to the head of a queue. When a value is
+ * added to a full cache, the value at the end of that queue is evicted and may
+ * become eligible for garbage collection.
+ *
+ *
+ * If your cached values hold resources that need to be explicitly released,
+ * override [.entryRemoved].
+ *
+ *
+ * If a cache miss should be computed on demand for the corresponding keys,
+ * override [.create]. This simplifies the calling code, allowing it to
+ * assume a value will always be returned, even when there's a cache miss.
+ *
+ *
+ * By default, the cache size is measured in the number of entries. Override
+ * [.sizeOf] to size the cache in different units. For example, this cache
+ * is limited to 4MiB of bitmaps:
+ * <pre>   `int cacheSize = 4 * 1024 * 1024; // 4MiB
+ * LruCache<String, Bitmap> bitmapCache = new LruCache<String, Bitmap>(cacheSize) {
+ * protected int sizeOf(String key, Bitmap value) {
+ * return value.getByteCount();
+ * }
+ * }`</pre>
+ *
+ *
+ * This class is thread-safe. Perform multiple cache operations atomically by
+ * synchronizing on the cache: <pre>   `synchronized (cache) {
+ * if (cache.get(key) == null) {
+ * cache.put(key, value);
+ * }
+ * }`</pre>
+ *
+ *
+ * This class does not allow null to be used as a key or value. A return
+ * value of null from [.get], [.put] or [.remove] is
+ * unambiguous: the key was not in the cache.
+ *
+ *
+ * This class appeared in Android 3.1 (Honeycomb MR1); it's available as part
+ * of [Android's
+ * Support Package](http://developer.android.com/sdk/compatibility-library.html) for earlier releases.
+ */
+class LruCache<K, V>(maxSize: Int) {
     private val map: LinkedHashMap<K, V>
 
     /** Size of this cache in units. Not necessarily the number of elements.  */
-    private var size: Int = 0
+    private var size = 0
     private var maxSize: Int
-    private var putCount: Int = 0
-    private var createCount: Int = 0
-    private var evictionCount: Int = 0
-    private var hitCount: Int = 0
-    private var missCount: Int = 0
+    private var putCount = 0
+    private var createCount = 0
+    private var evictionCount = 0
+    private var hitCount = 0
+    private var missCount = 0
 
     /**
      * Sets the size of the cache.
@@ -22,10 +69,8 @@ class LruCache<K, V> constructor(maxSize: Int) {
      * @hide
      */
     fun resize(maxSize: Int) {
-        if (maxSize <= 0) {
-            throw IllegalArgumentException("maxSize <= 0")
-        }
-        synchronized(this, { this.maxSize = maxSize })
+        require(maxSize > 0) { "maxSize <= 0" }
+        synchronized(this) { this.maxSize = maxSize }
         trimToSize(maxSize)
     }
 
@@ -40,14 +85,14 @@ class LruCache<K, V> constructor(maxSize: Int) {
             throw NullPointerException("key == null")
         }
         var mapValue: V?
-        synchronized(this, {
-            mapValue = map.get(key)
+        synchronized(this) {
+            mapValue = map[key]
             if (mapValue != null) {
                 hitCount++
                 return mapValue
             }
             missCount++
-        })
+        }
 
         /*
          * Attempt to create a value. This may take a long time, and the map
@@ -55,26 +100,23 @@ class LruCache<K, V> constructor(maxSize: Int) {
          * added to the map while create() was working, we leave that value in
          * the map and release the created value.
          */
-        val createdValue: V? = create(key)
-        if (createdValue == null) {
-            return null
-        }
-        synchronized(this, {
+        val createdValue = create(key) ?: return null
+        synchronized(this) {
             createCount++
             mapValue = map.put(key, createdValue)
             if (mapValue != null) {
                 // There was a conflict so undo that last put
-                map.put(key, mapValue)
+                map.put(key, mapValue!!)
             } else {
                 size += safeSizeOf(key, createdValue)
             }
-        })
-        if (mapValue != null) {
+        }
+        return if (mapValue != null) {
             entryRemoved(false, key, createdValue, mapValue)
-            return mapValue
+            mapValue
         } else {
             trimToSize(maxSize)
-            return createdValue
+            createdValue
         }
     }
 
@@ -89,16 +131,16 @@ class LruCache<K, V> constructor(maxSize: Int) {
             throw NullPointerException("key == null || value == null")
         }
         var previous: V?
-        synchronized(this, {
+        synchronized(this) {
             putCount++
             size += safeSizeOf(key, value)
             previous = map.put(key, value)
             if (previous != null) {
-                size -= safeSizeOf(key, previous)
+                size -= safeSizeOf(key, previous!!)
             }
-        })
+        }
         if (previous != null) {
-            entryRemoved(false, key, previous, value)
+            entryRemoved(false, key, previous!!, value)
         }
         trimToSize(maxSize)
         return previous
@@ -109,16 +151,16 @@ class LruCache<K, V> constructor(maxSize: Int) {
      * to evict even 0-sized elements.
      */
     private fun trimToSize(maxSize: Int) {
-        while (true) {
+         while (true) {
             var key: K
             var value: V
-            synchronized(this, {
-                if (size < 0 || (map.isEmpty() && size != 0)) {
-                    throw IllegalStateException((javaClass.getName()
-                            + ".sizeOf() is reporting inconsistent results!"))
+            synchronized(this) {
+                check(!(size < 0 || map.isEmpty() && size != 0)) {
+                    (javaClass.name
+                            + ".sizeOf() is reporting inconsistent results!")
                 }
                 if (size <= maxSize) {
-                    break
+                    return
                 }
 
                 // BEGIN LAYOUTLIB CHANGE
@@ -126,19 +168,19 @@ class LruCache<K, V> constructor(maxSize: Int) {
                 // This is not efficient, the goal here is to minimize the changes
                 // compared to the platform version.
                 var toEvict: Map.Entry<K, V>? = null
-                for (entry: Map.Entry<K, V>? in map.entries) {
+                for (entry in map.entries) {
                     toEvict = entry
                 }
                 // END LAYOUTLIB CHANGE
                 if (toEvict == null) {
-                    break
+                    return
                 }
                 key = toEvict.key
                 value = toEvict.value
                 map.remove(key)
                 size -= safeSizeOf(key, value)
                 evictionCount++
-            })
+            }
             entryRemoved(true, key, value, null)
         }
     }
@@ -153,14 +195,14 @@ class LruCache<K, V> constructor(maxSize: Int) {
             throw NullPointerException("key == null")
         }
         var previous: V?
-        synchronized(this, {
+        synchronized(this) {
             previous = map.remove(key)
             if (previous != null) {
-                size -= safeSizeOf(key, previous)
+                size -= safeSizeOf(key, previous!!)
             }
-        })
+        }
         if (previous != null) {
-            entryRemoved(false, key, previous, null)
+            entryRemoved(false, key, previous!!, null)
         }
         return previous
     }
@@ -205,10 +247,8 @@ class LruCache<K, V> constructor(maxSize: Int) {
     }
 
     private fun safeSizeOf(key: K, value: V): Int {
-        val result: Int = sizeOf(key, value)
-        if (result < 0) {
-            throw IllegalStateException("Negative size: " + key + "=" + value)
-        }
+        val result = sizeOf(key, value)
+        check(result >= 0) { "Negative size: $key=$value" }
         return result
     }
 
@@ -303,9 +343,9 @@ class LruCache<K, V> constructor(maxSize: Int) {
     }
 
     @Synchronized
-    public override fun toString(): String {
-        val accesses: Int = hitCount + missCount
-        val hitPercent: Int = if (accesses != 0) (100 * hitCount / accesses) else 0
+    override fun toString(): String {
+        val accesses = hitCount + missCount
+        val hitPercent = if (accesses != 0) 100 * hitCount / accesses else 0
         return String.format("LruCache[maxSize=%d,hits=%d,misses=%d,hitRate=%d%%]",
                 maxSize, hitCount, missCount, hitPercent)
     }
@@ -316,9 +356,7 @@ class LruCache<K, V> constructor(maxSize: Int) {
      * this is the maximum sum of the sizes of the entries in this cache.
      */
     init {
-        if (maxSize <= 0) {
-            throw IllegalArgumentException("maxSize <= 0")
-        }
+        require(maxSize > 0) { "maxSize <= 0" }
         this.maxSize = maxSize
         map = LinkedHashMap(0, 0.75f, true)
     }
