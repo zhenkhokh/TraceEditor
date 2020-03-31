@@ -58,7 +58,7 @@ open class HomeTest1 : BaseRobolectricTest() {
 
     @Test
     fun testFragment() {
-        assert(false);
+        assert(false)
         val launcher = FragmentScenario.launchInContainer(Home::class.java)
         launcher.moveToState(Lifecycle.State.RESUMED)
         launcher.onFragment { fragment1: Home? -> home = fragment1 }

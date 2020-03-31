@@ -20,6 +20,9 @@ allprojects {
             url 'https://maven.google.com'
         }
         google()
+        maven {
+            url 'https://repo1.maven.org'
+        }
     }
 }
 buildscript {
@@ -30,12 +33,17 @@ buildscript {
         maven { url "https://repo1.maven.org/maven2" }
 //        maven { url 'https://maven.google.com' }
         google()
+        mavenCentral()
+    maven { url "http://109.173.124.103:8081/repository/publicRepo" }
+maven {
+    url 'https://dl.google.com/dl/android/maven2'
+}
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0-rc03'
         classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
-        classpath 'com.google.gms:google-services:4.0.1'
+//        classpath 'com.google.gms:google-services:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 //        classpath 'com.android.tools.build:gradle:4.1.0-alpha03 '
     }
@@ -56,7 +64,8 @@ android {
     buildToolsVersion "28.0.3"
     sourceSets {
         main.root = 'src/main'
-//        test.setRoot('app/src/test')
+//        test.setRoot('src/test')
+        androidTest.setRoot('src/androidTest')
     }
     configurations.all {
 //    resolutionStrategy.force 'com.android.support:support-annotations:22.1.0'
@@ -122,25 +131,25 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
-    signingConfigs {
-        config {
-            keyAlias 'playstore'
-            keyPassword 'android'
-            storeFile file('/home/zheka/.android/release.keystore')
-            storePassword 'android'
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias 'playstore'
+//            keyPassword 'android'
+//            storeFile file('/home/zheka/.android/release.keystore')
+//            storePassword 'android'
+//        }
+//    }
     buildTypes {
         release {
             //minifyEnabled true
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
         debug {
 //              minifyEnabled true
             useProguard false
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
     }
     packagingOptions {
@@ -166,7 +175,7 @@ android {
 repositories {
 //    maven { url "file://home/zheka/.m2/repository/" }
     jcenter()
-    maven { url "https://repo1.maven.org/maven2" } //TODO remove
+    maven { url "https://mvnrepository.com/artifact" } //TODO remove
     maven { url "https://jitpack.io" }//TODO remove
     maven { url "http://109.173.124.103:8081/repository/publicRepo" }
 }
@@ -216,8 +225,7 @@ dependencies {
         exclude group: 'org.apache.xerces'
         exclude group: 'org.codehaus'
         exclude group: 'org.cyberneko'
-//        exclude group: 'org.robolectric.internal'
-
+        exclude group: 'org.robolectric.internal'
     }
     androidTestImplementation (test.robolectric) {
         exclude group: 'org.codehaus.plexus'
@@ -225,15 +233,13 @@ dependencies {
         exclude group: 'org.apache.xerces'
         exclude group: 'org.codehaus'
         exclude group: 'org.cyberneko'
-//        exclude group: 'org.robolectric.internal'
+        exclude group: 'org.robolectric.internal'
     }
     implementation 'androidx.test:runner:1.1.0'
 
-    //testCompile group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
     testImplementation test.resources
-    testImplementation test.sandbox
-    //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'
     testImplementation test.utils
+
 //    testImplementation test.shadowCore
 //        androidTestImplementation test.shadowCore
     testImplementation test.shadowPlay
@@ -241,10 +247,15 @@ dependencies {
 //    provided(group: 'android', name: 'android', version: '6.0_r3')//6.0_r3
     //testCompile (group: 'android', name: 'android', version:'5.1.1_r2')
     implementation 'com.android.support:multidex:1.0.3'
-    testImplementation "org.robolectric:shadows-multidex:3.1.1"
     testImplementation test.junit
     androidTestImplementation  test.junit
-    testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
+//    testImplementation (group: 'org.robolectric', name: 'android-all', version: '10-robolectric-5803371'){
+//         exclude group: 'org.robolectric.internal'
+//    }
+//    androidTestImplementation (group: 'org.robolectric', name: 'android-all', version: '10-robolectric-5803371'){
+//         exclude group: 'org.robolectric.internal'
+//    }
+
 //        androidTestImplementation  group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 
 //    androidTestImplementation androidx.testRunner
@@ -291,6 +302,12 @@ dependencies {
     androidTestImplementation test.mockito
     implementation test.fragment
 
+    testImplementation jarjar.repackage ('robolectric') {
+//        from test.robolectric
+
+//        classRename 'org.robolectric.internal.SandboxManager**', 'fff.@1'
+    }
+
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
 //exclude module: 'support-v4'
@@ -306,6 +323,7 @@ dependencies {
 
 */
 }
+
 /*
 class mySneakyIntervention implements TaskExecutionListener {
     void afterExecute(Task t,TaskState s) {}

@@ -5,13 +5,13 @@ import dagger.Module
 import dagger.Provides
 
 @Module //(includes = TestHomeModule.class)
-class TestApplicationModule //    @Provides
+class TestApplicationModule (private val app: RobolectricMainApp)//    @Provides
 //    public Home provideHome(){
 //        return view;
 //    }
-(private val app: RobolectricMainApp) {
+ {
     @Provides
-    fun provideApp(): Context {
+    fun provideApp(): Context? {
         return app.applicationContext
     } //TODO
 

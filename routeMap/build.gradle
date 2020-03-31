@@ -27,12 +27,15 @@ buildscript {
 //        maven { url "file://home/zheka/.m2/repository/" }
         maven { url "https://repo1.maven.org/maven2" }
         google()
+            maven { url "http://109.173.124.103:8081/repository/publicRepo" }
+
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0-rc01'
-        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
+        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
         classpath 'com.google.gms:google-services:4.0.1'
+
     }
 }
 
@@ -196,15 +199,28 @@ dependencies {
             {
                 exclude(module: 'guava')
             }
-    testImplementation test.robolectric
-    androidTestImplementation test.robolectric
-    //testCompile
-    //
-    // group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
+//    testImplementation (test.robolectric)    {
+//        exclude group: 'org.codehaus.plexus'
+//        exclude group: 'org.apache.maven'
+//        exclude group: 'org.apache.xerces'
+//        exclude group: 'org.codehaus'
+//        exclude group: 'org.cyberneko'
+////        exclude group: 'org.robolectric.internal'
+//
+//    }
+//    androidTestImplementation (test.robolectric)    {
+//        exclude group: 'org.codehaus.plexus'
+//        exclude group: 'org.apache.maven'
+//        exclude group: 'org.apache.xerces'
+//        exclude group: 'org.codehaus'
+//        exclude group: 'org.cyberneko'
+////        exclude group: 'org.robolectric.internal'
+//
+//    }
     testImplementation test.resources
     testImplementation test.sandbox
-    //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'
     testImplementation test.utils
+
 //    testImplementation test.shadowCore
 //        androidTestImplementation test.shadowCore
     testImplementation test.shadowPlay
@@ -215,7 +231,7 @@ dependencies {
     testImplementation "org.robolectric:shadows-multidex:3.1.1"
     testImplementation test.junit
     androidTestImplementation  test.junit
-    testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
+//    testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 //        androidTestImplementation  group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 
 //    androidTestImplementation androidx.testRunner
@@ -248,6 +264,11 @@ dependencies {
     testImplementation test.mockito
     androidTestImplementation test.mockito
     implementation test.fragment
+    implementation jarjar.repackage ('robolectric') {
+//        from test.robolectric
+//        classDelete "org.robolectric.internal.SandboxManager"
+    }
+
 
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
