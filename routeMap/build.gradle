@@ -49,6 +49,7 @@ android {
         main.root = 'app/src/main'
         androidTest.setRoot('app/src/test')
     }
+
     configurations.all {
 //    resolutionStrategy.force 'com.android.support:support-annotations:22.1.0'
         resolutionStrategy.force 'org.ow2.asm:asm:5.0.1'
@@ -72,6 +73,7 @@ android {
                 includeCompileClasspath false
             }
         }
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 //    test {
 //        exclude 'ru/android/zheka/gmapexample1/home/Test*'
@@ -145,6 +147,7 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
         exclude 'androidsupportmultidexversion.txt'
+        exclude 'licenses/javolution.license.TXT'
         //exclude '**/BufferedOutputStream.class'
     }
     dataBinding {
@@ -155,12 +158,14 @@ android {
 repositories {
 //    maven { url "file://home/zheka/.m2/repository/" }
     jcenter()
-    maven { url "https://repo1.maven.org/maven2" } //TODO remove
+    maven { url "https://mvnrepository.com/artifact" }
     maven { url "https://jitpack.io" }//TODO remove
     maven { url "http://109.173.124.103:8081/repository/publicRepo" }
 }
 
 dependencies {
+    testImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
     //robolectric
     api 'com.google.guava:guava:28.2-android'
     testImplementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'
@@ -196,11 +201,19 @@ dependencies {
             {
                 exclude(module: 'guava')
             }
-    testImplementation test.robolectric
-    androidTestImplementation test.robolectric
-    //testCompile
-    //
-    // group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
+    testImplementation (test.robolectric){
+//        exclude group: 'org.codehaus.plexus'
+//        exclude group: 'org.apache.maven'
+//        exclude group: 'org.apache.xerces'
+//        exclude group: 'org.cyberneko'
+    }
+    androidTestImplementation (test.robolectric){
+//        exclude group: 'org.codehaus.plexus'
+//        exclude group: 'org.apache.maven'
+//        exclude group: 'org.apache.xerces'
+//        exclude group: 'org.cyberneko'
+    }
+    //testCompile group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
     testImplementation test.resources
     testImplementation test.sandbox
     //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'

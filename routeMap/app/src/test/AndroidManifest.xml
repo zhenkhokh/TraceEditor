@@ -39,13 +39,10 @@ android:name="com.activeandroid.app.Application"
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-<!--        <provider-->
-<!--            android:name="ru.android.zheka.db.DatabaseContentProvider"-->
-<!--            android:authorities="ru.android.zheka.gmapexample1"-->
-<!--            android:exported="false" />-->
-
-
-
+        <provider
+            android:name="ru.android.zheka.db.DatabaseContentProvider"
+            android:authorities="ru.android.zheka.db"
+            android:exported="false" />
         <!--uses-library android:name="com.google.android.maps" /-->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

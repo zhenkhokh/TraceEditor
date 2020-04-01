@@ -25,8 +25,10 @@ import ru.android.zheka.vm.IPanelHomeVM
 import ru.android.zheka.vm.PanelHomeVM
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = "AndroidManifest.xml", sdk = [28], application = RobolectricMainApp::class)
+//@Config(manifest = "AndroidManifest.xml", sdk = [28], application = RobolectricMainApp::class)
 open class HomeTest1 : BaseRobolectricTest() {
+
+    val handler = RobolectricMockTestRule()
 
     @Mock
     var panelHomeVM: PanelHomeVM? = null
@@ -49,7 +51,7 @@ open class HomeTest1 : BaseRobolectricTest() {
     @get:Rule
 //    @JvmField
 //    @Rule
-    val mockitoRule = RobolectricMockTestRule().rule()
+    val mockitoRule = handler.rule()
 
     @Before
     fun setup() {
@@ -58,18 +60,17 @@ open class HomeTest1 : BaseRobolectricTest() {
 
     @Test
     fun testFragment() {
-        assert(false);
         val launcher = FragmentScenario.launchInContainer(Home::class.java)
         launcher.moveToState(Lifecycle.State.RESUMED)
         launcher.onFragment { fragment1: Home? -> home = fragment1 }
         assert(home!!.viewModel != null)
-        assert(home!!.viewModel != ipanelHomeVM)
+        assert(home!!.viewModel == ipanelHomeVM)
     }
 
     @Test
     fun testInjectFromComponent() {
         assert(ipanelHomeVM != null)
-//        assert(ipanelHomeVM == mockitoRule.vm)//TODO
+        assert(ipanelHomeVM == handler.vm)
     }
 
     @Test

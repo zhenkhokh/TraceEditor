@@ -13,6 +13,17 @@ targetCompatibility = 1.6
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+task createTestResources {
+    def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
+    if (System.env.MOCK_MAKER != null) {
+        logger.info("Using MockMaker ${System.env.MOCK_MAKER}")
+        mockMakerFile.parentFile.mkdirs()
+        mockMakerFile.createNewFile()
+        mockMakerFile.write(System.env.MOCK_MAKER)
+    } else {
+        logger.info("Using default MockMaker: mock-maker-inline")
+    }
+}
 // multidex-1.0.2
 allprojects {
     repositories {
@@ -27,7 +38,7 @@ buildscript {
     repositories {
         jcenter()
 //        maven { url "file://home/zheka/.m2/repository/" }
-        maven { url "https://repo1.maven.org/maven2" }
+        maven { url 'https://mvnrepository.com/repos/kotlin-dev' }
 //        maven { url 'https://maven.google.com' }
         google()
     }
@@ -35,8 +46,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0-rc03'
         classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
-        classpath 'com.google.gms:google-services:4.0.1'
+        classpath "com.google.gms:google-services:4.0.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
 //        classpath 'com.android.tools.build:gradle:4.1.0-alpha03 '
     }
 }
@@ -44,6 +56,7 @@ buildscript {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-allopen'
 
 //plugins {
 //    id 'org.anarres.jarjar.jarjar' version '1.0.0'

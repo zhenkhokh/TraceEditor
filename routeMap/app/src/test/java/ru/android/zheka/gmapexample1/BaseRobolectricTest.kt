@@ -11,7 +11,7 @@ import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.gmapexample1.home.HomeTest1
 
 @Config(manifest = "AndroidManifest.xml", sdk = [28], application = RobolectricMainApp::class)
-open class BaseRobolectricTest : RobolectricTestRunner(HomeTest1::class.java){
+open class BaseRobolectricTest {
     private val application: RobolectricMainApp? = null
     protected var point: Point? = null
     protected var trace: Trace? = null

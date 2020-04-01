@@ -12,10 +12,15 @@ import ru.android.zheka.vm.PanelHomeVM
 class RobolectricMockTestRule : MethodRule {
     open fun rule() = DaggerMock.rule<TestAppComponent>(TestApplicationModule(application)
             ,TestHomeBindingModule()) {
+        customizeBuilder {
+           builder:TestAppComponent.Builder->
+            builder.application(application)
+        }
         set { component:TestAppComponent->
-//            homeFragment = Home()
-//            component.homeSubcomponent()!!.create(homeFragment).inject(homeFragment)
-//            vm = homeFragment!!.viewModel
+            component.inject(application)
+            homeFragment = Home()
+            component.homeSubcomponent().create(homeFragment).inject(homeFragment)
+            vm = homeFragment!!.viewModel
         }
     } as MethodRule
 
