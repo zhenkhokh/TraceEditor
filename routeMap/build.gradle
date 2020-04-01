@@ -31,7 +31,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0-rc01'
-        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
+        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
         classpath 'com.google.gms:google-services:4.0.1'
     }
 }
@@ -49,7 +49,6 @@ android {
         main.root = 'app/src/main'
         androidTest.setRoot('app/src/test')
     }
-
     configurations.all {
 //    resolutionStrategy.force 'com.android.support:support-annotations:22.1.0'
         resolutionStrategy.force 'org.ow2.asm:asm:5.0.1'
@@ -216,8 +215,8 @@ dependencies {
     //testCompile group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
     testImplementation test.resources
     testImplementation test.sandbox
-    //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'
     testImplementation test.utils
+
 //    testImplementation test.shadowCore
 //        androidTestImplementation test.shadowCore
     testImplementation test.shadowPlay

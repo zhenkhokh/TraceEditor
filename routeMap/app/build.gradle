@@ -46,9 +46,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0-rc03'
         classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
-        classpath "com.google.gms:google-services:4.0.1"
+//        classpath 'com.google.gms:google-services:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
 //        classpath 'com.android.tools.build:gradle:4.1.0-alpha03 '
     }
 }
@@ -56,7 +55,6 @@ buildscript {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-allopen'
 
 //plugins {
 //    id 'org.anarres.jarjar.jarjar' version '1.0.0'
@@ -179,7 +177,7 @@ android {
 repositories {
 //    maven { url "file://home/zheka/.m2/repository/" }
     jcenter()
-    maven { url "https://repo1.maven.org/maven2" } //TODO remove
+    maven { url "https://mvnrepository.com/artifact" } //TODO remove
     maven { url "https://jitpack.io" }//TODO remove
     maven { url "http://109.173.124.103:8081/repository/publicRepo" }
 }
@@ -242,11 +240,9 @@ dependencies {
     }
     implementation 'androidx.test:runner:1.1.0'
 
-    //testCompile group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
     testImplementation test.resources
-    testImplementation test.sandbox
-    //testCompile group: 'org.robolectric', name: 'robolectric-sandbox', version:'3.4+'
     testImplementation test.utils
+
 //    testImplementation test.shadowCore
 //        androidTestImplementation test.shadowCore
     testImplementation test.shadowPlay
@@ -254,16 +250,22 @@ dependencies {
 //    provided(group: 'android', name: 'android', version: '6.0_r3')//6.0_r3
     //testCompile (group: 'android', name: 'android', version:'5.1.1_r2')
     implementation 'com.android.support:multidex:1.0.3'
-    testImplementation "org.robolectric:shadows-multidex:3.1.1"
     testImplementation test.junit
     androidTestImplementation  test.junit
-    testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
+//    testImplementation (group: 'org.robolectric', name: 'android-all', version: '10-robolectric-5803371'){
+//         exclude group: 'org.robolectric.internal'
+//    }
+//    androidTestImplementation (group: 'org.robolectric', name: 'android-all', version: '10-robolectric-5803371'){
+//         exclude group: 'org.robolectric.internal'
+//    }
+
 //        androidTestImplementation  group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
 
 //    androidTestImplementation androidx.testRunner
 //    androidTestImplementation androidx.testEspressoCore
 
     kapt di.daggerApi
+    implementation di.daggerApi
     implementation di.daggerSupport
 
     annotationProcessor di.daggerProcessor

@@ -15,7 +15,7 @@ ext {
 
     test = [
             junit: "junit:junit:${junitVersion}",
-            robolectric: "org.robolectric:robolectric:${robolectricVersion}",
+            robolectric: "org.robolectric:robolectric:4.3",
             resources: "org.robolectric:resources:${robolectricVersion}",
             sandbox: "org.robolectric:sandbox:${robolectricVersion}",
             utils: "org.robolectric:utils:${robolectricVersion}",

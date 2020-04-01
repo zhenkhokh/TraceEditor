@@ -7,6 +7,7 @@ import com.activeandroid.Configuration
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import ru.android.zheka.db.*
+import ru.android.zheka.gmapexample1.Application.Companion.initConfig
 import ru.android.zheka.gmapexample1.home.TestHomeBindingModule
 
 //TODO remove
@@ -20,7 +21,7 @@ class RobolectricMainApp : DaggerApplication() {
                 .addTypeSerializers(UtilePointSerializer::class.java, UtileTracePointsSerializer::class.java)
                 .create()
         ActiveAndroid.initialize(dbConfiguration)
-        Application.initConfig()
+        initConfig()
         if (Application.optimizationBellmanFlag.isEmpty()) Application.optimizationBellmanFlag = getString(R.string.optimizationdata3)
     }
 
