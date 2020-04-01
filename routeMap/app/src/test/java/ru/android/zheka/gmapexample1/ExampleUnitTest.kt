@@ -1,5 +1,7 @@
 package ru.android.zheka.gmapexample1
 
+import com.activeandroid.ActiveAndroid
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -466,4 +468,9 @@ class ExampleUnitTest : BaseRobolectricTest() {
     //        org.junit.Assert.assertTrue (SettingsActivity.pull (pipeline5, cmd2)
     //                .contentEquals (""));
     //    }
+
+    @After
+    fun close() {
+        ActiveAndroid.getDatabase().close()
+    }
 }

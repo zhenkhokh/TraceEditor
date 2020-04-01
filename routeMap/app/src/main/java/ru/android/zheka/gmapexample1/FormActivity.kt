@@ -9,7 +9,7 @@ import android.widget.EditText
 import android.widget.Spinner
 
 class FormActivity : Activity() {
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.form)
         val intent = Intent()

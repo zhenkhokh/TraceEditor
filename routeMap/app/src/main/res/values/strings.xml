@@ -94,6 +94,4 @@
 		<string name="home_address_btn">Переход</string>
 		<string name="home_geo_btn">Местоположение</string>
 		<string name="home_info_btn">Помощь</string>
-    <string name="google_maps_key" />
-    <string name="google_api_key" />
 </resources>
