@@ -10,25 +10,22 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.fragment.Home
 import ru.android.zheka.gmapexample1.BaseRobolectricTest
-import ru.android.zheka.gmapexample1.RobolectricMainApp
-import ru.android.zheka.gmapexample1.RobolectricMockTestRule
 import ru.android.zheka.model.HomeModel
 import ru.android.zheka.vm.IPanelHomeVM
 import ru.android.zheka.vm.PanelHomeVM
 
 @RunWith(RobolectricTestRunner::class)
-//@Config(manifest = "AndroidManifest.xml", sdk = [28], application = RobolectricMainApp::class)
-open class HomeTest1 : BaseRobolectricTest() {
+open class HomeTest : BaseRobolectricTest() {
 
-    val handler = RobolectricMockTestRule()
+    val handler = HomeMockRule()
 
     @Mock
     var panelHomeVM: PanelHomeVM? = null
@@ -81,9 +78,9 @@ open class HomeTest1 : BaseRobolectricTest() {
         Mockito.`when`(activity.intent).thenReturn(intent)
         Mockito.`when`(view!!.context).thenReturn(activity)
         homeVM!!.editTraces()
-        //        panelHomeVM.editTraces ();
-//        verify (panelHomeVM).editItem (anyString (),anyByte (),anyByte ());//("Trace", string.traces_column_name, string.traces_column_name1);
         Mockito.verify(activity).startActivity(intent)
+//        panelHomeVM!!.editTraces ()
+//        Mockito.verify (panelHomeVM)!!.editItem (anyString (),anyInt (), anyInt ())//("Trace", string.traces_column_name, string.traces_column_name1);
     }
 
     @After

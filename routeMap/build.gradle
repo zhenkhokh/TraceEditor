@@ -1,294 +1,35 @@
 apply from: 'dependencies.gradle'
 
-apply plugin: 'maven'
-apply plugin: 'com.android.application'
-
 group = 'ru.android.zheka.gmapexample1'
 version = '1.1.1-SNAPSHOT'
 
 description = """Trace Editor"""
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+buildscript {
+    ext.kotlin_version = '1.3.21'
+    repositories {
+        jcenter()
+//        maven { url "file://home/zheka/.m2/repository/" }
+        maven { url 'https://mvnrepository.com/repos/kotlin-dev' }
+//        maven { url 'https://maven.google.com' }
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.0-rc03'
+        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.0'
+//        classpath 'com.google.gms:google-services:4.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//        classpath 'com.android.tools.build:gradle:4.1.0-alpha03 '
+    }
 }
+
 // multidex-1.0.2
 allprojects {
     repositories {
         maven {
             url 'https://maven.google.com'
         }
-    }
-}
-buildscript {
-    repositories {
-        jcenter()
-//        maven { url "file://home/zheka/.m2/repository/" }
-        maven { url "https://repo1.maven.org/maven2" }
         google()
     }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.0-rc01'
-        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
-        classpath 'com.google.gms:google-services:4.0.1'
-    }
 }
-
-//plugins {
-//    id 'org.anarres.jarjar.jarjar' version '1.0.0'
-//}
-apply plugin: 'org.anarres.jarjar'
-//apply plugin: 'com.google.gms.google-services'
-
-android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
-    sourceSets {
-        main.root = 'app/src/main'
-        androidTest.setRoot('app/src/test')
-    }
-    configurations.all {
-//    resolutionStrategy.force 'com.android.support:support-annotations:22.1.0'
-        resolutionStrategy.force 'org.ow2.asm:asm:5.0.1'
-        resolutionStrategy.force 'org.ow2.asm:asm-tree:5.0.1'
-        resolutionStrategy.force 'org.ow2.asm:asm-util:5.0.1'
-//    resolutionStrategy.force  'com.google.guava:guava:19.0'
-        resolutionStrategy {
-            force "org.ow2.asm:asm:7.0"
-        }
-    }
-    defaultConfig {
-        applicationId "ru.android.zheka.gmapexample1"
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 26//27 next is 28
-        versionName "2.9"//2.9.1
-        multiDexEnabled = true
-        //robolectric
-        javaCompileOptions {
-            annotationProcessorOptions {
-                includeCompileClasspath false
-            }
-        }
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-    }
-//    test {
-//        exclude 'ru/android/zheka/gmapexample1/home/Test*'
-//    }
-    testOptions {
-// robolectric
-        unitTests.includeAndroidResources = true
-        unitTests {
-            all {
-                //javaMaxHeapSize "512m"
-                jvmArgs '-XX:MaxPermSize=8192m'
-//                exclude 'ru/android/zheka/gmapexample1/ExampleUnitTest.*'
-            }
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    configurations {
-//        all*.exclude module: 'support-v4'
-        all*.exclude module: 'io'
-        all*.exclude module: 'java'
-        all*.exclude group: 'java', module: 'io'
-    }
-//    dexOptions{
-//        javaMaxHeapSize="9000M"
-//        List<String> p = new ArrayList<>();
-//        p.add("--main-dex-list mainClasses1")
-//        p.add("--multi-dex")
-//        p.add("--set-max-idx=55000")
-//        additionalParameters=p
-//        //mainClassName "mainClasses"
-//    }
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-    signingConfigs {
-        config {
-            keyAlias 'playstore'
-            keyPassword 'android'
-            storeFile file('/home/zheka/.android/release.keystore')
-            storePassword 'android'
-        }
-    }
-    buildTypes {
-        release {
-            //minifyEnabled true
-            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.config
-        }
-        debug {
-//              minifyEnabled true
-            useProguard false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.config
-        }
-    }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/dependencies.txt'
-        exclude 'META-INF/LGPL2.1'
-        exclude 'androidsupportmultidexversion.txt'
-        exclude 'licenses/javolution.license.TXT'
-        //exclude '**/BufferedOutputStream.class'
-    }
-    dataBinding {
-        enabled = true
-    }
-}
-
-repositories {
-//    maven { url "file://home/zheka/.m2/repository/" }
-    jcenter()
-    maven { url "https://mvnrepository.com/artifact" }
-    maven { url "https://jitpack.io" }//TODO remove
-    maven { url "http://109.173.124.103:8081/repository/publicRepo" }
-}
-
-dependencies {
-    testImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    //robolectric
-    api 'com.google.guava:guava:28.2-android'
-    testImplementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'
-
-    testImplementation (group: 'com.activeandroid', name: 'activeandroid', version: '3.1.18-SNAPSHOT'){
-        exclude group: 'com.android.support'
-    }
-    androidTestImplementation (group: 'com.activeandroid', name: 'activeandroid', version: '3.1.18-SNAPSHOT'){
-        exclude group: 'com.android.support'
-    }
-    implementation (group: 'com.activeandroid', name: 'activeandroid', version: '3.1.18-SNAPSHOT')
-
-    implementation(group: 'com.google.android.gms', name: 'play-services', version: '8.1.0')
-
-    testImplementation(group: 'com.google.android.gms', name: 'play-services', version: '8.1.0') {
-        exclude(module: 'play-services-maps')
-    }
-    implementation(group: 'com.google.android.gms', name: 'play-services-maps', version: '8.1.0')//'11.6.0'
-    testImplementation(group: 'com.google.android.gms', name: 'play-services-maps', version: '8.1.0')//'11.6.0'
-
-    implementation group: 'com.android.support', name: 'appcompat-v7' //23.0.0//18.0.0
-    testImplementation group: 'com.android.support', name: 'appcompat-v7' //23.0.0//18.0.0
-
-    implementation (group: 'com.android.support', name: 'support-v4')
-    testImplementation (group: 'com.android.support', name: 'support-v4')
-    androidTestImplementation (group: 'com.android.support', name: 'support-v4')
-
-    implementation(group: 'org.roboguice', name: 'roboguice', version: '2.0')
-//            {
-//exclude(module: 'guice')
-//    }
-    implementation(group: 'com.google.inject', name: 'guice', version: '4.2.2', classifier: 'no_aop')
-            {
-                exclude(module: 'guava')
-            }
-    testImplementation (test.robolectric){
-//        exclude group: 'org.codehaus.plexus'
-//        exclude group: 'org.apache.maven'
-//        exclude group: 'org.apache.xerces'
-//        exclude group: 'org.cyberneko'
-    }
-    androidTestImplementation (test.robolectric){
-//        exclude group: 'org.codehaus.plexus'
-//        exclude group: 'org.apache.maven'
-//        exclude group: 'org.apache.xerces'
-//        exclude group: 'org.cyberneko'
-    }
-    //testCompile group: 'org.robolectric', name: 'robolectric-resources', version:'4.0+'
-    testImplementation test.resources
-    testImplementation test.sandbox
-    testImplementation test.utils
-
-//    testImplementation test.shadowCore
-//        androidTestImplementation test.shadowCore
-    testImplementation test.shadowPlay
-
-//    provided(group: 'android', name: 'android', version: '6.0_r3')//6.0_r3
-    //testCompile (group: 'android', name: 'android', version:'5.1.1_r2')
-    implementation 'com.android.support:multidex:1.0.3'
-    testImplementation "org.robolectric:shadows-multidex:3.1.1"
-    testImplementation test.junit
-    androidTestImplementation  test.junit
-    testImplementation group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
-//        androidTestImplementation  group: 'org.robolectric', name: 'android-all', version: 'Q-robolectric-5415296'
-
-//    androidTestImplementation androidx.testRunner
-//    androidTestImplementation androidx.testEspressoCore
-
-    implementation di.daggerApi
-    implementation di.daggerSupport
-
-    annotationProcessor di.daggerProcessor
-    androidTestAnnotationProcessor di.daggerProcessor
-    testAnnotationProcessor di.daggerProcessor
-
-    annotationProcessor di.daggerAndroidProcessor
-    androidTestAnnotationProcessor di.daggerAndroidProcessor
-    testAnnotationProcessor di.daggerAndroidProcessor
-
-    testImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
-    androidTestImplementation 'com.github.fabioCollini.daggermock:daggermock:0.8.5'
-
-    implementation androidx.appcompat
-    // auto size text
-    androidTestImplementation androidx.appcompat
-//    api androidx.constraintLayout
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'//2.0.0-alpha4'
-    // layout constraints
-    androidTestImplementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-
-    api rx.android
-    api rx.java
-    testImplementation test.mockito
-    androidTestImplementation test.mockito
-    implementation test.fragment
-
-    //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
-//exclude(group: 'com.android.support')
-//exclude module: 'support-v4'
-    //}
-    //compile group: 'com.android.support', name: 'mediarouter-v7', version:'18.0.0'
-    // Use jarjar.repackage in place of a dependency notation.
-/*		compile jarjar.repackage {
-			from 'android:android:6.0_r3'
-			//classDelete "com.google.common.base.**"
-			//classRename ("java.**", "aJava.@1")
-           	//classRename ("javax.**", "aJavax.@1")
-		}
-
-*/
-}
-/*
-class mySneakyIntervention implements TaskExecutionListener {
-    void afterExecute(Task t,TaskState s) {}
-    void beforeExecute(Task t) {
-        t.name.equals("transformClassesWithJarMergingForDebug"){
-            print "------------------1"
-        }
-        if (t instanceof  AntlrTask) {
-            // Let's make a backup of all the input files
-            // (Not really sure why you would want to do _that_,
-            //     but it's an example)
-            print '-----------'
-        }
-    }
-}
-*/

@@ -10,7 +10,6 @@ import ru.android.zheka.db.*
 import ru.android.zheka.gmapexample1.Application.Companion.initConfig
 import ru.android.zheka.gmapexample1.home.TestHomeBindingModule
 
-//TODO remove
 class RobolectricMainApp : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
@@ -32,6 +31,7 @@ class RobolectricMainApp : DaggerApplication() {
     //    public AndroidInjector androidInjector() {
     //        return fragmentInjector;
     //    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)

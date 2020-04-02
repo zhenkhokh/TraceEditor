@@ -2,13 +2,11 @@ package ru.android.zheka.gmapexample1
 
 import com.google.android.gms.maps.model.LatLng
 import org.junit.Before
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.Trace
 import ru.android.zheka.db.UtilePointSerializer
-import ru.android.zheka.gmapexample1.home.HomeTest1
 
 @Config(manifest = "AndroidManifest.xml", sdk = [28], application = RobolectricMainApp::class)
 open class BaseRobolectricTest {

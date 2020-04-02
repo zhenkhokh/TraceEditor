@@ -4,31 +4,9 @@ import org.junit.rules.MethodRule
 import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.model.Statement
 import org.robolectric.RuntimeEnvironment
-import ru.android.zheka.fragment.Home
-import ru.android.zheka.gmapexample1.home.TestHomeBindingModule
-import ru.android.zheka.vm.IPanelHomeVM
-import ru.android.zheka.vm.PanelHomeVM
 
-class RobolectricMockTestRule : MethodRule {
-    open fun rule() = DaggerMock.rule<TestAppComponent>(TestApplicationModule(application)
-            ,TestHomeBindingModule()) {
-        customizeBuilder {
-           builder:TestAppComponent.Builder->
-            builder.application(application)
-        }
-        set { component:TestAppComponent->
-            component.inject(application)
-            homeFragment = Home()
-            component.homeSubcomponent().create(homeFragment).inject(homeFragment)
-            vm = homeFragment!!.viewModel
-        }
-    } as MethodRule
-
-//DaggerMock<TestAppComponent>(TestAppComponent::class.java, TestApplicationModule(application),
-        //TestHomeBindingModule()) {
-    var vm: IPanelHomeVM? = null
-    var vmObj: PanelHomeVM? = null
-    var homeFragment: Home? = null
+abstract class RobolectricMockTestRule : MethodRule {
+    abstract fun rule():MethodRule
 
     companion object {
         val application: RobolectricMainApp
