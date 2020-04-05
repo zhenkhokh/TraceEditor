@@ -1,4 +1,4 @@
-package ru.android.zheka.di
+package ru.android.zheka.di.home
 
 import android.content.Context
 import dagger.Module

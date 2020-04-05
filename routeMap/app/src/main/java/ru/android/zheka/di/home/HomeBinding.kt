@@ -1,7 +1,8 @@
-package ru.android.zheka.di
+package ru.android.zheka.di.home
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import ru.android.zheka.di.FragmentScope
 import ru.android.zheka.fragment.Home
 
 @Module

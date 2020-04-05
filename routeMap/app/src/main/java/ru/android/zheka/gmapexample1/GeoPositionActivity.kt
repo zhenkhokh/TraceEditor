@@ -35,7 +35,7 @@ import ru.android.zheka.jsbridge.JsCallable
 import ru.zheka.android.timer.PositionReciever
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback, JsCallable, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
@@ -47,8 +47,6 @@ class GeoPositionActivity //AppCompatActivity
     var position: PositionInterceptor? = null
     var mMap: GoogleMap? = null
 
-    @InjectView(R.id.webViewMaps)
-    var webViewHome: WebView? = null
     var config: Config? = null
     protected var url = "file:///android_asset/geo.html"
     protected var resViewId = R.layout.activity_maps
@@ -124,8 +122,6 @@ class GeoPositionActivity //AppCompatActivity
                 .findFragmentById(R.id.map) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
-        val m = MenuHandler()
-        m.initJsBridge(this, url)
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
         position = PositionInterceptor(this)
@@ -133,8 +129,6 @@ class GeoPositionActivity //AppCompatActivity
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
         println(geoIntent.data as Uri)
-        println(geoIntent.getParcelableExtra<Parcelable>("start") as Uri)
-        println(geoIntent.getParcelableExtra<Parcelable>("end") as Uri)
         try {
             clTrace = Class.forName("ru.android.zheka.gmapexample1.TraceActivity")
             println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.TraceActivity")
@@ -184,90 +178,90 @@ class GeoPositionActivity //AppCompatActivity
         }
     }
 
-    override fun nextView(`val`: String) {
-        var intent = position!!.updatePosition()
-        if (`val`.contentEquals(HOME)) {
-            intent.setClass(context_, clMain)
-            intent.action = Intent.ACTION_VIEW
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contentEquals(POINTS)) {
-            //back from LatLng to center
-            if ( //position.state!=null&&
-                    TraceActivity.isOtherMode(position!!.state)) position!!.state = TRACE_PLOT_STATE.CENTER_COMMAND
-            intent = position!!.newIntent
-            intent.setClass(context_, clPoints)
-            intent.action = Intent.ACTION_VIEW
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contentEquals(SAVE_POINT)) {
-            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_point) as MySaveDialog
-            dialog.position = position
-            //dialog.show(getSupportFragmentManager(), "dialog");
-            dialog.show(getFragmentManager(), "dialog")
-        }
-        if (`val`.contentEquals(MAP)) {
-            if (position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND) {
-                dialog.show(getFragmentManager(), "Сообщение")
-                synchronized(monitor) {
-                    println("waiting dialog ...")
-                    while (!ready) {
-                        try {
-                            monitor.wait()
-                        } catch (e: InterruptedException) {
-                            e.printStackTrace()
-                        }
-                    }
-                    ready = false
-                }
-                //finish trace
-                if (msg.contains("yes")) {
-                    return
-                }
-                //else go to map
-            }
-
-            //if (//position.state!=null&&
-            //		TraceActivity.isOtherMode(position.state))
-            //	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
-            if ((position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
-                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
-                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
-            if (position!!.end == null) if (position!!.centerPosition != null) position!!.end = position!!.centerPosition else position!!.end = position!!.start
-            position!!.state = TRACE_PLOT_STATE.CENTER_START_COMMAND
-            intent = position!!.newIntent
-            //if (!position.extraPoints.isEmpty()){
-            //	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
-            intent.setClass(context_, clMap)
-            intent.action = Intent.ACTION_VIEW
-            if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contentEquals(TRACE)) {
-            intent.setClass(context_, clTrace)
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contentEquals(ADD_WAYPOINTS)) {
-            val model = EditModel()
-            model.clsName = "Point"
-            model.clsPkg = "ru.android.zheka.db"
-            model.name1Id = R.string.points_column_name1
-            model.nameId = R.string.points_column_name
-            intent.putExtra(EditActivity.EDIT_MODEL, model)
-            intent.action = Intent.ACTION_VIEW
-            intent.setClass(context_, clWayPoints)
-            startActivity(intent)
-            finish()
-        }
-        if (`val` == OFFLINE) {
-            MapsActivity.isOffline = if (MapsActivity.isOffline) false else true
-            if (MapsActivity.isOffline) Toast.makeText(this, "Офлайн загрузка включена", 15).show() else Toast.makeText(this, "Офлайн загрузка отключена", 15).show()
-        }
-    }
+//    override fun nextView(`val`: String) {
+//        var intent = position!!.updatePosition()
+//        if (`val`.contentEquals(HOME)) {
+//            intent.setClass(context_, clMain)
+//            intent.action = Intent.ACTION_VIEW
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contentEquals(POINTS)) {
+//            //back from LatLng to center
+//            if ( //position.state!=null&&
+//                    TraceActivity.isOtherMode(position!!.state)) position!!.state = TRACE_PLOT_STATE.CENTER_COMMAND
+//            intent = position!!.newIntent
+//            intent.setClass(context_, clPoints)
+//            intent.action = Intent.ACTION_VIEW
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contentEquals(SAVE_POINT)) {
+//            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_point) as MySaveDialog
+//            dialog.position = position
+//            //dialog.show(getSupportFragmentManager(), "dialog");
+//            dialog.show(getFragmentManager(), "dialog")
+//        }
+//        if (`val`.contentEquals(MAP)) {
+//            if (position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+//                dialog.show(getFragmentManager(), "Сообщение")
+//                synchronized(monitor) {
+//                    println("waiting dialog ...")
+//                    while (!ready) {
+//                        try {
+//                            monitor.wait()
+//                        } catch (e: InterruptedException) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//                    ready = false
+//                }
+//                //finish trace
+//                if (msg.contains("yes")) {
+//                    return
+//                }
+//                //else go to map
+//            }
+//
+//            //if (//position.state!=null&&
+//            //		TraceActivity.isOtherMode(position.state))
+//            //	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
+//            if ((position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
+//                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
+//                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
+//            if (position!!.end == null) if (position!!.centerPosition != null) position!!.end = position!!.centerPosition else position!!.end = position!!.start
+//            position!!.state = TRACE_PLOT_STATE.CENTER_START_COMMAND
+//            intent = position!!.newIntent
+//            //if (!position.extraPoints.isEmpty()){
+//            //	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
+//            intent.setClass(context_, clMap)
+//            intent.action = Intent.ACTION_VIEW
+//            if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contentEquals(TRACE)) {
+//            intent.setClass(context_, clTrace)
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contentEquals(ADD_WAYPOINTS)) {
+//            val model = EditModel()
+//            model.clsName = "Point"
+//            model.clsPkg = "ru.android.zheka.db"
+//            model.name1Id = R.string.points_column_name1
+//            model.nameId = R.string.points_column_name
+//            intent.putExtra(EditActivity.EDIT_MODEL, model)
+//            intent.action = Intent.ACTION_VIEW
+//            intent.setClass(context_, clWayPoints)
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val` == OFFLINE) {
+//            MapsActivity.isOffline = if (MapsActivity.isOffline) false else true
+//            if (MapsActivity.isOffline) Toast.makeText(this, "Офлайн загрузка включена", 15).show() else Toast.makeText(this, "Офлайн загрузка отключена", 15).show()
+//        }
+//    }
 
     override fun onMapReady(map: GoogleMap) {
         var intent: Intent? = null
@@ -286,8 +280,6 @@ class GeoPositionActivity //AppCompatActivity
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
         println(geoIntent.data as Uri)
-        println(geoIntent.getParcelableExtra<Parcelable>("start") as Uri)
-        println(geoIntent.getParcelableExtra<Parcelable>("end") as Uri)
         if (map != null) {
             mMap = map
             position!!.markerCenter = map.addMarker(MarkerOptions().position(position!!.centerPosition)
@@ -350,10 +342,6 @@ class GeoPositionActivity //AppCompatActivity
         //TODO advice to remove marker
     }
 
-    override fun getVebWebView(): WebView {
-        return webViewHome!!
-    }
-
     /*
      * locale
      * @see roboguice.activity.RoboFragmentActivity#onStart()
@@ -368,7 +356,7 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun getActivity(): Activity {
-        TODO("Not yet implemented")
+        return this
     }
 
     override fun onPause() {
@@ -400,22 +388,18 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun getLayoutId(): Int {
-        TODO("Not yet implemented")
+        return R.layout.activity_geo;
     }
 
     override fun initComponent() {
-        TODO("Not yet implemented")
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 
     override fun onDestroyBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 
     override fun onResumeBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 }

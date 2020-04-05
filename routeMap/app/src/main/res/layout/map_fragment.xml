@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="baseNameSpace">
+<data>
+    <variable
+        name="vm"
+        type="ru.android.zheka.vm.IMapVM" />
+</data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/include_map_settings"
+        layout="@layout/home_fragment"
+        bind:model="@{vm.model()}" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -4,6 +4,8 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
+import ru.android.zheka.di.home.HomeBinding
+import ru.android.zheka.di.home.MainBinding
 import ru.android.zheka.gmapexample1.Application
 import javax.inject.Singleton
 

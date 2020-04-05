@@ -1,7 +1,8 @@
-package ru.android.zheka.di
+package ru.android.zheka.di.home
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import ru.android.zheka.di.ActivityScope
 import ru.android.zheka.gmapexample1.MainActivity
 
 @Module

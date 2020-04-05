@@ -54,7 +54,7 @@ class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //
             Delete().from(Trace::class.java).where("name=?", DbFunctions.DEFAULT_CONFIG_NAME).execute<Model>()
             Application.Companion.initConfig()
         }
-        switchToFragment(R.id.settingsFragment, Home())
+        switchToFragment(R.id.homeFragment, Home())
         if (googleKey == "") googleKey = resources.getString(R.string.google_api_key)
         println("---------- " + System.getProperty("java.class.path"))
         try {

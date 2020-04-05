@@ -9,8 +9,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="vm"
-            type="ru.android.zheka.vm.IPanelHomeVM" />
+            name="model"
+            type="ru.android.zheka.coreUI.IPanelModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
 
         <TextView
             android:id="@+id/baseScanBarcode_actionLabel"
-            android:text="@{vm.model().action()}"
+            android:text="@{model.action()}"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_margin="8sp"
@@ -56,11 +56,11 @@
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar"
             app:layout_constraintStart_toStartOf="@+id/baseScanBarcode_background"
             />
-<!--        app:srcCompat="@{vm.model().successImage()}"-->
+<!--        app:srcCompat="@{model.successImage()}"-->
 
         <TextView
             android:id="@+id/baseScanBarcode_successLabel"
-            android:text="@{vm.model().success()}"
+            android:text="@{model.success()}"
             android:textColor="@color/basic"
             android:layout_width="0sp"
             android:layout_height="28sp"
@@ -72,7 +72,7 @@
             app:autoSizeStepGranularity="1sp"
             app:layout_constraintStart_toEndOf="@+id/baseScanBarcode_successImage"
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar" />
-<!--        @{ContextCompat.getColor(context, vm.model().successColor())}-->
+<!--        @{ContextCompat.getColor(context, model.successColor())}-->
 
         <Button
             android:id="@+id/baseScanBarcode_startButton"
@@ -80,21 +80,21 @@
             android:layout_height="40dp"
             android:background="@color/basic"
             android:focusable="false"
-            android:onClick="@{() -> vm.model().getStartButton().onClick()}"
-            android:text="@{vm.model().getStartButton().getLabel()}"
+            android:onClick="@{() -> model.getStartButton().onClick()}"
+            android:text="@{model.getStartButton().getLabel()}"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:visibility="@{vm.model().getStartButton().getVisible()}"
+            android:visibility="@{model.getStartButton().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
             app:layout_constraintTop_toTopOf="@+id/baseScanBarcode_background" />
 
         <Button
             android:id="@+id/baseScanBarcode_stopButton"
-            android:onClick="@{() -> vm.model().getStopButton().onClick()}"
-            android:visibility="@{vm.model().getStopButton().getVisible()}"
+            android:onClick="@{() -> model.getStopButton().onClick()}"
+            android:visibility="@{model.getStopButton().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getStopButton().getLabel()}"
+            android:text="@{model.getStopButton().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -105,11 +105,11 @@
 
         <Button
             android:id="@+id/baseScanBarcode_nextButton"
-            android:onClick="@{() -> vm.model().getNextButton().onClick()}"
-            android:visibility="@{vm.model().getNextButton().getVisible()}"
+            android:onClick="@{() -> model.getNextButton().onClick()}"
+            android:visibility="@{model.getNextButton().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getNextButton().getLabel()}"
+            android:text="@{model.getNextButton().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -123,21 +123,21 @@
             android:layout_height="40dp"
             android:background="@color/basic"
             android:focusable="false"
-            android:onClick="@{() -> vm.model().getStartButton1().onClick()}"
-            android:text="@{vm.model().getStartButton1().getLabel()}"
+            android:onClick="@{() -> model.getStartButton1().onClick()}"
+            android:text="@{model.getStartButton1().getLabel()}"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:visibility="@{vm.model().getStartButton1().getVisible()}"
+            android:visibility="@{model.getStartButton1().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton" />
 
         <Button
             android:id="@+id/baseScanBarcode_stopButton1"
-            android:onClick="@{() -> vm.model().getStopButton1().onClick()}"
-            android:visibility="@{vm.model().getStopButton1().getVisible()}"
+            android:onClick="@{() -> model.getStopButton1().onClick()}"
+            android:visibility="@{model.getStopButton1().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getStopButton1().getLabel()}"
+            android:text="@{model.getStopButton1().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -148,11 +148,11 @@
 
         <Button
             android:id="@+id/baseScanBarcode_nextButton1"
-            android:onClick="@{() -> vm.model().getNextButton1().onClick()}"
-            android:visibility="@{vm.model().getNextButton1().getVisible()}"
+            android:onClick="@{() -> model.getNextButton1().onClick()}"
+            android:visibility="@{model.getNextButton1().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getNextButton1().getLabel()}"
+            android:text="@{model.getNextButton1().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -166,21 +166,21 @@
             android:layout_height="40dp"
             android:background="@color/basic"
             android:focusable="false"
-            android:onClick="@{() -> vm.model().getStartButton2().onClick()}"
-            android:text="@{vm.model().getStartButton2().getLabel()}"
+            android:onClick="@{() -> model.getStartButton2().onClick()}"
+            android:text="@{model.getStartButton2().getLabel()}"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:visibility="@{vm.model().getStartButton2().getVisible()}"
+            android:visibility="@{model.getStartButton2().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton1" />
 
         <Button
             android:id="@+id/baseScanBarcode_stopButton2"
-            android:onClick="@{() -> vm.model().getStopButton2().onClick()}"
-            android:visibility="@{vm.model().getStopButton2().getVisible()}"
+            android:onClick="@{() -> model.getStopButton2().onClick()}"
+            android:visibility="@{model.getStopButton2().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getStopButton2().getLabel()}"
+            android:text="@{model.getStopButton2().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -191,11 +191,11 @@
 
         <Button
             android:id="@+id/baseScanBarcode_nextButton2"
-            android:onClick="@{() -> vm.model().getNextButton2().onClick()}"
-            android:visibility="@{vm.model().getNextButton2().getVisible()}"
+            android:onClick="@{() -> model.getNextButton2().onClick()}"
+            android:visibility="@{model.getNextButton2().getVisible()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{vm.model().getNextButton2().getLabel()}"
+            android:text="@{model.getNextButton2().getLabel()}"
             android:background="@color/basic"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -205,9 +205,9 @@
 
         <EditText
             android:id="@+id/baseScanBarcode_inputValue"
-            android:text="@={vm.model().input()}"
-            app:onKeyListener="@{vm.model().keyListener()}"
-            android:visibility="@{safeUnbox(vm.model().inputVisible()==vm.model().INPUT_TEXT_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
+            android:text="@={model.input()}"
+            app:onKeyListener="@{model.keyListener()}"
+            android:visibility="@{safeUnbox(model.inputVisible()==model.INPUT_TEXT_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
             android:layout_width="0sp"
             android:layout_height="45sp"
             android:layout_margin="10sp"
@@ -220,9 +220,9 @@
 
         <Spinner
             android:id="@+id/basicComboBox"
-            android:visibility="@{safeUnbox(vm.model().inputVisible()==vm.model().COMBO_BOX_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
-            android:onItemSelected="@{(a, b, c, d) -> vm.model().getSpinner().onItemSelected(a, b, c, d)}"
-            android:adapter="@{vm.model().getSpinner().getSpinnerAdapter()}"
+            android:visibility="@{safeUnbox(model.inputVisible()==model.COMBO_BOX_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
+            android:onItemSelected="@{(a, b, c, d) -> model.getSpinner().onItemSelected(a, b, c, d)}"
+            android:adapter="@{model.getSpinner().getSpinnerAdapter()}"
             android:layout_width="0sp"
             android:layout_height="45sp"
             android:layout_margin="10sp"

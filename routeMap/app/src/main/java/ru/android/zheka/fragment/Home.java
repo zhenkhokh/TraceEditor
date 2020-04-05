@@ -24,16 +24,16 @@ public class Home extends AbstractFragment <HomeFragmentBinding> {
 
     @Override
     protected void onInitBinding(HomeFragmentBinding binding) {
-        binding.setVm (viewModel);
+        binding.setModel (viewModel.model ());
     }
 
     @Override
     protected void onResumeBinding(HomeFragmentBinding binding) {
-        binding.getVm ().onResume ();
+        viewModel.onResume ();
     }
 
     @Override
     protected void onDestroyBinding(HomeFragmentBinding binding) {
-        binding.getVm ().onDestroy ();
+        viewModel.onDestroy ();
     }
 }

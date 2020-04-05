@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.*
 import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.*
+import ru.android.zheka.fragment.Home
 import ru.android.zheka.jsbridge.JsCallable
 import ru.android.zheka.route.*
 import ru.android.zheka.route.BellmannFord.MissMatchDataException
@@ -52,8 +53,8 @@ class MapsActivity //extends AppCompatActivity
     @JvmField
 	var position: PositionInterceptor? = null
 
-    @InjectView(R.id.webViewMaps)
-    var webView: WebView? = null
+    var webView: WebView? = null//TODO remove
+
     protected var url = "file:///android_asset/map.html"
     protected var resViewId = R.layout.activity_maps //R.layout.activity_maps;
     var dataTrace: DataTrace? = DataTrace()
@@ -148,6 +149,7 @@ class MapsActivity //extends AppCompatActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
+        switchToFragment(R.id.mapFragment, ru.android.zheka.fragment.Map())
         updateOfflineState(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = getSupportFragmentManager()
