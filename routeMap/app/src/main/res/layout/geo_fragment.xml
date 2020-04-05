@@ -2,7 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bind="baseNameSpace">
     <data>
-        <import type="android.view.View"/>
         <variable
             name="vm"
             type="ru.android.zheka.vm.IGeoVM" />

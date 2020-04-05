@@ -22,20 +22,26 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.UtilePointSerializer
+import ru.android.zheka.fragment.Geo
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.jsbridge.JsCallable
 import ru.zheka.android.timer.PositionReciever
+import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
@@ -56,6 +62,12 @@ class GeoPositionActivity //AppCompatActivity
     var dialog: SingleChoiceDialog = MyDialog()
     var saveDialog = MySaveDialog()
     private var mapType: MapTypeHandler? = null
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector!!
+    }
 
     class MyDialog : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
             , R.string.cancel_plot_trace
@@ -116,12 +128,14 @@ class GeoPositionActivity //AppCompatActivity
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this) //TODO
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
         val mapFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.map) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
+        switchToFragment(R.layout.geo_fragment, Geo())
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
         position = PositionInterceptor(this)
