@@ -33,6 +33,7 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.fragment.Geo
+import ru.android.zheka.fragment.Home
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
 import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE
 import ru.android.zheka.gmapexample1.edit.EditModel
@@ -135,7 +136,7 @@ class GeoPositionActivity //AppCompatActivity
                 .findFragmentById(R.id.map) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
-        switchToFragment(R.layout.geo_fragment, Geo())
+        switchToFragment(R.id.mapFragment, Geo())
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
         position = PositionInterceptor(this)

@@ -1,32 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<!--Do not use this, use activity_maps layout instead
+    Just for layout to not duplicate MapFragment with another fragment tags
+-->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/LinearLayout_1"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/LinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
             tools:context="ru.android.zheka.gmapexample1.GeoPositionActivity">
 
+            <!--<WebView xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--         android:id="@+id/webViewMaps"-->
+            <!--         android:layout_width="wrap_content"-->
+            <!--         android:layout_height="wrap_content" />-->
+
             <FrameLayout
                 android:id="@+id/geoFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             </FrameLayout>
 
+            <TextView
+                android:id="@+id/coordinateTextGeo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="широта/долгота"
+                android:textIsSelectable="true"
+                android:textSize="8pt"
+                android:visibility="gone" />
+
             <fragment
-                android:id="@+id/mapGP"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/geoFM"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-    <!--      android:name="com.example.zheka.gmapexample1.ShadowSupportMapFragment" -->
-    <!--  android:name="com.google.android.gms.maps.SupportMapFragment" -->
