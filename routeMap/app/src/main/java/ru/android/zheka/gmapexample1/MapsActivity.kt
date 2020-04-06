@@ -158,7 +158,6 @@ class MapsActivity //extends AppCompatActivity
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)//TODO remove
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
         switchToFragment(R.id.geoFragment, ru.android.zheka.fragment.Map())
@@ -998,6 +997,7 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override fun initComponent() {
+        AndroidInjection.inject(this)
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {

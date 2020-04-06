@@ -69,7 +69,6 @@ class GeoPositionActivity //AppCompatActivity
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this) //TODO
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
         val mapFragment = getSupportFragmentManager()
@@ -310,6 +309,7 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun initComponent() {
+        AndroidInjection.inject(this)
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {

@@ -40,14 +40,15 @@ class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //
         return R.layout.activity_home
     }
 
-    override fun initComponent() {}
+    override fun initComponent() {
+        AndroidInjection.inject(this)
+    }
 
     override fun onInitBinding(binding: ViewDataBinding?) {}
     override fun onResumeBinding(binding: ViewDataBinding?) {}
     override fun onDestroyBinding(binding: ViewDataBinding?) {}
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this) //TODO
         super.onCreate(savedInstanceState)
         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
         if (Application.Companion.isFieldNull(config)) {

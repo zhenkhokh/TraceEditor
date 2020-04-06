@@ -39,8 +39,8 @@ public abstract class AbstractActivity<B extends ViewDataBinding> extends
 
     @Override
     protected void onStart() {
-        super.onStart ();
         initComponent ();
+        super.onStart ();
         onInitBinding (binding);
     }
 
