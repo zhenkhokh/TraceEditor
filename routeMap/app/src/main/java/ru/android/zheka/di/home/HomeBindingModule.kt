@@ -12,7 +12,7 @@ import ru.android.zheka.vm.PanelHomeVM
 class HomeBindingModule {
     @Provides
     fun bindHomeVM(model: HomeModel?, view: IActivity?): IPanelHomeVM {
-        return PanelHomeVM(view, model)
+        return PanelHomeVM(view!!, model!!)
     }
 
     @Provides

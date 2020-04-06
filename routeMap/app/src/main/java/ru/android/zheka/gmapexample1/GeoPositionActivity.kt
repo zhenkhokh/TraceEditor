@@ -55,76 +55,16 @@ class GeoPositionActivity //AppCompatActivity
     var mMap: GoogleMap? = null
 
     var config: Config? = null
-    protected var url = "file:///android_asset/geo.html"
     protected var resViewId = R.layout.activity_maps
 
     //TimerService timerService = TimerService.getInstance();
     var positionReciever: PositionReciever? = null
-    var dialog: SingleChoiceDialog = MyDialog()
-    var saveDialog = MySaveDialog()
     private var mapType: MapTypeHandler? = null
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
         return androidInjector!!
-    }
-
-    class MyDialog : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
-            , R.string.cancel_plot_trace
-            , R.string.ok_plot_trace) {
-        override fun positiveProcess() {
-            synchronized(monitor) {
-                Companion.msg = "yes"
-                ready = true
-                monitor.notify()
-            }
-        }
-
-        override fun negativeProcess() {
-            synchronized(monitor) {
-                Companion.msg = "no"
-                ready = true
-                monitor.notify()
-            }
-        }
-    }
-
-    class MySaveDialog : SaveDialog() {
-        var position: PositionInterceptor? = null
-        override fun positiveProcess() {
-            println("start positiveProcess")
-            val point = Point()
-            point.data = position!!.centerPosition
-            point.name = nameField!!.text.toString()
-            val dialog = AlertDialog("")
-            if (point.name.isEmpty()) {
-                //Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
-                dialog.msg = "Отсутсвует текст, введите название"
-                dialog.show(fragmentManager, "Ошибка")
-                return
-            }
-            if (DbFunctions.getPointByName(point.name) != null) {
-                dialog.msg = "Точка с таким именем существует"
-                dialog.show(fragmentManager, "Ошибка")
-                return
-            }
-            println("start adding point $point")
-            try {
-                DbFunctions.add(point)
-            } catch (e: java.lang.InstantiationException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-            println("end positiveProcess")
-        }
-
-        override fun newInstance(): SaveDialog {
-            return this
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -139,7 +79,7 @@ class GeoPositionActivity //AppCompatActivity
         switchToFragment(R.id.mapFragment, Geo())
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
-        position = PositionInterceptor(this)
+        position = PositionInterceptor(this, R.id.coordinateText)//TODO move to VM
         //TODO remove print
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
@@ -176,7 +116,7 @@ class GeoPositionActivity //AppCompatActivity
         }
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        val coordinate = findViewById(PositionInterceptor.resViewId) as TextView
+        val coordinate = findViewById(R.id.coordinateText) as TextView
         println("get config")
         coordinate.visibility = View.GONE
         if (config != null) if (config!!.uLocation) {
@@ -218,42 +158,6 @@ class GeoPositionActivity //AppCompatActivity
 //            dialog.show(getFragmentManager(), "dialog")
 //        }
 //        if (`val`.contentEquals(MAP)) {
-//            if (position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND) {
-//                dialog.show(getFragmentManager(), "Сообщение")
-//                synchronized(monitor) {
-//                    println("waiting dialog ...")
-//                    while (!ready) {
-//                        try {
-//                            monitor.wait()
-//                        } catch (e: InterruptedException) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//                    ready = false
-//                }
-//                //finish trace
-//                if (msg.contains("yes")) {
-//                    return
-//                }
-//                //else go to map
-//            }
-//
-//            //if (//position.state!=null&&
-//            //		TraceActivity.isOtherMode(position.state))
-//            //	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
-//            if ((position!!.state != TRACE_PLOT_STATE.CENTER_END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
-//                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
-//                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
-//            if (position!!.end == null) if (position!!.centerPosition != null) position!!.end = position!!.centerPosition else position!!.end = position!!.start
-//            position!!.state = TRACE_PLOT_STATE.CENTER_START_COMMAND
-//            intent = position!!.newIntent
-//            //if (!position.extraPoints.isEmpty()){
-//            //	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
-//            intent.setClass(context_, clMap)
-//            intent.action = Intent.ACTION_VIEW
-//            if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
-//            startActivity(intent)
-//            finish()
 //        }
 //        if (`val`.contentEquals(TRACE)) {
 //            intent.setClass(context_, clTrace)
@@ -279,9 +183,8 @@ class GeoPositionActivity //AppCompatActivity
 //    }
 
     override fun onMapReady(map: GoogleMap) {
-        var intent: Intent? = null
         try {
-            intent = position!!.positioning() //getIntent();
+            position!!.positioning() //getIntent();
         } catch (e: Exception) {
             Toast.makeText(this, "Нет переданного местоположения", 15).show()
             e.printStackTrace()

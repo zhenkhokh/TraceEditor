@@ -94,4 +94,7 @@
 		<string name="home_address_btn">Переход</string>
 		<string name="home_geo_btn">Местоположение</string>
 		<string name="home_info_btn">Помощь</string>
+<!--    geo buttons-->
+        <string name="geo_maps">Просмотр</string>
+
 </resources>

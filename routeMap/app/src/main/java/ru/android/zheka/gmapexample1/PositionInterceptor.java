@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 //import com.google.android.gms.tasks.Task;
 
 public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+	private final int resTextId;
 	public Marker markerCenter;
 	public LatLng centerPosition = null;
 	// use if modify collection, use iterator from local copy then existed reader iterators will be fine
@@ -62,9 +63,12 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		this.extraPoints = extraPoints;
 		isWriteExtra = false;
 	}
-
 	public PositionInterceptor(final Activity target) {
+		this(target,-1);
+	}
+	public PositionInterceptor(final Activity target, int resTextId) {
 		this.target = target;
+		this.resTextId = resTextId;
 		initLocation ();
 	}
 	public void initLocation(){
@@ -101,7 +105,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 				}
 				*/
 				if (mLastLocation == null) {
-					updateUILocation ();
+					updateUILocation (resTextId);
 				}
 				centerPosition = getLocation ();
 
@@ -269,7 +273,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		});
 		*/
 		if (mLastLocation != null) {
-			updateUILocation ();
+			updateUILocation (resTextId);
 		}
 		System.out.println ("mLastConnection is " + mLastLocation);
 		if (!PositionUtil.isAvailablePermissions (target))
@@ -289,10 +293,14 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		*/
 		System.out.println ("end ConnectionCallbacks.onConnected");
 	}
-	@SuppressLint("MissingPermission")
 	public void updateUILocation() {
+		updateUILocation(resTextId);
+	}
+
+	@SuppressLint("MissingPermission")
+	public void updateUILocation(int textId) {
 		System.out.println ("call updateUILocation");
-		TextView coordinate = (TextView) target.findViewById (resViewId);
+		TextView coordinate = (TextView) target.findViewById (textId);
 		if (coordinate != null) {
 			//check permission is alredy done
 			mLastLocation = LocationServices.FusedLocationApi.getLastLocation (
@@ -383,7 +391,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		if (arg0!=null)
 			mLastLocation = arg0;
 		if (mLastLocation != null) {
-			updateUILocation ();
+			updateUILocation (resTextId);
 			System.out.println ("updateUILocatin called in MapsActivity.onLocationChanged");
 		}
 	}

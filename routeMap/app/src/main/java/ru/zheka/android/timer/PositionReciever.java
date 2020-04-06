@@ -1,31 +1,20 @@
 package ru.zheka.android.timer;
 
-import ru.android.zheka.db.Config;
-import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Trace;
-import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.gmapexample1.MapsActivity;
-import ru.android.zheka.gmapexample1.PositionInterceptor;
-import ru.android.zheka.gmapexample1.PositionUtil;
-import ru.android.zheka.gmapexample1.R;
-import ru.android.zheka.route.BellmannFord;
-
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+
+import ru.android.zheka.db.Config;
+import ru.android.zheka.db.DbFunctions;
+import ru.android.zheka.gmapexample1.MapsActivity;
+import ru.android.zheka.gmapexample1.PositionInterceptor;
+import ru.android.zheka.gmapexample1.PositionUtil;
+import ru.android.zheka.route.BellmannFord;
 
 public class PositionReciever extends BroadcastReceiver implements Recievable {
     GoogleMap mMap;

@@ -12,7 +12,7 @@ import ru.android.zheka.vm.IMapVM
 class MapBindingModule {
     @Provides
     fun bindMapVM(model: MapModel?, view: IActivity?): IMapVM {
-        return MapVM(view, model)
+        return MapVM(view!!, model!!)
     }
 
     @Provides

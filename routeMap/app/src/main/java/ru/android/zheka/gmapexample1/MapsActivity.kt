@@ -19,6 +19,10 @@ import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.*
@@ -30,6 +34,7 @@ import ru.android.zheka.route.BellmannFord.NoDirectionException
 import ru.zheka.android.timer.PositionReciever
 import java.util.*
 import java.util.concurrent.ExecutionException
+import javax.inject.Inject
 
 /*
 import com.google.android.gms.common.ConnectionResult;
@@ -44,7 +49,8 @@ import com.google.android.gms.location.LocationServices;
 */
 //import android.app.AlertDialog;
 class MapsActivity //extends AppCompatActivity
-    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback, RoutingListener, JsCallable, OnCameraChangeListener {
+    : AbstractActivity<ViewDataBinding?>(),HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
+    private val resTextId: Int = R.id.coordinateTextGeo
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
     var context_: Context = this
@@ -53,10 +59,8 @@ class MapsActivity //extends AppCompatActivity
     @JvmField
 	var position: PositionInterceptor? = null
 
-    var webView: WebView? = null//TODO remove
-
     protected var url = "file:///android_asset/map.html"
-    protected var resViewId = R.layout.activity_maps //R.layout.activity_maps;
+    protected var resViewId = R.layout.activity_geo //R.layout.activity_maps;
     var dataTrace: DataTrace? = DataTrace()
     private var onRoutingReady = false
     private var cnt = 0
@@ -78,6 +82,13 @@ class MapsActivity //extends AppCompatActivity
 	var results = ResultRouteHandler(-1) // not available
     var replaceDialog = ReplaceDialog()
     var wayPoints = ArrayList<LatLng>()
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector!!
+    }
+
     fun fetchWayPoints(): ArrayList<LatLng> {
         wayPoints = ArrayList()
         if (isFakeStart) wayPoints.add(position!!.start) else wayPoints.add(position!!.centerPosition)
@@ -147,9 +158,10 @@ class MapsActivity //extends AppCompatActivity
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)//TODO remove
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
-        switchToFragment(R.id.mapFragment, ru.android.zheka.fragment.Map())
+        switchToFragment(R.id.geoFragment, ru.android.zheka.fragment.Map())
         updateOfflineState(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = getSupportFragmentManager()
@@ -157,9 +169,7 @@ class MapsActivity //extends AppCompatActivity
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         println("async map")
-        val m = MenuHandler()
-        m.initJsBridge(this, url)
-        position = PositionInterceptor(this)
+        position = PositionInterceptor(this, resTextId)
         val classes = loadClasses("ru.android.zheka.gmapexample1.MainActivity"
                 , "ru.android.zheka.gmapexample1.GeoPositionActivity"
                 , "ru.android.zheka.gmapexample1.TraceActivity"
@@ -169,8 +179,8 @@ class MapsActivity //extends AppCompatActivity
         clTrace = classes[2]
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        rateLimit_ms = config!!.rateLimit_ms.toInt()
-        val coordinate = findViewById(PositionInterceptor.resViewId) as TextView
+        rateLimit_ms = config!!.rateLimit_ms.toBigDecimal().intValueExact()
+        val coordinate = findViewById(resTextId) as TextView
         println("get config: $config")
         coordinate.visibility = View.GONE
         //coordinate.setText("");
@@ -656,7 +666,7 @@ class MapsActivity //extends AppCompatActivity
             if (cnt == 0) options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
             if (position!!.extraPoints != null && cnt == position!!.extraPoints.size - 1) {
                 options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                position!!.updateUILocation()
+                position!!.updateUILocation(resTextId)
                 val tmp = ArrayList(position!!.extraPoints)
                 dataTrace!!.extraPoints = tmp
                 val allPoints: List<LatLng> = ArrayList()
@@ -682,139 +692,139 @@ class MapsActivity //extends AppCompatActivity
         return DbFunctions.getNamePointByData(point) ?: return ""
     }
 
-    override fun nextView(`val`: String) {
-        var intent = position!!.updatePosition() //new Intent();
-        if (`val`.contentEquals(HOME)) {
-            intent.setClass(context_, clMain)
-            intent.action = Intent.ACTION_VIEW
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contentEquals(GEO)) {
-            val mapIntent = position!!.updatePosition() //new Intent(Intent.ACTION_VIEW, geoUri);
-            mapIntent.action = Intent.ACTION_VIEW
-            mapIntent.setClass(context_, clGeo)
-            startActivity(mapIntent)
-            finish()
-        }
-        // SQLite pojo: name, (?)trace, (String)traceLight
-        if (`val`.contentEquals(SAVE_TRACE)) {
-            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_trace) as MySaveDialog
-            dialog.map = this@MapsActivity
-            dialog.dataTrace = dataTrace
-            dialog.position = position
-            //dialog.show(getSupportFragmentManager(), "dialog");
-            dialog.show(getFragmentManager(), "dialog")
-        }
-        if (`val` == TRACE) {
-            Toast.makeText(this, "Trace view called: $`val`", 15).show()
-            intent.setClass(context_, clTrace)
-            startActivity(intent)
-            finish()
-        }
-        if (`val`.contains(GO_POSITION)) {
-            goPosition(false)
-        }
-        if (`val`.contains(ADD_POINT)) {
-            Toast.makeText(this
-                    , "Для добавления путевой точки перейдите в местоположение и установите ее по центру, далее вернитесь к просмотру"
-                    , 25).show()
-        }
-        if (`val`.contains(REMOVE_POINT)) {
-            while (position!!.isWriteExtra == true) {
-            } // or remove, copy, block new writers&readers until finished
-            println("extraPoint before removing " + position!!.extraPoints)
-            var tmp = ArrayList(position!!.extraPoints)
-            val sz = tmp.size
-            if (sz < 2) {
-                Toast.makeText(this, "Нет путевых точек для удаления", 15).show()
-                return
-            }
-            val newStart = UtilePointSerializer().deserialize(tmp[0]) as LatLng
-            //String[] temp = Arrays.copyOf (position.getExtraPoints ().toArray (new String[0]),sz);//remove(0)
-            val temp = arrayOfNulls<String>(sz - 1)
-            System.arraycopy(position!!.extraPoints.toTypedArray()
-                    , 1, temp, 0, sz - 1)
-            if (position!!.isWriteExtra == true || sz != temp.size + 1) {
-                Toast.makeText(this, "Ресурс занят, повторите операцию", 15).show()
-                return
-            }
-            tmp = ArrayList(Arrays.asList(*temp))
-            position!!.setExtraPointsFromCopy(tmp)
-            println("extraPoint after removing " + position!!.extraPoints)
-            println("extraPoint tmp " + Arrays.asList(*temp) + " len=" + temp.size)
-            //LatLng end = position.end;
-            setIntent(intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, tmp))
-            if (isOffline) {
-                //Trace trace = (Trace)DbFunctions.getModelByName (currentNameOffline,Trace.class);
-                var dataTrace = traceDebugging!!.copy(false)
-                if (dataTrace != null) {
-                    if (dataTrace.removeFirstSegment() == null) {
-                        Toast.makeText(this, "Данные сегмента не доступны", 15).show()
-                        return
-                    }
-                    dataTrace.extraPoints = tmp
-                    dataTrace = dataTrace.copy(true)
-                    position!!.title = UtileTracePointsSerializer().serialize(dataTrace) as String
-                } else {
-                    Toast.makeText(this, "Данные маршрута не доступны", 15).show()
-                    return
-                }
-            }
-            position!!.start = newStart
-            println("from remove way-point:position.end " + position!!.end + " position.start: " + position!!.start)
-            //if (position.end==null && point!=null )
-            //	position.end = point;
-            setIntent(position!!.newIntent)
-            intent = position!!.updatePosition()
-
-            //position.end = end;
-            intent.setClass(context_, MapsActivity::class.java)
-            intent.action = Intent.ACTION_VIEW
-            Toast.makeText(this, "Ближайшая путевая точка удалена", 15).show()
-            startActivity(intent)
-            finish()
-        }
-        if (`val` == FAKE_START) {
-            isFakeStart = if (isFakeStart) false else true
-            if (isFakeStart) {
-                Toast.makeText(this, "Задан псевдо старт", 15).show()
-            } else {
-                Toast.makeText(this, "Дан старт из местоположения", 15).show()
-            }
-            intent.setClass(context_, MapsActivity::class.java)
-            intent.action = Intent.ACTION_VIEW
-            startActivity(intent)
-            finish()
-        }
-        if (`val` == MAP_TYPE) {
-            //if (mMap==null) {
-            //	Toast.makeText (this, "Ошибка: карта не определена", 15).show ();
-            //	return;
-            //}
-            when (mapType.type) {
-                MapTypeHandler.Type.NORMAL -> {
-                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_SATELLITE
-                    Toast.makeText(this, "Изменена на спутниковую, поверните экран", 15).show()
-                }
-                MapTypeHandler.Type.SATELLITE -> {
-                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_TERRAIN
-                    Toast.makeText(this, "Изменена на рельефную, повторите просмотр", 15).show()
-                }
-                MapTypeHandler.Type.TERRAIN -> {
-                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_HYBRID
-                    Toast.makeText(this, "Изменена на гибридную, поверните экран", 15).show()
-                }
-                MapTypeHandler.Type.HYBRID -> {
-                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_NORMAL
-                    Toast.makeText(this, "Изменена на обычную, повторите просмотр", 15).show()
-                }
-            }
-            mapType = MapTypeHandler(MapTypeHandler.userCode)
-            //mMap.setMapType (mapType.getCode ());// setting has no effect
-            //goPosition (false);//?
-        }
-    }
+//    override fun nextView(`val`: String) {
+//        var intent = position!!.updatePosition() //new Intent();
+//        if (`val`.contentEquals(HOME)) {
+//            intent.setClass(context_, clMain)
+//            intent.action = Intent.ACTION_VIEW
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contentEquals(GEO)) {
+//            val mapIntent = position!!.updatePosition() //new Intent(Intent.ACTION_VIEW, geoUri);
+//            mapIntent.action = Intent.ACTION_VIEW
+//            mapIntent.setClass(context_, clGeo)
+//            startActivity(mapIntent)
+//            finish()
+//        }
+//        // SQLite pojo: name, (?)trace, (String)traceLight
+//        if (`val`.contentEquals(SAVE_TRACE)) {
+//            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_trace) as MySaveDialog
+//            dialog.map = this@MapsActivity
+//            dialog.dataTrace = dataTrace
+//            dialog.position = position
+//            //dialog.show(getSupportFragmentManager(), "dialog");
+//            dialog.show(getFragmentManager(), "dialog")
+//        }
+//        if (`val` == TRACE) {
+//            Toast.makeText(this, "Trace view called: $`val`", 15).show()
+//            intent.setClass(context_, clTrace)
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val`.contains(GO_POSITION)) {
+//            goPosition(false)
+//        }
+//        if (`val`.contains(ADD_POINT)) {
+//            Toast.makeText(this
+//                    , "Для добавления путевой точки перейдите в местоположение и установите ее по центру, далее вернитесь к просмотру"
+//                    , 25).show()
+//        }
+//        if (`val`.contains(REMOVE_POINT)) {
+//            while (position!!.isWriteExtra == true) {
+//            } // or remove, copy, block new writers&readers until finished
+//            println("extraPoint before removing " + position!!.extraPoints)
+//            var tmp = ArrayList(position!!.extraPoints)
+//            val sz = tmp.size
+//            if (sz < 2) {
+//                Toast.makeText(this, "Нет путевых точек для удаления", 15).show()
+//                return
+//            }
+//            val newStart = UtilePointSerializer().deserialize(tmp[0]) as LatLng
+//            //String[] temp = Arrays.copyOf (position.getExtraPoints ().toArray (new String[0]),sz);//remove(0)
+//            val temp = arrayOfNulls<String>(sz - 1)
+//            System.arraycopy(position!!.extraPoints.toTypedArray()
+//                    , 1, temp, 0, sz - 1)
+//            if (position!!.isWriteExtra == true || sz != temp.size + 1) {
+//                Toast.makeText(this, "Ресурс занят, повторите операцию", 15).show()
+//                return
+//            }
+//            tmp = ArrayList(Arrays.asList(*temp))
+//            position!!.setExtraPointsFromCopy(tmp)
+//            println("extraPoint after removing " + position!!.extraPoints)
+//            println("extraPoint tmp " + Arrays.asList(*temp) + " len=" + temp.size)
+//            //LatLng end = position.end;
+//            setIntent(intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, tmp))
+//            if (isOffline) {
+//                //Trace trace = (Trace)DbFunctions.getModelByName (currentNameOffline,Trace.class);
+//                var dataTrace = traceDebugging!!.copy(false)
+//                if (dataTrace != null) {
+//                    if (dataTrace.removeFirstSegment() == null) {
+//                        Toast.makeText(this, "Данные сегмента не доступны", 15).show()
+//                        return
+//                    }
+//                    dataTrace.extraPoints = tmp
+//                    dataTrace = dataTrace.copy(true)
+//                    position!!.title = UtileTracePointsSerializer().serialize(dataTrace) as String
+//                } else {
+//                    Toast.makeText(this, "Данные маршрута не доступны", 15).show()
+//                    return
+//                }
+//            }
+//            position!!.start = newStart
+//            println("from remove way-point:position.end " + position!!.end + " position.start: " + position!!.start)
+//            //if (position.end==null && point!=null )
+//            //	position.end = point;
+//            setIntent(position!!.newIntent)
+//            intent = position!!.updatePosition()
+//
+//            //position.end = end;
+//            intent.setClass(context_, MapsActivity::class.java)
+//            intent.action = Intent.ACTION_VIEW
+//            Toast.makeText(this, "Ближайшая путевая точка удалена", 15).show()
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val` == FAKE_START) {
+//            isFakeStart = if (isFakeStart) false else true
+//            if (isFakeStart) {
+//                Toast.makeText(this, "Задан псевдо старт", 15).show()
+//            } else {
+//                Toast.makeText(this, "Дан старт из местоположения", 15).show()
+//            }
+//            intent.setClass(context_, MapsActivity::class.java)
+//            intent.action = Intent.ACTION_VIEW
+//            startActivity(intent)
+//            finish()
+//        }
+//        if (`val` == MAP_TYPE) {
+//            //if (mMap==null) {
+//            //	Toast.makeText (this, "Ошибка: карта не определена", 15).show ();
+//            //	return;
+//            //}
+//            when (mapType.type) {
+//                MapTypeHandler.Type.NORMAL -> {
+//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_SATELLITE
+//                    Toast.makeText(this, "Изменена на спутниковую, поверните экран", 15).show()
+//                }
+//                MapTypeHandler.Type.SATELLITE -> {
+//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_TERRAIN
+//                    Toast.makeText(this, "Изменена на рельефную, повторите просмотр", 15).show()
+//                }
+//                MapTypeHandler.Type.TERRAIN -> {
+//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_HYBRID
+//                    Toast.makeText(this, "Изменена на гибридную, поверните экран", 15).show()
+//                }
+//                MapTypeHandler.Type.HYBRID -> {
+//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_NORMAL
+//                    Toast.makeText(this, "Изменена на обычную, повторите просмотр", 15).show()
+//                }
+//            }
+//            mapType = MapTypeHandler(MapTypeHandler.userCode)
+//            //mMap.setMapType (mapType.getCode ());// setting has no effect
+//            //goPosition (false);//?
+//        }
+//    }
 
     fun goPosition(isBeforeAnimation: Boolean) {
         runOnUiThread(Runnable {
@@ -853,10 +863,6 @@ class MapsActivity //extends AppCompatActivity
         })
     }
 
-    override fun getVebWebView(): WebView {
-        return webView!!
-    }
-
     override fun onCameraChange(position: CameraPosition) {
         if (position != null) {
             this.position!!.zoom = position.zoom
@@ -881,7 +887,7 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override fun getActivity(): Activity {
-        TODO("Not yet implemented")
+        return  this
     }
 
     /*
@@ -988,22 +994,18 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override fun getLayoutId(): Int {
-        TODO("Not yet implemented")
+        return R.layout.activity_maps
     }
 
     override fun initComponent() {
-        TODO("Not yet implemented")
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 
     override fun onResumeBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 
     override fun onDestroyBinding(binding: ViewDataBinding?) {
-        TODO("Not yet implemented")
     }
 }

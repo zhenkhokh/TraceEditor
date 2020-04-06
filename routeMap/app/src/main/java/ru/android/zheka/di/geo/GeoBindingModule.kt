@@ -12,7 +12,7 @@ import ru.android.zheka.vm.IGeoVM
 class GeoBindingModule {
     @Provides
     fun bindGeoVM(model: GeoModel?, view: IActivity?): IGeoVM {
-        return GeoVM(view, model)
+        return GeoVM(view!!, model!!)
     }
 
     @Provides
