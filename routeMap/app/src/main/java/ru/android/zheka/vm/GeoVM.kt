@@ -1,16 +1,9 @@
 package ru.android.zheka.vm
 
-import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
-import android.os.Message
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
-import io.reactivex.SingleTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
@@ -18,75 +11,70 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.gmapexample1.*
-import ru.android.zheka.gmapexample1.R.*
 import ru.android.zheka.gmapexample1.GeoPositionActivity.Companion.OFFLINE
+import ru.android.zheka.gmapexample1.R.string
+import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.model.IGeoModel
 
 class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
-    //    var dialog: MyDialog = MyDialog()
-//    var saveDialog = MySaveDialog()
-    var monitor = Object()
-    var ready = false
-    var msg = ""
-
-    init {
-        GeoVM.view = view
-    }
-
     override fun home() {
-//TODO
+        val intent = position!!.updatePosition()
+        intent.setClass(view.context, MainActivity.javaClass)
+        intent.action = Intent.ACTION_VIEW
+        view.activity.startActivity(intent)
+        view.activity.finish()
     }
 
     override fun points() {
-//TODO
+        if ( //position.state!=null&&
+                TraceActivity.isOtherMode(position!!.state))
+            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_COMMAND
+        val intent = position!!.newIntent
+        intent.setClass(view.context, TraceActivity::class.java)
+        intent.action = Intent.ACTION_VIEW
+        view.activity.startActivity(intent)
+        view.activity.finish()
     }
 
     override fun savePoint() {
         GeoSaveDialog.newInstance(string.hint_dialog_point)
-                .show(getFragmentManager(), "dialog")
-        //dialog.show(getSupportFragmentManager(), "dialog");
+                .show(view.activity.getFragmentManager(), "dialog")
+    }
+
+    override fun pointToTrace() {
+        val intent = position!!.updatePosition()
+        intent.setClass(view.context, TraceActivity::class.java)
+        view.activity.startActivity(intent)
+        view.activity.finish()
     }
 
     override fun map() {
         if (position!!.state != PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
-//            dialog.setOnCancelListener({ a-> goToMap()})
-//            dialog.
             Single.just(true)
                     .doOnSubscribe({ a -> GeoVM.show(view.activity.getFragmentManager(), "Сообщение") })
                     .compose(RxTransformer.singleIoToMain())
-                    .subscribe({ a -> println("Finish") }, { e -> println("Error:" + e.message) })
-
-//            dialog.show (view.activity.getFragmentManager (), "Сообщение")
-//            synchronized (monitor) {
-//                println ("waiting dialog ...")
-//                while (!ready) {
-//                    try {
-//                        monitor.wait ()
-//                    } catch (e:InterruptedException){
-//                        e.printStackTrace ()
-//                    }
-//                }
-//                ready = false
-//            }
-
-
-            //else go to map
+                    .subscribe({ a -> println("Finish successfully") }, { e -> println("Error:" + e.message) })
         }
     }
 
 
     override fun addWayPoints() {
-//TODO
-    }
-
-    override fun onResume() {
-        position = PositionInterceptor(view.activity)
-        model.startButton.set(getButton(Consumer { a: Boolean? -> map() }, string.geo_maps))//TODO
-        model.stopButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))//TODO
+        val model = EditModel()
+        model.clsName = "Point"
+        model.clsPkg = "ru.android.zheka.db"
+        model.name1Id = R.string.points_column_name1
+        model.nameId = R.string.points_column_name
+        val intent = position!!.updatePosition()
+        intent.putExtra(EditActivity.EDIT_MODEL, model)
+        intent.action = Intent.ACTION_VIEW
+        intent.setClass(view.context, WayPointsToTrace.javaClass)
+        view.activity.startActivity(intent)
+        view.activity.finish()
     }
 
     override fun onDestroy() {}
+
     override fun model(): IGeoModel {
         return model
     }
@@ -94,6 +82,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     companion object : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
             , string.cancel_plot_trace
             , string.ok_plot_trace) {
+
         override fun positiveProcess() {
         }
 
@@ -102,6 +91,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         }
 
         var position: PositionInterceptor? = null
+
         lateinit var view: IActivity
         fun goToMap() {
             //if (//position.state!=null&&
@@ -169,5 +159,16 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         return ButtonHandler(consumer
                 , nameId
                 , view)
+    }
+
+    override fun onResume() {
+        position = PositionInterceptor(view.activity)
+        GeoVM.view = view
+        model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
+        model.stopButton.set(getButton(Consumer { a: Boolean? -> points() }, string.geo_points))
+        model.nextButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))
+        model.startButton1.set(getButton(Consumer { a: Boolean? -> pointToTrace() }, string.geo_point_to_trace))
+        model.stopButton1.set(getButton(Consumer { a: Boolean? -> addWayPoints() }, string.geo_add_waypoints))
+        model.nextButton1.set(getButton(Consumer { a: Boolean? -> map() }, string.geo_maps))
     }
 }

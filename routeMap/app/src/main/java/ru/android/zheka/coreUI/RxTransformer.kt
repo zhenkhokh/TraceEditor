@@ -6,7 +6,6 @@ package ru.android.zheka.coreUI
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
 /**
  * {Description}
@@ -20,9 +19,6 @@ class RxTransformer  {
 
         val iOScheduler: Scheduler
             get() = Schedulers.io()
-
-        val computationScheduler: Scheduler
-            get() = Schedulers.computation()
 
         fun <T> observableIoToMain(): ObservableTransformer<T, T> {
             return ObservableTransformer { objectObservable: Observable<T> ->

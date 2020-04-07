@@ -18,7 +18,7 @@ abstract class SingleChoiceDialog(msg: String?) : DialogFragment() {
         this.negativeId = negativeId
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreate(savedInstanceState)
         val inflater = activity.layoutInflater
         val builder = AlertDialog.Builder(activity)

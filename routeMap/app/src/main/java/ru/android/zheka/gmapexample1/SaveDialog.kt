@@ -35,7 +35,7 @@ abstract class SaveDialog : DialogFragment() {
 
     //get sub-class instance
     protected abstract fun newInstance(): SaveDialog
-    override fun onCreateDialog(savedInstanceState: Bundle): Dialog {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         println("start onCreateDialog")
         super.onCreate(savedInstanceState)
         val inflater = activity.layoutInflater

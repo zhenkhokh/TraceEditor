@@ -132,55 +132,6 @@ class GeoPositionActivity //AppCompatActivity
         }
     }
 
-//    override fun nextView(`val`: String) {
-//        var intent = position!!.updatePosition()
-//        if (`val`.contentEquals(HOME)) {
-//            intent.setClass(context_, clMain)
-//            intent.action = Intent.ACTION_VIEW
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val`.contentEquals(POINTS)) {
-//            //back from LatLng to center
-//            if ( //position.state!=null&&
-//                    TraceActivity.isOtherMode(position!!.state)) position!!.state = TRACE_PLOT_STATE.CENTER_COMMAND
-//            intent = position!!.newIntent
-//            intent.setClass(context_, clPoints)
-//            intent.action = Intent.ACTION_VIEW
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val`.contentEquals(SAVE_POINT)) {
-//            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_point) as MySaveDialog
-//            dialog.position = position
-//            //dialog.show(getSupportFragmentManager(), "dialog");
-//            dialog.show(getFragmentManager(), "dialog")
-//        }
-//        if (`val`.contentEquals(MAP)) {
-//        }
-//        if (`val`.contentEquals(TRACE)) {
-//            intent.setClass(context_, clTrace)
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val`.contentEquals(ADD_WAYPOINTS)) {
-//            val model = EditModel()
-//            model.clsName = "Point"
-//            model.clsPkg = "ru.android.zheka.db"
-//            model.name1Id = R.string.points_column_name1
-//            model.nameId = R.string.points_column_name
-//            intent.putExtra(EditActivity.EDIT_MODEL, model)
-//            intent.action = Intent.ACTION_VIEW
-//            intent.setClass(context_, clWayPoints)
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val` == OFFLINE) {
-//            MapsActivity.isOffline = if (MapsActivity.isOffline) false else true
-//            if (MapsActivity.isOffline) Toast.makeText(this, "Офлайн загрузка включена", 15).show() else Toast.makeText(this, "Офлайн загрузка отключена", 15).show()
-//        }
-//    }
-
     override fun onMapReady(map: GoogleMap) {
         try {
             position!!.positioning() //getIntent();
