@@ -96,5 +96,6 @@
 		<string name="home_info_btn">Помощь</string>
 <!--    geo buttons-->
         <string name="geo_maps">Просмотр</string>
+        <string name="geo_save_point">Сохранить точку</string>
 
 </resources>
