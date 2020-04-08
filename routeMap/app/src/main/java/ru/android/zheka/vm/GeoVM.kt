@@ -82,6 +82,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     companion object : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
             , string.cancel_plot_trace
             , string.ok_plot_trace) {
+        lateinit var model:IGeoModel
 
         override fun positiveProcess() {
         }
@@ -161,9 +162,14 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
                 , view)
     }
 
-    override fun onResume() {
+    fun initPosition() {
         position = PositionInterceptor(view.activity)
         GeoVM.view = view
+        GeoVM.model = model
+    }
+
+    override fun onResume() {
+        initPosition()
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
         model.stopButton.set(getButton(Consumer { a: Boolean? -> points() }, string.geo_points))
         model.nextButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))

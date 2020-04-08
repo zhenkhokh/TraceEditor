@@ -8,6 +8,7 @@ import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import ru.android.zheka.db.*
 import ru.android.zheka.gmapexample1.Application.Companion.initConfig
+import ru.android.zheka.gmapexample1.geo.TestGeoBindingModule
 import ru.android.zheka.gmapexample1.home.TestHomeBindingModule
 
 class RobolectricMainApp : DaggerApplication() {
@@ -41,7 +42,8 @@ class RobolectricMainApp : DaggerApplication() {
         return DaggerTestAppComponent.builder()
                 .application(this)
                 .testApplicationModule(TestApplicationModule(this))
-                .testHomeBindingModule(TestHomeBindingModule())
+//                .testHomeBindingModule(TestHomeBindingModule())
+//                .testGeoBindingModule(TestGeoBindingModule())
                 .build()
     }
 }

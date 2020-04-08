@@ -7,7 +7,7 @@ import ru.android.zheka.gmapexample1.R;
 import ru.android.zheka.gmapexample1.databinding.GeoFragmentBinding;
 import ru.android.zheka.vm.IGeoVM;
 
-public class Geo extends AbstractFragment <GeoFragmentBinding> {
+public class Geo extends AbstractFragment <GeoFragmentBinding> implements IGeo {
 
     @Inject
     IGeoVM viewModel;

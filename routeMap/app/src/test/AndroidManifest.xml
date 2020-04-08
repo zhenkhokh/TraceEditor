@@ -75,6 +75,9 @@ android:name="com.activeandroid.app.Application"
         </activity>
         <activity android:name=".MainActivity" 
         			android:label="@string/title_activity_main"/>
+
+        <activity android:name=".MainActivity$Companion"/>
+
         <activity android:name=".MapsActivity" 
         			android:label="@string/title_activity_maps"/>
         <activity android:name=".GeoPositionActivity"

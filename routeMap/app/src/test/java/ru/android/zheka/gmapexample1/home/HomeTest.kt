@@ -10,13 +10,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
-import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.fragment.Home
+import ru.android.zheka.fragment.IHome
 import ru.android.zheka.gmapexample1.BaseRobolectricTest
 import ru.android.zheka.model.HomeModel
 import ru.android.zheka.vm.IPanelHomeVM
@@ -43,7 +42,7 @@ open class HomeTest : BaseRobolectricTest() {
     var homeModel: HomeModel? = null
 
     @Mock
-    var view: IActivity? = null
+    var view: IHome? = null
 
     @get:Rule
 //    @JvmField

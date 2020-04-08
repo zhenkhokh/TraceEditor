@@ -7,11 +7,9 @@ import ru.android.zheka.gmapexample1.RobolectricMockTestRule
 import ru.android.zheka.gmapexample1.TestAppComponent
 import ru.android.zheka.gmapexample1.TestApplicationModule
 import ru.android.zheka.vm.IPanelHomeVM
-import ru.android.zheka.vm.PanelHomeVM
 
 class HomeMockRule: RobolectricMockTestRule(){
     var vm: IPanelHomeVM? = null
-    var vmObj: PanelHomeVM? = null
     var homeFragment: Home? = null
 
     override fun rule() =  DaggerMock.rule<TestAppComponent>(TestApplicationModule(application)
