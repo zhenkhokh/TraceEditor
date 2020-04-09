@@ -10,4 +10,9 @@
 	<color name="red">#ff5048</color>
 	<color name="black">#000000</color>
 	<color name="download">#6db91a</color>
+
+	<color name="errorDialog_titleBackground">#000398</color>
+	<color name="errorDialog_titleFont">#ffffff</color>
+	<color name="errorDialog_editValueBackground">#efeded</color>
+
 </resources>

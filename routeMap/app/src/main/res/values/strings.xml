@@ -102,4 +102,5 @@
     <string name="geo_add_waypoints">Передать путевые точки в маршрут</string>
     <string name="geo_maps">Просмотр</string>
 
+    	<string name="errorDialog_windowTitle">Ошибка</string>
 </resources>

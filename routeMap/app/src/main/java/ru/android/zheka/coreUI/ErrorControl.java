@@ -33,6 +33,10 @@ public class ErrorControl {
                     .contentValue(throwable.getMessage ())
                     .context(view.getContext ())
                     .positiveConsumer (consumer)
+                    .layoutId (R.layout.dialog_error)
+                    .titleId (R.id.errorDialog_windowTitle)
+                    .contentId (R.id.errorDialog_value)
+                    .poistiveBtnId (R.string.ok_save_point)
                     .build();
             new ErrorDialog(config).show();
         }
@@ -44,20 +48,20 @@ public class ErrorControl {
 
         public void show() {
             View view = getDialogView ();
-            getContent (view);//?
             AlertDialog dialog = configureDialog (view);
             dialog.setCanceledOnTouchOutside (false);
+            dialog.show ();
         }
 
         private AlertDialog configureDialog(View view) {
-            AlertDialog dialog = new AlertDialog.Builder (config.context)
+            getContent (view);
+            return new AlertDialog.Builder (config.context)
                     .setView (view)
-                    .setPositiveButton (config.poistiveBtnId, null)
-                    .show ();
-            dialog.getButton (AlertDialog.BUTTON_POSITIVE).setOnClickListener (
-                    v-> Observable.just(true).subscribe(config.positiveConsumer, this.view::showError).dispose());
-            dialog.dismiss();
-            return dialog;
+                    .setPositiveButton (config.poistiveBtnId, (d,which) -> {
+                        d.cancel ();
+                        Observable.just(true).subscribe(config.positiveConsumer, this.view::showError).dispose();
+                    })
+                    .create ();
         }
 
         private View getDialogView() {
