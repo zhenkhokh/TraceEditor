@@ -8,14 +8,15 @@ import ru.android.zheka.fragment.IGeo
 import ru.android.zheka.model.GeoModel
 import ru.android.zheka.model.IGeoModel
 import ru.android.zheka.vm.GeoVM
+import ru.android.zheka.vm.IGeoVM
 
 @Module(includes = [TestGeoModule::class])
 class TestGeoBindingModule {
     var mockVM = Mockito.mock(GeoVM::class.java)
 
     @Provides
-    fun bindGeoVM(view: IGeo?, model: IGeoModel?): GeoVM {
-        return mockVM//GeoVM(view!!,model!!)
+    fun bindGeoVM(view: IGeo?, model: IGeoModel?): IGeoVM {
+        return GeoVM(view!!,model!!)
     }
 
     @Provides

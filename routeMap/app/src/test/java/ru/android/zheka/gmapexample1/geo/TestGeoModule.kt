@@ -6,8 +6,6 @@ import ru.android.zheka.fragment.Geo
 import ru.android.zheka.fragment.IGeo
 import ru.android.zheka.model.GeoModel
 import ru.android.zheka.model.IGeoModel
-import ru.android.zheka.vm.GeoVM
-import ru.android.zheka.vm.IGeoVM
 
 @Module
 abstract class TestGeoModule {
@@ -17,6 +15,6 @@ abstract class TestGeoModule {
     @Binds
     abstract fun bindActivity(context: Geo?): IGeo?
 
-    @Binds //    @ActivityScope
-    abstract fun bindGeoVM(vm: GeoVM?): IGeoVM?
+//    @Binds //    @ActivityScope
+//    abstract fun bindGeoVM(vm: GeoVM?): IGeoVM?
 }

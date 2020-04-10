@@ -47,7 +47,7 @@ public class TraceActivity extends RoboListActivity implements JsCallable{
 			//SingleChoiceDialog("Выберете текущую точку маршрута как путевую или как конечную") {
 	static public class MyDialogFragment extends SingleChoiceDialog{
 public MyDialogFragment(){
-	super(null);
+	super("");
 }
 				@Override
 				public void positiveProcess() {

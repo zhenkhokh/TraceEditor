@@ -10,7 +10,7 @@ import ru.android.zheka.vm.IGeoVM;
 public class Geo extends AbstractFragment <GeoFragmentBinding> implements IGeo {
 
     @Inject
-    IGeoVM viewModel;
+    public IGeoVM viewModel;
 
     @Override
     protected int getLayoutId() {
