@@ -20,7 +20,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     override fun home() {
         val intent = position!!.updatePosition()
-        intent.setClass(view.context, MainActivity.javaClass)
+        intent.setClass(view.context, MainActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         view.activity.startActivity(intent)
         view.activity.finish()
@@ -68,7 +68,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         val intent = position!!.updatePosition()
         intent.putExtra(EditActivity.EDIT_MODEL, model)
         intent.action = Intent.ACTION_VIEW
-        intent.setClass(view.context, WayPointsToTrace.javaClass)
+        intent.setClass(view.context, WayPointsToTrace::class.java)
         view.activity.startActivity(intent)
         view.activity.finish()
     }
