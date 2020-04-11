@@ -68,7 +68,6 @@ open class GeoTest : BaseRobolectricTest() {
 
     @Test
     fun trace1Test() {
-        initMock()
         lateinit var geo:Geo
         val launcher = FragmentScenario.launchInContainer(Geo::class.java)
         launcher.moveToState(Lifecycle.State.RESUMED)

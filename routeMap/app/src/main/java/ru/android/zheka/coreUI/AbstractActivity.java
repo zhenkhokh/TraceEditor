@@ -10,6 +10,7 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import ru.android.zheka.gmapexample1.R;
 
 public abstract class AbstractActivity<B extends ViewDataBinding> extends
         AppCompatActivity
@@ -33,6 +34,8 @@ public abstract class AbstractActivity<B extends ViewDataBinding> extends
     @Override
     protected void onCreate(Bundle savedState) {
         super.onCreate (savedState);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         error = new ErrorControl (this);
         binding = DataBindingUtil.setContentView (this, getLayoutId ());
     }

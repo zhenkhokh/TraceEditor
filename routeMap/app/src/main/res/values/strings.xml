@@ -98,7 +98,7 @@
     <string name="geo_home">Главная</string>
     <string name="geo_points">Навигация по точкам</string>
     <string name="geo_save_point">Сохранить точку</string>
-    <string name="geo_point_to_trace">Передать центральную точку в маршрут</string>
+    <string name="geo_point_to_trace">Передать ЦТ в маршрут</string>
     <string name="geo_add_waypoints">Передать путевые точки в маршрут</string>
     <string name="geo_maps">Просмотр</string>
 
