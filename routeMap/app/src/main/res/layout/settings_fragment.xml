@@ -1,6 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="vm"
+            type="ru.android.zheka.vm.ISettingsVM"
+            />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Switch
+            android:id="@+id/update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/update_text"
+            android:textSize="8pt" />
+        <TextView
+            android:id="@+id/radioTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="8pt"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/optimization_text"/>
+        <RadioGroup
+            android:id="@+id/optimizationRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatRadioButton android:id="@+id/optimizationNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/optimizationuser1"
+                android:onClick="onRadioButtonClicked"/>
+            <androidx.appcompat.widget.AppCompatRadioButton android:id="@+id/optimizationGoogle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/optimizationuser2"
+                android:onClick="onRadioButtonClicked"/>
+            <androidx.appcompat.widget.AppCompatRadioButton android:id="@+id/optimizationBellmanFord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/optimizationuser3"
+                android:onClick="onRadioButtonClicked"/>
+        </RadioGroup>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/head1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/segmentTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="8pt"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:text="@string/segment_text"
+                android:layout_weight="1"/>
+            <Spinner
+                android:id="@+id/speedSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:entries="@array/speedList"
+                android:layout_weight="0">
+            </Spinner>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/avoid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/avoid_text"
+            android:textSize="8pt"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/offline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/offline_text"
+            android:textSize="8pt"/>
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/head"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text"
+                android:text="@string/travelmodelabel"
+                android:textSize="8pt"
+                android:layout_weight="1"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text1"
+                android:text="@string/timerlabel"
+                android:textSize="8pt"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/lists"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/list"
+                android:name="ru.android.zheka.gmapexample1.TravelModeFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/list1"
+                android:name="ru.android.zheka.gmapexample1.TimerFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

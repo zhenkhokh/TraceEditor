@@ -3,11 +3,11 @@ package ru.android.zheka.di.setting
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import ru.android.zheka.di.FragmentScope
-import ru.android.zheka.fragment.Geo
+import ru.android.zheka.fragment.Settings
 
 @Module
-abstract class GeoBinding {
+abstract class SettingsBinding {
     @FragmentScope
-    @ContributesAndroidInjector(modules = [GeoBindingModule::class])
-    abstract fun geoFragment(): Geo?
+    @ContributesAndroidInjector(modules = [SettingsBindingModule::class])
+    abstract fun settingsFragment(): Settings?
 }

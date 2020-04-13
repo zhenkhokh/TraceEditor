@@ -19,6 +19,7 @@ import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Trace
 import ru.android.zheka.fragment.Home
+import ru.android.zheka.fragment.Settings
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler
 import ru.android.zheka.jsbridge.JsCallable
 import javax.inject.Inject
@@ -56,6 +57,7 @@ class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //
             Application.Companion.initConfig()
         }
         switchToFragment(R.id.homeFragment, Home())
+        switchToFragment(R.id.mainFragment, Settings())
         if (googleKey == "") googleKey = resources.getString(R.string.google_api_key)
         println("---------- " + System.getProperty("java.class.path"))
         try {

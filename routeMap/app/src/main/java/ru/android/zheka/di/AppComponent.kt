@@ -10,6 +10,7 @@ import ru.android.zheka.di.home.HomeBinding
 import ru.android.zheka.di.home.MainBinding
 import ru.android.zheka.di.map.MapBinding
 import ru.android.zheka.di.map.MapMainBinding
+import ru.android.zheka.di.setting.SettingsBinding
 import ru.android.zheka.gmapexample1.Application
 import javax.inject.Singleton
 
@@ -20,7 +21,8 @@ import javax.inject.Singleton
     , GeoBinding::class
     , GeoMainBinding::class
     , MapBinding::class
-    , MapMainBinding::class])
+    , MapMainBinding::class
+    , SettingsBinding::class])
 interface AppComponent : AndroidInjector<Application?> {
     @Component.Builder
     interface Builder {

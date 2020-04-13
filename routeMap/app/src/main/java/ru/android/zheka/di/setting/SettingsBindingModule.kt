@@ -4,19 +4,19 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
-import ru.android.zheka.model.GeoModel
-import ru.android.zheka.vm.GeoVM
-import ru.android.zheka.vm.IGeoVM
+import ru.android.zheka.model.SettingsModel
+import ru.android.zheka.vm.ISettingsVM
+import ru.android.zheka.vm.SettingsVM
 
-@Module(includes = [GeoModule::class])
-class GeoBindingModule {
+@Module(includes = [SettingsModule::class])
+class SettingsBindingModule {
     @Provides
-    fun bindGeoVM(model: GeoModel?, view: IActivity?): IGeoVM {
-        return GeoVM(view!!, model!!)
+    fun bindSettingsVM(model: SettingsModel?, view: IActivity?): ISettingsVM {
+        return SettingsVM(view!!, model!!)
     }
 
     @Provides
-    fun provideGeoModel(view: Context?): GeoModel {
-        return GeoModel(view)
+    fun provideSettingsModel(view: Context?): SettingsModel {
+        return SettingsModel(view)
     }
 }

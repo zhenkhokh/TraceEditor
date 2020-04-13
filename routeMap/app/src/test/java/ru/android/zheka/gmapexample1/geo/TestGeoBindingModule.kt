@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import org.mockito.Mockito
 import ru.android.zheka.fragment.IGeo
-import ru.android.zheka.model.GeoModel
 import ru.android.zheka.model.IGeoModel
 import ru.android.zheka.vm.GeoVM
 import ru.android.zheka.vm.IGeoVM

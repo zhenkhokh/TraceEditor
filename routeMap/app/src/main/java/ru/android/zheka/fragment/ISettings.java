@@ -1,4 +1,6 @@
 package ru.android.zheka.fragment;
 
-public interface ISettings {
+import ru.android.zheka.coreUI.IActivity;
+
+public interface ISettings extends IActivity {
 }
