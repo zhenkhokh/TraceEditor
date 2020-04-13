@@ -171,10 +171,10 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     override fun onResume() {
         initPosition()
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
-        model.stopButton.set(getButton(Consumer { a: Boolean? -> points() }, string.geo_points))
+        model.nextButton2.set(getButton(Consumer { a: Boolean? -> points() }, string.geo_points))
         model.nextButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))
-        model.startButton1.set(getButton(Consumer { a: Boolean? -> pointToTrace() }, string.geo_point_to_trace))
         model.stopButton1.set(getButton(Consumer { a: Boolean? -> addWayPoints() }, string.geo_add_waypoints))
-        model.nextButton1.set(getButton(Consumer { a: Boolean? -> map() }, string.geo_maps))
+        model.startButton2.set(getButton(Consumer { a: Boolean? -> pointToTrace() }, string.geo_point_to_trace))
+        model.stopButton.set(getButton(Consumer { a: Boolean? -> map() }, string.geo_maps))
     }
 }

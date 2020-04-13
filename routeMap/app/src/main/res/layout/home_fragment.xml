@@ -74,16 +74,12 @@
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar" />
 <!--        @{ContextCompat.getColor(context, model.successColor())}-->
 
+        <!--            style="@{safeUnbox(model.startButtonStyle==model.DEFAULT_STYLE)?@style/BUTTONS_THEME:@style/BUTTONS_THEME_ALTR}"-->
         <Button
             android:id="@+id/baseScanBarcode_startButton"
-            android:layout_width="102dp"
-            android:layout_height="40dp"
-            android:background="@color/basic"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME"
             android:onClick="@{() -> model.getStartButton().onClick()}"
             android:text="@{model.getStartButton().getLabel()}"
-            android:textColor="@color/white"
-            android:textSize="16sp"
             android:visibility="@{model.getStartButton().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
             app:layout_constraintTop_toTopOf="@+id/baseScanBarcode_background" />
@@ -92,13 +88,8 @@
             android:id="@+id/baseScanBarcode_stopButton"
             android:onClick="@{() -> model.getStopButton().onClick()}"
             android:visibility="@{model.getStopButton().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getStopButton().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME"
             app:layout_constraintStart_toEndOf="@id/baseScanBarcode_startButton"
             app:layout_constraintEnd_toStartOf="@id/baseScanBarcode_nextButton"
             app:layout_constraintTop_toTopOf="@id/baseScanBarcode_background" />
@@ -107,41 +98,27 @@
             android:id="@+id/baseScanBarcode_nextButton"
             android:onClick="@{() -> model.getNextButton().onClick()}"
             android:visibility="@{model.getNextButton().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getNextButton().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME_ALTR"
             app:layout_constraintTop_toTopOf="@id/baseScanBarcode_background"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
 <!--row 1-->
         <Button
             android:id="@+id/baseScanBarcode_startButton1"
-            android:layout_width="102dp"
-            android:layout_height="40dp"
-            android:background="@color/basic"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME_ALTR"
             android:onClick="@{() -> model.getStartButton1().onClick()}"
             android:text="@{model.getStartButton1().getLabel()}"
-            android:textColor="@color/white"
-            android:textSize="16sp"
             android:visibility="@{model.getStartButton1().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
-            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton" />
+            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton"
+            />
 
         <Button
             android:id="@+id/baseScanBarcode_stopButton1"
             android:onClick="@{() -> model.getStopButton1().onClick()}"
             android:visibility="@{model.getStopButton1().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getStopButton1().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME"
             app:layout_constraintStart_toEndOf="@id/baseScanBarcode_startButton1"
             app:layout_constraintEnd_toStartOf="@id/baseScanBarcode_nextButton1"
             app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_startButton" />
@@ -150,26 +127,17 @@
             android:id="@+id/baseScanBarcode_nextButton1"
             android:onClick="@{() -> model.getNextButton1().onClick()}"
             android:visibility="@{model.getNextButton1().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getNextButton1().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME"
             app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_startButton"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
 <!--row 2-->
         <Button
             android:id="@+id/baseScanBarcode_startButton2"
-            android:layout_width="102dp"
-            android:layout_height="40dp"
             android:background="@color/basic"
-            android:focusable="false"
             android:onClick="@{() -> model.getStartButton2().onClick()}"
             android:text="@{model.getStartButton2().getLabel()}"
-            android:textColor="@color/white"
-            android:textSize="16sp"
+            style="@style/BUTTONS_THEME"
             android:visibility="@{model.getStartButton2().getVisible()}"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton1" />
@@ -178,13 +146,8 @@
             android:id="@+id/baseScanBarcode_stopButton2"
             android:onClick="@{() -> model.getStopButton2().onClick()}"
             android:visibility="@{model.getStopButton2().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getStopButton2().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME"
             app:layout_constraintStart_toEndOf="@id/baseScanBarcode_startButton2"
             app:layout_constraintEnd_toStartOf="@id/baseScanBarcode_nextButton2"
             app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_startButton1" />
@@ -193,13 +156,8 @@
             android:id="@+id/baseScanBarcode_nextButton2"
             android:onClick="@{() -> model.getNextButton2().onClick()}"
             android:visibility="@{model.getNextButton2().getVisible()}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@{model.getNextButton2().getLabel()}"
-            android:background="@color/basic"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:focusable="false"
+            style="@style/BUTTONS_THEME_ALTR"
             app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_startButton1"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
 

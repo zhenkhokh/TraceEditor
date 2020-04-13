@@ -6,8 +6,6 @@ import android.view.View;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 import ru.android.zheka.core.IInfoModel;
-import ru.android.zheka.coreUI.ButtonHandler;
-import ru.android.zheka.coreUI.SpinnerHandler;
 
 public interface IPanelModel {
     int COMBO_BOX_VISIBLE = 0;
