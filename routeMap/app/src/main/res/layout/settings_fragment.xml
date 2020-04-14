@@ -7,6 +7,10 @@
             name="vm"
             type="ru.android.zheka.vm.ISettingsVM"
             />
+<!--        <variable-->
+<!--            name="model"-->
+<!--            type="ru.android.zheka.model.ISettingsModel"-->
+<!--            />-->
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +21,7 @@
         android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +29,10 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
             android:text="@string/update_text"
-            android:textSize="8pt" />
+            android:textSize="8pt"
+            android:checked="@={vm.model.updateLen()}"
+            android:onCheckedChanged="@{(switch,checked)->vm.switchUpdateLen(checked)}"
+            />
         <TextView
             android:id="@+id/radioTitle"
             android:layout_width="match_parent"
