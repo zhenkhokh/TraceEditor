@@ -8,7 +8,7 @@ interface ISettingsVM : IVM<ISettingsModel?> {
     fun optimizationNo()
     fun optimizationGoogle()
     fun optimizationBellmanFord()
-    fun speedTraceControl()
+    fun speedTraceControl(input:String )
     fun switchIgnorePaidRoads(checked: Boolean)
     fun switchOffline(checked: Boolean)
     fun traceMode()

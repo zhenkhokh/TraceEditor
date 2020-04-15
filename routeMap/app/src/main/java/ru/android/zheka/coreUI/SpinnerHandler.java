@@ -61,6 +61,9 @@ public class SpinnerHandler {
     public void onItemSelected(AdapterView <?> parent, View view, int pos, long id) {
         if (!isEmpty && parent != null && parent.getItemAtPosition (pos) != null) {
             selectedItem = parent.getItemAtPosition (pos).toString ();
+
+            Observable.just (selectedItem).subscribe(name -> methodHandler.accept (name)
+                    ,this.view::showError).dispose ();
             //TODO
 //            Observable.just (selectedItem).subscribe (name -> {
 //                methodHandler.accept (name);// error stop yesNo dialog here

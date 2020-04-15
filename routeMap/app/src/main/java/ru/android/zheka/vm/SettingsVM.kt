@@ -1,6 +1,7 @@
 package ru.android.zheka.vm
 
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
 import ru.android.zheka.db.DbFunctions.add
@@ -10,6 +11,12 @@ import ru.android.zheka.model.ISettingsModel
 
 class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
 
+    init {
+        val data = view.context.getResources().getStringArray(R.array.speedList).asList()
+                as MutableList<*>
+        model.spinner.set(SpinnerHandler({ a -> speedTraceControl(a) }, { a -> }, data, view))
+    }
+
     override fun switchUpdateLen(checked: Boolean) {
         val config = udateDb { config -> config.uLocation = checked }
         println("update location is set as " + config.uLocation)
@@ -17,31 +24,33 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
 
     override fun optimizationNo() {
         val config = udateDb { config ->
-                config.optimization = false
-                config.bellmanFord = ""
+            config.optimization = false
+            config.bellmanFord = ""
         }
         println("update optimizationNo as " + config.optimization)
     }
 
     override fun optimizationGoogle() {
         var config = udateDb { config ->
-                config.optimization = true
-                config.bellmanFord = ""
-                println("hello from inline")
+            config.optimization = true
+            config.bellmanFord = ""
         }
         println("update optimizationGoogle as " + config.optimization)
     }
 
     override fun optimizationBellmanFord() {
         var config = udateDb { config ->
-                config.optimization = false
-                config.bellmanFord = view.context.getResources().getString (R.string.optimizationdata3);
+            config.optimization = false
+            config.bellmanFord = view.context.getResources().getString(R.string.optimizationdata3);
         }
         println("update optimizationBellmanFord as " + config.bellmanFord)
     }
 
-    override fun speedTraceControl() {
-
+    override fun speedTraceControl(input: String) {
+        val config = udateDb { config ->
+            config.rateLimit_ms = (input.toDouble() * 1000.0).toString()
+        }
+        println("speedTraceControl as " + config.rateLimit_ms)
     }
 
     override fun switchIgnorePaidRoads(checked: Boolean) {

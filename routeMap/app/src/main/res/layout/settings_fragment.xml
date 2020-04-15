@@ -82,11 +82,16 @@
                 android:text="@string/segment_text"
                 android:layout_weight="1"/>
             <Spinner
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/speedSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:entries="@array/speedList"
-                android:layout_weight="0">
+                android:layout_weight="0"
+                android:onItemSelected="@{(a, b, c, d) -> vm.model.getSpinner().onItemSelected(a, b, c, d)}"
+                android:adapter="@{vm.model.getSpinner().getSpinnerAdapter()}"
+                android:selectedItemPosition="@={vm.model.getSpeedTrace()}"
+                >
             </Spinner>
         </LinearLayout>
 
@@ -136,7 +141,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/list"
                 android:name="ru.android.zheka.gmapexample1.TravelModeFragment"
                 android:layout_width="match_parent"
@@ -144,7 +148,6 @@
                 android:layout_weight="1" />
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/list1"
                 android:name="ru.android.zheka.gmapexample1.TimerFragment"
                 android:layout_width="match_parent"
