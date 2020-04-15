@@ -5,7 +5,9 @@ import ru.android.zheka.model.ISettingsModel
 
 interface ISettingsVM : IVM<ISettingsModel?> {
     fun switchUpdateLen(checked: Boolean)
-    fun optimizationMode()
+    fun optimizationNo()
+    fun optimizationGoogle()
+    fun optimizationBellmanFord()
     fun speedTraceControl()
     fun switchIgnorePaidRoads(checked: Boolean)
     fun switchOffline(checked: Boolean)

@@ -50,17 +50,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/optimizationuser1"
-                android:onClick="onRadioButtonClicked"/>
+                android:checked="@={vm.model.optimizationNo()}"
+                android:onClick="@{()->vm.optimizationNo()}"/>
             <androidx.appcompat.widget.AppCompatRadioButton android:id="@+id/optimizationGoogle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/optimizationuser2"
-                android:onClick="onRadioButtonClicked"/>
+                android:checked="@={vm.model.optimizationGoogle()}"
+                android:onClick="@{()->vm.optimizationGoogle()}"/>
             <androidx.appcompat.widget.AppCompatRadioButton android:id="@+id/optimizationBellmanFord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/optimizationuser3"
-                android:onClick="onRadioButtonClicked"/>
+                android:checked="@={vm.model.optimizationBellmanFord()}"
+                android:onClick="@{()->vm.optimizationBellmanFord()}"/>
         </RadioGroup>
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

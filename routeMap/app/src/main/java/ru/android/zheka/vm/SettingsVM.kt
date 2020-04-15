@@ -5,29 +5,39 @@ import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
 import ru.android.zheka.db.DbFunctions.add
 import ru.android.zheka.db.DbFunctions.getModelByName
+import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.ISettingsModel
 
 class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
 
     override fun switchUpdateLen(checked: Boolean) {
-        var config:Config = getModelByName (DEFAULT_CONFIG_NAME, Config::class.java) as Config
-        config.uLocation = checked;
-        try {
-            add(config);
-        } catch (e:IllegalAccessException) {
-            e.printStackTrace();
-        } catch (e:InstantiationException) {
-            e.printStackTrace();
-        } catch (e:IllegalArgumentException) {
-            e.printStackTrace();
-        } catch (e:Exception) {
-            e.printStackTrace();
-        }
-        println("update location is set as " + config.uLocation);
+        val config = udateDb { config -> config.uLocation = checked }
+        println("update location is set as " + config.uLocation)
     }
 
-    override fun optimizationMode() {
+    override fun optimizationNo() {
+        val config = udateDb { config ->
+                config.optimization = false
+                config.bellmanFord = ""
+        }
+        println("update optimizationNo as " + config.optimization)
+    }
 
+    override fun optimizationGoogle() {
+        var config = udateDb { config ->
+                config.optimization = true
+                config.bellmanFord = ""
+                println("hello from inline")
+        }
+        println("update optimizationGoogle as " + config.optimization)
+    }
+
+    override fun optimizationBellmanFord() {
+        var config = udateDb { config ->
+                config.optimization = false
+                config.bellmanFord = view.context.getResources().getString (R.string.optimizationdata3);
+        }
+        println("update optimizationBellmanFord as " + config.bellmanFord)
     }
 
     override fun speedTraceControl() {
@@ -58,4 +68,20 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
     override fun onDestroy() {
     }
 
+    private inline fun udateDb(chekManip: (config: Config) -> Unit): Config {
+        var config1 = getModelByName(DEFAULT_CONFIG_NAME, Config::class.java) as Config
+        chekManip(config1)
+        try {
+            add(config1)
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        } catch (e: InstantiationException) {
+            e.printStackTrace()
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return config1
+    }
 }
