@@ -95,14 +95,6 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
         view.activity.finish()
     }
 
-    override fun settingsAction() {
-        val intent = view.activity.intent
-        intent.action = Intent.ACTION_VIEW
-        intent.setClass(view.context, SettingsActivity::class.java)
-        view.activity.startActivity(intent)
-        view.activity.finish()
-    }
-
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {
         return ButtonHandler(consumer
                 , nameId
@@ -110,14 +102,13 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     }
 
     override fun onResume() {
-        model.startButton.set(getButton(Consumer { a: Boolean? -> settingsAction() }, string.home_settings_btn))
+        model.startButton.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
         model.stopButton.set(getButton(Consumer { a: Boolean? -> address() }, string.home_address_btn))
         model.nextButton.set(getButton(Consumer { a: Boolean? -> pointNavigate() }, string.home_points_btn))
         model.startButton1.set(getButton(Consumer { a: Boolean? -> editTraces() }, string.home_editTrace_btn))
         model.stopButton1.set(getButton(Consumer { a: Boolean? -> editPoints() }, string.home_editPoint_btn))
         model.nextButton1.set(getButton(Consumer { a: Boolean? -> createTrace() }, string.home_toTrace_btn))
         model.startButton2.set(getButton(Consumer { a: Boolean? -> geo() }, string.home_geo_btn))
-        model.stopButton2.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
         model.inputVisible().set(View.GONE)
     }
 

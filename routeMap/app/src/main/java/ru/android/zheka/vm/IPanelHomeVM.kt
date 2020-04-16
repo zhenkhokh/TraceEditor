@@ -11,5 +11,4 @@ interface IPanelHomeVM : IVM<IHomeModel?> {
     fun editTraces()
     fun pointNavigate()
     fun createTrace()
-    fun settingsAction()
 }
