@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="vm"
@@ -17,8 +15,8 @@
         android:layout_height="wrap_content"
         >
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
         <androidx.appcompat.widget.SwitchCompat
@@ -82,7 +80,6 @@
                 android:text="@string/segment_text"
                 android:layout_weight="1"/>
             <Spinner
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/speedSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -95,6 +92,55 @@
             </Spinner>
         </LinearLayout>
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/head"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/travelmodelabel"
+                    android:textSize="8pt" />
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/timerlabel"
+                    android:textSize="8pt" />
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/lists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/list"
+                    android:name="ru.android.zheka.gmapexample1.TravelModeFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:adapter="@{vm.model.getSpinnerTravel().getSpinnerAdapter()}"
+                    android:onItemSelected="@{(a, b, c, d) -> vm.model.getSpinnerTravel().onItemSelected(a, b, c, d)}"
+                    android:selectedItemPosition="@={vm.model.getPosTravel()}" />
+
+                <Spinner xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/list1"
+                    android:name="ru.android.zheka.gmapexample1.TimerFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:adapter="@{vm.model.getSpinnerTimer().getSpinnerAdapter()}"
+                    android:onItemSelected="@{(a, b, c, d) -> vm.model.getSpinnerTimer().onItemSelected(a, b, c, d)}"
+                    android:selectedItemPosition="@={vm.model.getPosTimer()}" />
+            </LinearLayout>
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/avoid"
             android:layout_width="match_parent"
@@ -115,45 +161,6 @@
             android:text="@string/offline_text"
             android:textSize="8pt"/>
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/head"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/text"
-                android:text="@string/travelmodelabel"
-                android:textSize="8pt"
-                android:layout_weight="1"/>
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/text1"
-                android:text="@string/timerlabel"
-                android:textSize="8pt"
-                android:layout_weight="1"/>
-        </LinearLayout>
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/lists"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/list"
-                android:name="ru.android.zheka.gmapexample1.TravelModeFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/list1"
-                android:name="ru.android.zheka.gmapexample1.TimerFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-        </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

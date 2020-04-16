@@ -3,6 +3,7 @@ package ru.android.zheka.model;
 import android.content.Context;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.databinding.ObservableBoolean;
@@ -22,7 +23,13 @@ public class SettingsModel extends PanelModel implements ISettingsModel {
     private ObservableBoolean optimizationGoogle;
     private ObservableBoolean optimizationBellmanFord;
     private ObservableField<SpinnerHandler> spinner;
+    private ObservableField<SpinnerHandler> spinnerTimer;
+    private ObservableField<SpinnerHandler> spinnerTravel;
     private ObservableInt speedTrace;
+
+    private ObservableInt posTimer;
+
+    private ObservableInt posTravel;
 
     public SettingsModel(Context view) {
         super (view);
@@ -41,6 +48,35 @@ public class SettingsModel extends PanelModel implements ISettingsModel {
             if (spinnerSelected.equals (Double.valueOf (spinnerData.get (pos))))
                 break;
         speedTrace = new ObservableInt (pos);
+        String[] timerData = view.getResources ().getStringArray (R.array.timerdatalist);
+        String selectedData = config.tenMSTime;
+        Comparator<String> c = (o1,o2) -> o1.compareTo (o2);
+        posTimer = new ObservableInt (Arrays.binarySearch(timerData, selectedData, c));
+        spinnerTimer = new ObservableField <> ((SpinnerHandler)null);
+        String[] travelData = view.getResources ().getStringArray (R.array.travelmodelist);
+        selectedData = config.travelMode;
+        posTravel = new ObservableInt (Arrays.binarySearch(travelData, selectedData, c));
+        spinnerTravel = new ObservableField <> ((SpinnerHandler)null);
+    }
+
+    @Override
+    public ObservableField <SpinnerHandler> getSpinnerTimer() {
+        return spinnerTimer;
+    }
+
+    @Override
+    public ObservableField <SpinnerHandler> getSpinnerTravel() {
+        return spinnerTravel;
+    }
+
+    @Override
+    public ObservableInt getPosTimer() {
+        return posTimer;
+    }
+
+    @Override
+    public ObservableInt getPosTravel() {
+        return posTravel;
     }
 
     @Override

@@ -62,7 +62,13 @@ public class SpinnerHandler {
         if (!isEmpty && parent != null && parent.getItemAtPosition (pos) != null) {
             selectedItem = parent.getItemAtPosition (pos).toString ();
 
-            Observable.just (selectedItem).subscribe(name -> methodHandler.accept (name)
+            Observable.just (selectedItem).subscribe(name -> {
+                        if (map == null) {
+                            methodHandler.accept (name);
+                        } else {
+                            methodHandler.accept (map.get (selectedItem));
+                        }
+                    }
                     ,this.view::showError).dispose ();
             //TODO
 //            Observable.just (selectedItem).subscribe (name -> {

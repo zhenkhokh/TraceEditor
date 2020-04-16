@@ -11,6 +11,6 @@ interface ISettingsVM : IVM<ISettingsModel?> {
     fun speedTraceControl(input:String )
     fun switchIgnorePaidRoads(checked: Boolean)
     fun switchOffline(checked: Boolean)
-    fun traceMode()
-    fun updateRatePositionMode()
+    fun travelMode(input: String)
+    fun updateRatePositionMode(input: String)
 }

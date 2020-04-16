@@ -12,9 +12,21 @@ import ru.android.zheka.model.ISettingsModel
 class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
 
     init {
-        val data = view.context.getResources().getStringArray(R.array.speedList).asList()
-                as MutableList<*>
+        var data = view.context.getResources().getStringArray(R.array.speedList).asList()
+                as MutableList<String>
         model.spinner.set(SpinnerHandler({ a -> speedTraceControl(a) }, { a -> }, data, view))
+        data = view.context.getResources().getStringArray(R.array.travelmodelist).asList()
+                as MutableList<String>
+        var names = view.context.getResources().getStringArray(R.array.traveluserlist).asList()
+                as MutableList<String>
+        var map = (names zip data).associate { lt -> Pair(lt.first, lt.second) }
+        model.spinnerTravel.set(SpinnerHandler({ a -> travelMode(a) }, { a -> }, map, view))
+        data = view.context.getResources().getStringArray(R.array.timerdatalist).asList()
+                as MutableList<String>
+        names = view.context.getResources().getStringArray(R.array.timeruserlist).asList()
+                as MutableList<String>
+        map = (names zip data).associate { lt -> Pair(lt.first, lt.second) }
+        model.spinnerTimer.set(SpinnerHandler({ a -> updateRatePositionMode(a) }, { a -> }, map, view))
     }
 
     override fun switchUpdateLen(checked: Boolean) {
@@ -61,10 +73,12 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
 
     }
 
-    override fun traceMode() {
+    override fun travelMode(input: String) {
+        val config = udateDb { config -> config.travelMode = input }
     }
 
-    override fun updateRatePositionMode() {
+    override fun updateRatePositionMode(input: String) {
+        val config = udateDb { config -> config.tenMSTime = input }
     }
 
     override fun onResume() {
