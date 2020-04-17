@@ -72,7 +72,7 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 	        	    System.out.println("----------  from LatLngActivity: find  android.app.Activity");
 	        	}catch (ClassNotFoundException e){
 	        	    System.out.println("---------- from LatLngActivity "+e.getMessage());
-	        }	
+	        }
 	         try {
 	        	 clPosIntr = getClassLoader().loadClass("ru.android.zheka.gmapexample1.PositionInterceptor");
 	             System.out.println("----------  from LatLngActivity: loadClass  ru.android.zheka.gmapexample1.PositionInterceptor");
@@ -96,7 +96,7 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 	        	    System.out.println("----------  from LatLngActivity: find  ru.android.zheka.gmapexample1.MainActivity");
 	        	}catch (ClassNotFoundException e){
 	        	    System.out.println("---------- from LatLngActivity "+e.getMessage());
-	        }	
+	        }
 	         // no menu
 	         MenuHandler m = new MenuHandler();
 	         m.initJsBridge(this,url);
@@ -143,7 +143,7 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 
         String centerSer = (String)new UtilePointSerializer().serialize(point.data);
         //try get ExistingCenterEndStart intention for trace
-        /*try{stateIntent =  positionUtil.defCommand();  
+        /*try{stateIntent =  positionUtil.defCommand();
             	geoIntent = PositionUtil.createIntentForExistingCenterEndStart(stateIntent
         		,centerSer
         		,intent);
@@ -160,7 +160,7 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
 	        positionUtil.setEnd(center);
 	        positionUtil.setZoom(PositionUtil.zoomDefault);
         }
-        positionUtil.setCenter(center);        
+        positionUtil.setCenter(center);
         */
         //PositionInterceptor positionInterceptor = new PositionInterceptor(this);
         PositionInterceptor positionInterceptor = null;
@@ -193,10 +193,10 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
         }
         positionInterceptor.centerPosition = point.data;
         geoIntent = positionInterceptor.getNewIntent();
-        
+
         //zoom get from default
         //geoIntent = positionUtil.getIntent();
-        
+
         System.out.println("LatLng geoIntent dispatchment");
         System.out.println((Uri)geoIntent.getData());
         //geoIntent.setData(Uri.parse(PositionUtil.getGeoPosition(center,String.valueOf(2),title)));
@@ -204,9 +204,9 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
         System.out.println((Uri)geoIntent.getParcelableExtra("start"));
         System.out.println((Uri)geoIntent.getParcelableExtra("end"));
         System.out.println("LatLng setIntent:"+geoIntent);
-        
+
         geoIntent.setClass(this.context, cls);
-        geoIntent.setAction(Intent.ACTION_VIEW);        
+        geoIntent.setAction(Intent.ACTION_VIEW);
         startActivity(geoIntent);
         finish();
 	}
@@ -225,7 +225,7 @@ public class LatLngActivity extends RoboListActivity implements JsCallable{
             intent.setClass(this.context, clMain);
 	        intent.setAction(Intent.ACTION_VIEW);
             startActivity(intent);
-            finish();	
+            finish();
 		}
 	}
 	@Override

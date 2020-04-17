@@ -49,7 +49,7 @@ public class SpinnerHandler {
         this.map = map;
     }
 
-    SpinnerHandler() {
+    public SpinnerHandler() {
         isEmpty = true;
         spinnerAdapter = new ObservableField <ArrayAdapter> ((ArrayAdapter) null);
     }

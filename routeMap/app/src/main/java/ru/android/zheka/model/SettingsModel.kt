@@ -66,7 +66,7 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
         optimizationNo = ObservableBoolean(!config.optimization && !isBellman)
         optimizationBellmanFord = ObservableBoolean(isBellman)
         optimizationGoogle = ObservableBoolean(config.optimization && !isBellman)
-        spinner = ObservableField(null )
+        spinner = ObservableField(SpinnerHandler() )// TODO put some object or null
         val spinnerData = Arrays.asList(*view.resources.getStringArray(R.array.speedList))
         var pos = -1
         val spinnerSelected = java.lang.Double.valueOf(config.rateLimit_ms) / 1000.0
