@@ -10,6 +10,8 @@ interface ISettingsVM : IVM<ISettingsModel?> {
     fun optimizationBellmanFord()
     fun speedTraceControl(input:String )
     fun switchIgnorePaidRoads(checked: Boolean)
+    fun switchIgnoreHighWays(checked: Boolean)
+    fun switchIgnoreInDoors(checked: Boolean)
     fun switchOffline(checked: Boolean)
     fun travelMode(input: String)
     fun updateRatePositionMode(input: String)

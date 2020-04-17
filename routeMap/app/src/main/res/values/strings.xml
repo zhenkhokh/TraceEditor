@@ -42,6 +42,8 @@
     <string name="optimization_text">Оптимизация маршрута</string>
     <string name="update_text">Отображение координат и оценки длины</string>
     <string name="avoid_text">Игнорирование платных дорог</string>
+    <string name="avoid_high_roads_text">Игнорирование шоссе</string>
+    <string name="avoid_in_doors_text">Игнорирование планировки зданий</string>
     <string name="offline_text">Офлайн загрузка</string>
     <string name="segment_text">Скорость построения (c)</string>
     <string name="travelmodelabel">Способ прокладки маршрута</string> 

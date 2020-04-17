@@ -3,6 +3,7 @@ package ru.android.zheka.vm
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
+import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
 import ru.android.zheka.db.DbFunctions.add
 import ru.android.zheka.db.DbFunctions.getModelByName
@@ -66,19 +67,42 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
     }
 
     override fun switchIgnorePaidRoads(checked: Boolean) {
+        udateDb { config ->
+            config.avoid = if (checked)
+                push(config.avoid, DbFunctions.AVOID_TOLLS)
+            else
+                pull(config.avoid, DbFunctions.AVOID_TOLLS)
+        }
+    }
 
+    override fun switchIgnoreHighWays(checked: Boolean) {
+        udateDb { config ->
+            config.avoid = if (checked)
+                push(config.avoid, DbFunctions.AVOID_HIGHWAYS)
+            else
+                pull(config.avoid, DbFunctions.AVOID_HIGHWAYS)
+        }
+    }
+
+    override fun switchIgnoreInDoors(checked: Boolean) {
+        udateDb { config ->
+            config.avoid = if (checked)
+                push(config.avoid, DbFunctions.AVOID_INDOR)
+            else
+                pull(config.avoid, DbFunctions.AVOID_INDOR)
+        }
     }
 
     override fun switchOffline(checked: Boolean) {
-
+        udateDb { config -> config.offline = checked.toString() }
     }
 
     override fun travelMode(input: String) {
-        val config = udateDb { config -> config.travelMode = input }
+        udateDb { config -> config.travelMode = input }
     }
 
     override fun updateRatePositionMode(input: String) {
-        val config = udateDb { config -> config.tenMSTime = input }
+        udateDb { config -> config.tenMSTime = input }
     }
 
     override fun onResume() {
@@ -106,5 +130,21 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
             e.printStackTrace()
         }
         return config1
+    }
+
+    private fun push(avoid: String, value: String): String {
+        var pipeline = avoid
+        if (pipeline.contains(value))
+            return pipeline
+        if (pipeline.isEmpty())
+            return value
+        return "$pipeline|$value";
+    }
+
+    private fun pull(avoid: String, value: String): String {
+        var pipeline = avoid
+        pipeline = pipeline.replace("$value|", "")
+        pipeline = pipeline.replace("|$value", "")
+        return pipeline.replace(value, "")
     }
 }

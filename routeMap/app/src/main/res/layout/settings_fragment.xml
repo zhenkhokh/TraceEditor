@@ -149,7 +149,33 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
             android:text="@string/avoid_text"
-            android:textSize="8pt"/>
+            android:textSize="8pt"
+            android:checked="@={vm.model.getAvoid()}"
+            android:onCheckedChanged="@{(switch,checked)->vm.switchIgnorePaidRoads(checked)}"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/avoidHighWays"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/avoid_high_roads_text"
+            android:textSize="8pt"
+            android:checked="@={vm.model.getAvoidHighWays()}"
+            android:onCheckedChanged="@{(switch,checked)->vm.switchIgnoreHighWays(checked)}"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/avoidInDoor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/avoid_in_doors_text"
+            android:textSize="8pt"
+            android:checked="@={vm.model.getAvoidInDoor()}"
+            android:onCheckedChanged="@{(switch,checked)->vm.switchIgnoreInDoors(checked)}"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/offline"
@@ -159,7 +185,9 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
             android:text="@string/offline_text"
-            android:textSize="8pt"/>
+            android:textSize="8pt"
+            android:checked="@={vm.model.getOffline()}"
+            android:onCheckedChanged="@{(switch,checked)->vm.switchOffline(checked)}"/>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

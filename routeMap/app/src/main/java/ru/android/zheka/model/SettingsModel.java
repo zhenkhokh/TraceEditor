@@ -22,41 +22,67 @@ public class SettingsModel extends PanelModel implements ISettingsModel {
     private ObservableBoolean optimizationNo;
     private ObservableBoolean optimizationGoogle;
     private ObservableBoolean optimizationBellmanFord;
-    private ObservableField<SpinnerHandler> spinner;
-    private ObservableField<SpinnerHandler> spinnerTimer;
-    private ObservableField<SpinnerHandler> spinnerTravel;
+    private ObservableField <SpinnerHandler> spinner;
+    private ObservableField <SpinnerHandler> spinnerTimer;
+    private ObservableField <SpinnerHandler> spinnerTravel;
     private ObservableInt speedTrace;
-
     private ObservableInt posTimer;
-
     private ObservableInt posTravel;
+    private ObservableBoolean avoid;
+    private ObservableBoolean avoidHighWays;
+    private ObservableBoolean avoidInDoor;
+    private ObservableBoolean offline;
 
     public SettingsModel(Context view) {
         super (view);
-        Config config = (Config) DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
+        Config config = (Config) DbFunctions.getModelByName (DbFunctions.DEFAULT_CONFIG_NAME, Config.class);
         updateLen = new ObservableBoolean (config.uLocation);
-        String optimizationBellman = view.getResources().getString (R.string.optimizationdata3);
+        String optimizationBellman = view.getResources ().getString (R.string.optimizationdata3);
         Boolean isBellman = optimizationBellman.equals (config.bellmanFord);
         optimizationNo = new ObservableBoolean (!config.optimization && !isBellman);
         optimizationBellmanFord = new ObservableBoolean (isBellman);
         optimizationGoogle = new ObservableBoolean (config.optimization && !isBellman);
         spinner = new ObservableField <> ((SpinnerHandler) null);
-        List<String> spinnerData = Arrays.asList (view.getResources ().getStringArray (R.array.speedList));
+        List <String> spinnerData = Arrays.asList (view.getResources ().getStringArray (R.array.speedList));
         int pos = -1;
-        Double spinnerSelected = Double.valueOf(config.rateLimit_ms)/1000.0;
-        while (++pos<spinnerData.size ())
+        Double spinnerSelected = Double.valueOf (config.rateLimit_ms) / 1000.0;
+        while (++pos < spinnerData.size ())
             if (spinnerSelected.equals (Double.valueOf (spinnerData.get (pos))))
                 break;
         speedTrace = new ObservableInt (pos);
         String[] timerData = view.getResources ().getStringArray (R.array.timerdatalist);
         String selectedData = config.tenMSTime;
-        Comparator<String> c = (o1,o2) -> o1.compareTo (o2);
-        posTimer = new ObservableInt (Arrays.binarySearch(timerData, selectedData, c));
-        spinnerTimer = new ObservableField <> ((SpinnerHandler)null);
+        Comparator <String> c = (o1, o2) -> o1.compareTo (o2);
+        posTimer = new ObservableInt (Arrays.binarySearch (timerData, selectedData, c));
+        spinnerTimer = new ObservableField <> ((SpinnerHandler) null);
         String[] travelData = view.getResources ().getStringArray (R.array.travelmodelist);
         selectedData = config.travelMode;
-        posTravel = new ObservableInt (Arrays.binarySearch(travelData, selectedData, c));
-        spinnerTravel = new ObservableField <> ((SpinnerHandler)null);
+        posTravel = new ObservableInt (Arrays.binarySearch (travelData, selectedData, c));
+        spinnerTravel = new ObservableField <> ((SpinnerHandler) null);
+        avoid = new ObservableBoolean (config.avoid.contains (DbFunctions.AVOID_TOLLS));
+        avoidHighWays = new ObservableBoolean (config.avoid.contains (DbFunctions.AVOID_HIGHWAYS));
+        avoidInDoor = new ObservableBoolean (config.avoid.contains (DbFunctions.AVOID_INDOR));
+        offline = new ObservableBoolean (config.offline.equals (view.getResources ().getString (R.string.offlineOn)));
+    }
+
+    @Override
+    public ObservableBoolean getAvoidHighWays() {
+        return avoidHighWays;
+    }
+
+    @Override
+    public ObservableBoolean getAvoidInDoor() {
+        return avoidInDoor;
+    }
+
+    @Override
+    public ObservableBoolean getAvoid() {
+        return avoid;
+    }
+
+    @Override
+    public ObservableBoolean getOffline() {
+        return offline;
     }
 
     @Override
@@ -106,7 +132,7 @@ public class SettingsModel extends PanelModel implements ISettingsModel {
 
     @Override
     public ObservableBoolean updateLen() {
-        return updateLen ;
+        return updateLen;
     }
 
     @Override

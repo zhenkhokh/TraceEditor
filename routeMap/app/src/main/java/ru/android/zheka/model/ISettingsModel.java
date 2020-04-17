@@ -12,6 +12,14 @@ public interface ISettingsModel  extends IInfoModel {
     ObservableBoolean optimizationGoogle();
     ObservableBoolean optimizationBellmanFord();
 
+    ObservableBoolean getAvoidHighWays();
+
+    ObservableBoolean getAvoidInDoor();
+
+    ObservableBoolean getAvoid();
+
+    ObservableBoolean getOffline();
+
     ObservableField <SpinnerHandler> getSpinnerTimer();
 
     ObservableField <SpinnerHandler> getSpinnerTravel();
