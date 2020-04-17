@@ -17,6 +17,6 @@ class SettingsBindingModule {
 
     @Provides
     fun provideSettingsModel(view: Context?): SettingsModel {
-        return SettingsModel(view)
+        return SettingsModel(view!!)
     }
 }
