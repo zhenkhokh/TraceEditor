@@ -7,9 +7,14 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.db.DbFunctions
+import ru.android.zheka.db.Point
+import ru.android.zheka.fragment.LatLng
+import ru.android.zheka.fragment.Settings
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.gmapexample1.R.*
 import ru.android.zheka.gmapexample1.edit.EditModel
@@ -17,6 +22,19 @@ import ru.android.zheka.model.IHomeModel
 import java.util.*
 
 class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
+    var fragment: Fragment
+
+    init {
+         fragment = view.manager.findFragmentById(id.mainFragment)!!
+    }
+
+
+    override fun settings() {
+        view.removeFragment(fragment)
+        fragment = Settings()
+        view.switchToFragment(id.mainFragment, fragment)
+    }
+
     override fun info() {
         val activity = view.activity
         val inflater = LayoutInflater.from(activity)
@@ -80,11 +98,9 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     }
 
     override fun pointNavigate() {
-        val intent = view.activity.intent
-        intent.setClass(view.context, LatLngActivity::class.java)
-        intent.action = Intent.ACTION_VIEW
-        view.activity.startActivity(intent)
-        view.activity.finish()
+        view.removeFragment(fragment)
+        fragment = LatLng()
+        view.switchToFragment(id.latLngFragment, fragment)
     }
 
     override fun createTrace() {
@@ -102,14 +118,27 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     }
 
     override fun onResume() {
-        model.startButton.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
+        model.startButton.set(getButton(Consumer { a: Boolean? -> settings() }, string.home_settings_btn))
         model.stopButton.set(getButton(Consumer { a: Boolean? -> address() }, string.home_address_btn))
-        model.nextButton.set(getButton(Consumer { a: Boolean? -> pointNavigate() }, string.home_points_btn))
+        if (isPoints()) {
+            model.nextButton.set(getButton(Consumer { a: Boolean? -> pointNavigate() }, string.home_points_btn))
+            model.stopButton1.set(getButton(Consumer { a: Boolean? -> editPoints() }, string.home_editPoint_btn))
+        }
         model.startButton1.set(getButton(Consumer { a: Boolean? -> editTraces() }, string.home_editTrace_btn))
-        model.stopButton1.set(getButton(Consumer { a: Boolean? -> editPoints() }, string.home_editPoint_btn))
         model.nextButton1.set(getButton(Consumer { a: Boolean? -> createTrace() }, string.home_toTrace_btn))
         model.startButton2.set(getButton(Consumer { a: Boolean? -> geo() }, string.home_geo_btn))
+        model.stopButton2.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
+//TODO        model.stopButton2.set(getButton(Consumer { a: Boolean? -> hide() }, string.home_hide_btn))
         model.inputVisible().set(View.GONE)
+    }
+
+    private fun isPoints(): Boolean {
+        val list = DbFunctions.getTablesByModel(Point::class.java)
+        return list != null && list.isNotEmpty()
+    }
+
+    private fun hide() {
+
     }
 
     override fun onDestroy() {}

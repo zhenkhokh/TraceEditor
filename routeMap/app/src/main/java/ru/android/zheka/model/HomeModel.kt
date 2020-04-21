@@ -12,14 +12,4 @@ class HomeModel(view: Context?) : PanelModel(view), IHomeModel {
         get() = TODO("Not yet implemented")
     override val message: Message?
         get() = TODO("Not yet implemented")
-
-    //    @Override
-    //    public void setStartButton(ObservableField button) {
-    //        this.startButton = button;
-    //    }
-    //
-    //    @Override
-    //    public ObservableField <ButtonHandler> getStartButton() {
-    //        return this.startButton;
-    //    }
 }

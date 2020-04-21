@@ -49,7 +49,7 @@ import com.google.android.gms.location.LocationServices;
 */
 //import android.app.AlertDialog;
 class MapsActivity //extends AppCompatActivity
-    : AbstractActivity<ViewDataBinding?>(),HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
+    : AbstractActivity<ViewDataBinding>(),HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
     private val resTextId: Int = R.id.coordinateTextGeo
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
@@ -992,9 +992,8 @@ class MapsActivity //extends AppCompatActivity
         private const val currentQuiry = "where name is $currentName"
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_maps
-    }
+    override val layoutId
+        get() = R.layout.activity_maps
 
     override fun initComponent() {
         AndroidInjection.inject(this)

@@ -3,25 +3,33 @@ package ru.android.zheka.coreUI
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import dagger.android.support.DaggerFragment
+import ru.android.zheka.gmapexample1.R
 
-abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFragment {
+abstract class AbstractActivity //RoboFragmentActivity
+<B : ViewDataBinding> : AppCompatActivity(), IActivity {
     private var error: ErrorControl? = null
-    lateinit var binding: B
+    var binding: B? = null
     protected abstract val layoutId: Int
     protected abstract fun initComponent()
-    protected abstract fun onInitBinding(binding: B)
-    protected abstract fun onResumeBinding(binding: B)
-    protected abstract fun onDestroyBinding(binding: B)
+    protected abstract fun onInitBinding(binding: B?)
+    protected abstract fun onResumeBinding(binding: B?)
+    protected abstract fun onDestroyBinding(binding: B?)
+    override fun onCreate(savedState: Bundle?) {
+        super.onCreate(savedState)
+        supportActionBar!!.setIcon(R.mipmap.ic_launcher)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        error = ErrorControl(this)
+        binding = DataBindingUtil.inflate<B>(LayoutInflater.from(context)!!, layoutId,null,false)
+    }
+
     override fun onStart() {
-        super.onStart()
         initComponent()
+        super.onStart()
         onInitBinding(binding)
     }
 
@@ -30,31 +38,18 @@ abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFr
         onResumeBinding(binding)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         onDestroyBinding(binding)
-        binding.unbind()
+        binding!!.unbind()
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        error = ErrorControl(this)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, saveInstance: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
-        binding = initAdapter(binding)
-        return binding.getRoot()
-    }
-
-    open fun initAdapter(binding: B):B {return binding}
 
     override fun showError(throwable: Throwable) {
         error!!.showError(throwable) { a: Boolean? -> }
     }
 
-    override fun getContext(): Context? {
-        return activity
+    override fun getContext(): Context {
+        return this
     }
 
     override fun switchToFragment(fragmentId: Int, fragment: Fragment) {
@@ -70,6 +65,6 @@ abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFr
     }
 
     override fun getManager(): FragmentManager {
-        return activity!!.supportFragmentManager
+        return supportFragmentManager
     }
 }

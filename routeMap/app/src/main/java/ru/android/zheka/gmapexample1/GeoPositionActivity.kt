@@ -42,7 +42,7 @@ import ru.zheka.android.timer.PositionReciever
 import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ViewDataBinding?>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ViewDataBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
@@ -255,9 +255,8 @@ class GeoPositionActivity //AppCompatActivity
         var msg = ""
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_geo;
-    }
+    override val layoutId
+        get() = R.layout.activity_geo
 
     override fun initComponent() {
         AndroidInjection.inject(this)

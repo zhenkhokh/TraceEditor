@@ -16,5 +16,7 @@ public interface IActivity {
 
     void switchToFragment(int fragmentId, @NonNull Fragment fragment);
 
+    void removeFragment(@NonNull Fragment fragment);
+
     FragmentManager getManager();
 }

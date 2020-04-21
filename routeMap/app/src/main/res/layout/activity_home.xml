@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,16 +15,36 @@
             <FrameLayout
                 android:id="@+id/homeFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-			</FrameLayout>
-            <ScrollView android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent" />
+<!--just initialize LatLng-->
             <FrameLayout
-                android:id="@+id/mainFragment"
+                android:id="@+id/latLngFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-			</FrameLayout>
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:id="@+id/mainFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                     />
             </ScrollView>
+            <include
+                layout="@layout/lat_lng_fragment"
+                app:vm="@{vm}" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+        <variable
+            name="model"
+            type="ru.android.zheka.model.IHomeModel" />
+
+        <variable
+            name="vm"
+            type="ru.android.zheka.vm.ILatLngVM" />
+    </data>
 </layout>

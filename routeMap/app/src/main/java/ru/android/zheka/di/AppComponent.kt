@@ -8,6 +8,7 @@ import ru.android.zheka.di.geo.GeoBinding
 import ru.android.zheka.di.geo.GeoMainBinding
 import ru.android.zheka.di.home.HomeBinding
 import ru.android.zheka.di.home.MainBinding
+import ru.android.zheka.di.latlng.LatLngBinding
 import ru.android.zheka.di.map.MapBinding
 import ru.android.zheka.di.map.MapMainBinding
 import ru.android.zheka.di.setting.SettingsBinding
@@ -22,7 +23,8 @@ import javax.inject.Singleton
     , GeoMainBinding::class
     , MapBinding::class
     , MapMainBinding::class
-    , SettingsBinding::class])
+    , SettingsBinding::class
+    , LatLngBinding::class])
 interface AppComponent : AndroidInjector<Application?> {
     @Component.Builder
     interface Builder {

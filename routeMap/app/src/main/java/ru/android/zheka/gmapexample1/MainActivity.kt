@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import androidx.databinding.ViewDataBinding
 import com.activeandroid.Model
 import com.activeandroid.query.Delete
 import dagger.android.AndroidInjection
@@ -20,12 +19,17 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Trace
 import ru.android.zheka.fragment.Home
 import ru.android.zheka.fragment.Settings
+import ru.android.zheka.gmapexample1.databinding.ActivityHomeBinding
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler
 import ru.android.zheka.jsbridge.JsCallable
+import ru.android.zheka.model.IHomeModel
 import javax.inject.Inject
 
-class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //RoboActivity
+class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector //RoboActivity
 {
+    @Inject
+    lateinit var homeModel: IHomeModel
+
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
@@ -37,17 +41,20 @@ class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //
     var clGeo: Class<*>? = null
     var clLatLng: Class<*>? = null
     var clPtoTr: Class<*>? = null
-    override fun getLayoutId(): Int {
-        return R.layout.activity_home
-    }
+    override val layoutId
+        get() = R.layout.activity_home
 
     override fun initComponent() {
         AndroidInjection.inject(this)
     }
 
-    override fun onInitBinding(binding: ViewDataBinding?) {}
-    override fun onResumeBinding(binding: ViewDataBinding?) {}
-    override fun onDestroyBinding(binding: ViewDataBinding?) {}
+    override fun onInitBinding(binding: ActivityHomeBinding?) {
+        switchToFragment(R.id.mainFragment, Settings())
+        switchToFragment(R.id.homeFragment, Home())
+    }
+
+    override fun onResumeBinding(binding: ActivityHomeBinding?) {}
+    override fun onDestroyBinding(binding: ActivityHomeBinding?) {}
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +63,7 @@ class MainActivity : AbstractActivity<ViewDataBinding?>(), HasAndroidInjector //
             Delete().from(Trace::class.java).where("name=?", DbFunctions.DEFAULT_CONFIG_NAME).execute<Model>()
             Application.Companion.initConfig()
         }
-        switchToFragment(R.id.homeFragment, Home())
-        switchToFragment(R.id.mainFragment, Settings())
+
         if (googleKey == "") googleKey = resources.getString(R.string.google_api_key)
         println("---------- " + System.getProperty("java.class.path"))
         try {
