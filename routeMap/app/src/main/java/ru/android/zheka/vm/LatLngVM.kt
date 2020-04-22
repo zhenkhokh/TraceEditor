@@ -2,11 +2,14 @@ package ru.android.zheka.vm
 
 import android.content.Context
 import android.view.View
-import android.widget.Toast
+import io.reactivex.Observable
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.LatLngHandler
+import ru.android.zheka.gmapexample1.GeoPositionActivity
+import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
@@ -28,7 +31,20 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
         get() = View.OnClickListener { view -> onClick(_handler.adapterPosition) }
 
     private fun onClick(adapterPosition: Int) {
-        Toast.makeText(view.context,""+adapterPosition,15).show()
+        Observable.just(true).compose(RxTransformer.observableIoToMain())
+                .subscribe({ t->
+                    var positionInterceptor = PositionInterceptor(view.activity)
+                    positionInterceptor.centerPosition = points[adapterPosition].data
+                    positionInterceptor.end = positionInterceptor.end?:positionInterceptor.centerPosition
+                    view.activity.intent = positionInterceptor.updatePosition()
+                    positionInterceptor.positioning()
+                    var geoIntent = positionInterceptor.newIntent
+                    geoIntent.setClass(view.context, GeoPositionActivity::class.java)
+
+                    view.activity.startActivity(geoIntent)
+                    view.activity.finish()
+                },
+                    view::showError)
     }
 
     override val shownItems: List<String>

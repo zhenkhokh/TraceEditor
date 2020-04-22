@@ -46,9 +46,8 @@ class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     }
 }
 
-class LatLngAdapter(var viewModel: ILatLngVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
+class LatLngAdapter(val viewModel: ILatLngVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
-        var context = viewModel.context
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
                 R.layout.row, parent, false)
         val handler = LatLngHandler(itemBind)
