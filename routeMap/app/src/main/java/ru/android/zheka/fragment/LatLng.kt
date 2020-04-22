@@ -1,5 +1,6 @@
 package ru.android.zheka.fragment
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -26,9 +27,9 @@ class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
         binding.vm = viewModel
     }
 
-    override fun initAdapter(binding: LatLngFragmentBinding):LatLngFragmentBinding {
-        val adapter = LatLngAdapter(viewModel)
-        binding.listLatlng.adapter  = adapter
+    override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
+        val adapter = LatLngAdapter(viewModel, viewModel.context)
+        binding.listLatlng.adapter = adapter
         var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding!!.listLatlng.id)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
@@ -45,12 +46,15 @@ class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     }
 }
 
-class LatLngAdapter(val viewModel: ILatLngVM) : RecyclerView.Adapter<LatLngHandler>() {
+class LatLngAdapter(var viewModel: ILatLngVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
         var context = viewModel.context
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
-            R.layout.row, parent, false)
-        return LatLngHandler(itemBind)
+                R.layout.row, parent, false)
+        val handler = LatLngHandler(itemBind)
+        itemBind.root.setOnClickListener(viewModel.onClickListener)
+        viewModel.handler = handler
+        return handler
     }
 
     override fun getItemCount(): Int {
@@ -58,19 +62,14 @@ class LatLngAdapter(val viewModel: ILatLngVM) : RecyclerView.Adapter<LatLngHandl
     }
 
     override fun onBindViewHolder(holder: LatLngHandler, position: Int) {
-        holder.bind(viewModel.shownItems.get(position))
+        if (position != -1)
+            holder.bind(viewModel.shownItems.get(position))
     }
-
 }
 
-class LatLngHandler(rowBinding: RowBinding) : RecyclerView.ViewHolder(rowBinding.root) {
-    var rowBinding: RowBinding
+class LatLngHandler(var rowBinding: RowBinding) : RecyclerView.ViewHolder(rowBinding.root) {
 
-    init {
-        this.rowBinding = rowBinding
-    }
-
-    fun bind(text:String) {
+    fun bind(text: String) {
         rowBinding.text = text
         rowBinding.executePendingBindings()
     }

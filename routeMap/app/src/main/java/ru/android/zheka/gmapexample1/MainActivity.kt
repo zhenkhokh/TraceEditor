@@ -51,6 +51,11 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
     override fun onInitBinding(binding: ActivityHomeBinding?) {
         switchToFragment(R.id.mainFragment, Settings())
         switchToFragment(R.id.homeFragment, Home())
+//        val adapter = LatLngAdapter(this)
+//        binding!!.latLngFragments .adapter = adapter
+//        var recyclerView: RecyclerView? = findViewById(binding!!.latLngFragments.id)
+//        recyclerView!!.layoutManager = LinearLayoutManager(context)
+//        recyclerView!!.adapter = adapter
     }
 
     override fun onResumeBinding(binding: ActivityHomeBinding?) {}
