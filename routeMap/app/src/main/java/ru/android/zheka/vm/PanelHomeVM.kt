@@ -13,6 +13,7 @@ import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
+import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.LatLng
 import ru.android.zheka.fragment.Settings
 import ru.android.zheka.gmapexample1.*
@@ -75,14 +76,17 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     }
 
     override fun editPoints() {
-        editItem("Point", string.points_column_name, string.points_column_name1)
+//        editItem("Point", string.points_column_name, string.points_column_name1)
+        view.removeFragment(fragment)
+        fragment = Edit()
+        view.switchToFragment(id.latLngFragment, fragment)
     }
 
     override fun editTraces() {
         editItem("Trace", string.traces_column_name, string.traces_column_name1)
     }
 
-    fun editItem(item: String?, nameId: Int, name1Id: Int): Int {
+    fun editItem(item: String?, nameId: Int, name1Id: Int) {
         val intent = view.activity.intent
         val model = EditModel()
         model.clsName = item
@@ -94,7 +98,6 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
         intent.setClass(view.context, EditActivity::class.java)
         view.activity.startActivity(intent)
         view.activity.finish()
-        return 0
     }
 
     override fun pointNavigate() {

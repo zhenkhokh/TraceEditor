@@ -4,6 +4,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
+import ru.android.zheka.di.edit.EditBinding
 import ru.android.zheka.di.edit.EditMainBinding
 import ru.android.zheka.di.geo.GeoBinding
 import ru.android.zheka.di.geo.GeoMainBinding
@@ -26,7 +27,8 @@ import javax.inject.Singleton
     , MapMainBinding::class
     , SettingsBinding::class
     , LatLngBinding::class
-    , EditMainBinding::class])
+    , EditMainBinding::class
+    , EditBinding::class])
 interface AppComponent : AndroidInjector<Application?> {
     @Component.Builder
     interface Builder {
