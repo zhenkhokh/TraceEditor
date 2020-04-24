@@ -122,7 +122,7 @@
                 android:orientation="horizontal">
 
                 <Spinner xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/list"
+                    android:id="@+id/listSpinner"
                     android:name="ru.android.zheka.gmapexample1.TravelModeFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

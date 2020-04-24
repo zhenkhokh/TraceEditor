@@ -1,5 +1,6 @@
 package ru.android.zheka.gmapexample1
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,25 +12,34 @@ import android.widget.CheckBox
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.databinding.ViewDataBinding
 import com.activeandroid.Model
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import roboguice.activity.RoboListActivity
 import roboguice.inject.InjectView
+import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.gmapexample1.edit.Editable
 import ru.android.zheka.jsbridge.JsCallable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
-open class EditActivity : RoboListActivity(), JsCallable {
-    @InjectView(R.id.webViewPoint)
-    var vebViewHome: WebView? = null
+open class EditActivity : AbstractActivity<ViewDataBinding>(),HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector!!
+    }
+
     var resViewId = R.layout.activity_points
     var url = "file:///android_asset/edit.html"
-    var context: Context = this
-    var name: String? = null
     var name1: String? = null
-    var status = ConcurrentHashMap<String?, Boolean?>()
     var model: EditModel? = null
     var adapter: MyAdapter? = null
 
@@ -72,7 +82,7 @@ open class EditActivity : RoboListActivity(), JsCallable {
     //	this.model = model;
     //}
     //public EditActivity(){}
-    public override fun onCreate(savedInstanceState: Bundle) {
+    public override fun onCreate(savedInstanceState: Bundle?) {
         println("start EditActivity.onCreate")
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
@@ -88,8 +98,6 @@ open class EditActivity : RoboListActivity(), JsCallable {
         name = resources.getString(model!!.nameId) //R.string.points_column_name
         name1 = resources.getString(model!!.name1Id)
         updateView()
-        val m = MenuHandler()
-        m.initJsBridge(this, url)
         println("end EditActivity.onCreate")
     }
 
@@ -112,7 +120,7 @@ open class EditActivity : RoboListActivity(), JsCallable {
                 dataTmp?.add(map)
             }
         }
-        adapter = MyAdapter(context
+        adapter = MyAdapter(this
                 , dataTmp
                 , R.layout.row_edit
                 , arrayOf(name, name1), intArrayOf(R.id.text1, R.id.check))
@@ -136,7 +144,7 @@ open class EditActivity : RoboListActivity(), JsCallable {
 			System.out.println("------ end EditActivity.onListItemClick");
 		}
 		*/
-    override fun nextView(`val`: String) {
+     open fun nextView(`val`: String) {
         val intent = intent
         if (`val`.contentEquals(HOME)) {
             intent.setClass(context, MainActivity::class.java)
@@ -227,17 +235,18 @@ open class EditActivity : RoboListActivity(), JsCallable {
         }
     }
 
-    override fun getVebWebView(): WebView {
-        return vebViewHome!!
-    }
+//    override fun getVebWebView(): WebView {
+//        return vebViewHome!!
+//    }
 
-    inner class MyAdapter(context: Context?, data: List<MutableMap<String, *>?>?,
-                          resource: Int, from: Array<String?>?, to: IntArray?) : SimpleAdapter(context, data, resource, from, to) {
-        override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
+
+    class MyAdapter(val activity: Activity, data: List<MutableMap<String, *>?>?,
+                    resource: Int, from: Array<String?>?, to: IntArray?) : SimpleAdapter(activity, data, resource, from, to) {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             var view: View? = null
             println("------ start MyAdapter.getView")
             view = if (convertView == null) {
-                val inflator = layoutInflater
+                val inflator = activity.layoutInflater
                 inflator.inflate(R.layout.row_edit, null)
             } else {
                 convertView
@@ -255,11 +264,37 @@ open class EditActivity : RoboListActivity(), JsCallable {
             return view
         }
     }
-
     companion object {
+        var name: String? = null
+        var status = ConcurrentHashMap<String?, Boolean?>()
+
+
         const val EDIT_MODEL = "editModel"
         const val RENAME = "rename"
         const val REMOVE = "remove"
         const val HOME = "home"
+    }
+
+    override val layoutId: Int = R.layout.activity_points
+
+
+    override fun initComponent() {
+        AndroidInjection.inject(this)
+    }
+
+    override fun getActivity(): Activity {
+        return this
+    }
+
+    override fun onInitBinding(binding: ViewDataBinding?) {
+
+    }
+
+    override fun onResumeBinding(binding: ViewDataBinding?) {
+
+    }
+
+    override fun onDestroyBinding(binding: ViewDataBinding?) {
+
     }
 }

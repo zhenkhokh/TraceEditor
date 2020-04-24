@@ -51,7 +51,8 @@ class EditModel : Parcelable {
         }
 
     companion object {
-        val CREATOR: Parcelable.Creator<*> = object : Parcelable.Creator<Any?> {
+        @kotlin.jvm.JvmField
+        val CREATOR = object : Parcelable.Creator<EditModel> {
             override fun createFromParcel(`in`: Parcel): EditModel? {
                 return EditModel(`in`)
             }

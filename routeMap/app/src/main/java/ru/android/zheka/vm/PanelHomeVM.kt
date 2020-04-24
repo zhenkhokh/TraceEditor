@@ -123,9 +123,9 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
         if (isPoints()) {
             model.nextButton.set(getButton(Consumer { a: Boolean? -> pointNavigate() }, string.home_points_btn))
             model.stopButton1.set(getButton(Consumer { a: Boolean? -> editPoints() }, string.home_editPoint_btn))
+            model.nextButton1.set(getButton(Consumer { a: Boolean? -> createTrace() }, string.home_toTrace_btn))
         }
         model.startButton1.set(getButton(Consumer { a: Boolean? -> editTraces() }, string.home_editTrace_btn))
-        model.nextButton1.set(getButton(Consumer { a: Boolean? -> createTrace() }, string.home_toTrace_btn))
         model.startButton2.set(getButton(Consumer { a: Boolean? -> geo() }, string.home_geo_btn))
         model.stopButton2.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
 //TODO        model.stopButton2.set(getButton(Consumer { a: Boolean? -> hide() }, string.home_hide_btn))
