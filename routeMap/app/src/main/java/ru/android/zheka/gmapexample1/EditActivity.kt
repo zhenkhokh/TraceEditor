@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -12,7 +13,11 @@ import android.widget.CheckBox
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.activeandroid.Model
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -21,6 +26,9 @@ import dagger.android.HasAndroidInjector
 import roboguice.activity.RoboListActivity
 import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
+import ru.android.zheka.coreUI.AbstractListActivity
+import ru.android.zheka.coreUI.ErrorControl
+import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.gmapexample1.edit.Editable
@@ -29,7 +37,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
-open class EditActivity : AbstractActivity<ViewDataBinding>(),HasAndroidInjector {
+open class EditActivity : AbstractActivity_<ViewDataBinding>(),HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -296,5 +304,64 @@ open class EditActivity : AbstractActivity<ViewDataBinding>(),HasAndroidInjector
 
     override fun onDestroyBinding(binding: ViewDataBinding?) {
 
+    }
+}
+
+abstract class AbstractActivity_ //RoboFragmentActivity
+<B : ViewDataBinding> : AbstractListActivity(), IActivity {
+    private var error: ErrorControl? = null
+    var binding: B? = null
+    protected abstract val layoutId: Int
+    protected abstract fun initComponent()
+    protected abstract fun onInitBinding(binding: B?)
+    protected abstract fun onResumeBinding(binding: B?)
+    protected abstract fun onDestroyBinding(binding: B?)
+    override fun onCreate(savedState: Bundle?) {
+        super.onCreate(savedState)
+        supportActionBar!!.setIcon(R.mipmap.ic_launcher)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        error = ErrorControl(this)
+        binding = DataBindingUtil.inflate<B>(LayoutInflater.from(context)!!, layoutId,null,false)
+    }
+
+    override fun onStart() {
+        initComponent()
+        super.onStart()
+        onInitBinding(binding)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onResumeBinding(binding)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onDestroyBinding(binding)
+        binding!!.unbind()
+    }
+
+    override fun showError(throwable: Throwable) {
+        error!!.showError(throwable) { a: Boolean? -> }
+    }
+
+    override fun getContext(): Context {
+        return this
+    }
+
+    override fun switchToFragment(fragmentId: Int, fragment: Fragment) {
+        val transaction = manager.beginTransaction()
+        transaction.replace(fragmentId, fragment)
+        transaction.commit()
+    }
+
+    override fun removeFragment(fragment: Fragment) {
+        val transaction = manager.beginTransaction()
+        transaction.remove(fragment)
+        transaction.commit()
+    }
+
+    override fun getManager(): FragmentManager {
+        return supportFragmentManager
     }
 }

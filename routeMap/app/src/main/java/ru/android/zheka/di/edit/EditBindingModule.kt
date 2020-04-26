@@ -5,13 +5,13 @@ import dagger.Module
 import dagger.Provides
 import ru.android.zheka.fragment.IEdit
 import ru.android.zheka.model.EditModel
+import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
-import ru.android.zheka.vm.IEditVM
 
 @Module(includes = [EditModule::class])
 class EditBindingModule {
     @Provides
-    fun bindEditVM(model: EditModel?, view: IEdit?): IEditVM {
+    fun bindEditVM(model: LatLngModel?, view: IEdit?): EditVM {
         return EditVM(view!!, model!!)
     }
 

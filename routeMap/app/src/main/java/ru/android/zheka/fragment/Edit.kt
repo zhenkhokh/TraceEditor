@@ -14,10 +14,11 @@ import ru.android.zheka.gmapexample1.databinding.RowBinding
 import ru.android.zheka.vm.IEditVM
 import javax.inject.Inject
 
-class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
+open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     @Inject
     lateinit var viewModel: IEditVM
-    lateinit var panelModel:IInfoModel
+
+    lateinit var panelModel: IInfoModel
 
     override val layoutId
         get() = R.layout.lat_lng_fragment
@@ -26,7 +27,6 @@ class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     }
 
     override fun onInitBinding(binding: LatLngFragmentBinding) {
-        binding.vm = viewModel
         viewModel.panelModel = panelModel
     }
 
@@ -48,7 +48,7 @@ class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     }
 }
 
-class EditAdapter(val viewModel: IEditVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
+open class EditAdapter(val viewModel: IEditVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
                 R.layout.row, parent, false)

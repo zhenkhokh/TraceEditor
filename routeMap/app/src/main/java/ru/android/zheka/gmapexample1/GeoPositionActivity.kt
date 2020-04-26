@@ -3,12 +3,11 @@ package ru.android.zheka.gmapexample1
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
-import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -26,19 +25,13 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
-import ru.android.zheka.db.Point
-import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.fragment.Geo
-import ru.android.zheka.fragment.Home
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE
-import ru.android.zheka.gmapexample1.edit.EditModel
-import ru.android.zheka.jsbridge.JsCallable
 import ru.zheka.android.timer.PositionReciever
+import java.io.File
 import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
@@ -66,9 +59,17 @@ class GeoPositionActivity //AppCompatActivity
     override fun androidInjector(): AndroidInjector<Any> {
         return androidInjector!!
     }
-
+    private fun fixGoogleMapBug() {
+        val googleBug: SharedPreferences = getSharedPreferences("google_bug", Context.MODE_PRIVATE)
+        if (!googleBug.contains("fixed")) {
+            val corruptedZoomTables = File(filesDir, "ZoomTables.data")
+            corruptedZoomTables.delete()
+            googleBug.edit().putBoolean("fixed", true).apply()
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public override fun onCreate(savedInstanceState: Bundle?) {
+        fixGoogleMapBug()
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
         val mapFragment = getSupportFragmentManager()

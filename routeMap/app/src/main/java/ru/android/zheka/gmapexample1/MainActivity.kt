@@ -23,12 +23,16 @@ import ru.android.zheka.gmapexample1.databinding.ActivityHomeBinding
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler
 import ru.android.zheka.jsbridge.JsCallable
 import ru.android.zheka.model.IHomeModel
+import ru.android.zheka.model.LatLngModel
 import javax.inject.Inject
 
 class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector //RoboActivity
 {
     @Inject
+    lateinit var latLngModel: LatLngModel
+    @Inject
     lateinit var homeModel: IHomeModel
+
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -58,7 +62,8 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
 //        recyclerView!!.adapter = adapter
     }
 
-    override fun onResumeBinding(binding: ActivityHomeBinding?) {}
+    override fun onResumeBinding(binding: ActivityHomeBinding?) {
+    }
     override fun onDestroyBinding(binding: ActivityHomeBinding?) {}
 
     public override fun onCreate(savedInstanceState: Bundle?) {

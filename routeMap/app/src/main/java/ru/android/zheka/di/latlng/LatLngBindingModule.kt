@@ -1,6 +1,5 @@
 package ru.android.zheka.di.latlng
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
@@ -15,8 +14,8 @@ class LatLngBindingModule {
         return LatLngVM(view!!, model!!)
     }
 
-    @Provides
-    fun provideLatLngModel(view: Context?): LatLngModel {
-        return LatLngModel(view!!)
-    }
+//    @Provides
+//    fun provideLatLngModel(view: Context?): LatLngModel {
+//        return LatLngModel(view!!)
+//    }
 }

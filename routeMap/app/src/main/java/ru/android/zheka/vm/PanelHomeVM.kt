@@ -13,20 +13,19 @@ import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
-import ru.android.zheka.fragment.Edit
-import ru.android.zheka.fragment.LatLng
-import ru.android.zheka.fragment.Settings
+import ru.android.zheka.fragment.*
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.gmapexample1.R.*
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.model.IHomeModel
 import java.util.*
 
-class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
+class PanelHomeVM(var view: IActivity, var model: IHomeModel,
+                  var edit: IEdit, var editTraces: IEditTraces) : IPanelHomeVM {
     var fragment: Fragment
 
     init {
-         fragment = view.manager.findFragmentById(id.mainFragment)!!
+        fragment = view.manager.findFragmentById(id.mainFragment)!!
     }
 
 
@@ -78,13 +77,17 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     override fun editPoints() {
 //        editItem("Point", string.points_column_name, string.points_column_name1)
         view.removeFragment(fragment)
-        fragment = Edit()
-        (fragment as Edit).panelModel = model
+        fragment = edit as Edit
+        (edit as Edit).panelModel = model
         view.switchToFragment(id.latLngFragment, fragment)
     }
 
     override fun editTraces() {
-        editItem("Trace", string.traces_column_name, string.traces_column_name1)
+//        editItem("Trace", string.traces_column_name, string.traces_column_name1)
+        view.removeFragment(fragment)
+        fragment = editTraces as EditTraces
+        (fragment as EditTraces).panelModel = model
+        view.switchToFragment(id.latLngFragment, fragment)
     }
 
     fun editItem(item: String?, nameId: Int, name1Id: Int) {

@@ -24,7 +24,7 @@ class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     }
 
     override fun onInitBinding(binding: LatLngFragmentBinding) {
-        binding.vm = viewModel
+        binding.model = viewModel.model()
     }
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
@@ -61,8 +61,7 @@ class LatLngAdapter(val viewModel: ILatLngVM, val context: Context) : RecyclerVi
     }
 
     override fun onBindViewHolder(holder: LatLngHandler, position: Int) {
-        if (position != -1)
-            holder.bind(viewModel.shownItems.get(position))
+        holder.bind(viewModel.shownItems.get(position))
     }
 }
 

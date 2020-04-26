@@ -10,6 +10,7 @@ import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.GeoPositionActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
+import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
@@ -18,6 +19,8 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
 
     init {
         points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
+                model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
+
     }
 
     private lateinit var _handler: LatLngHandler
@@ -54,6 +57,7 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
         get() = view.context
 
     override fun onResume() {
+        model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
     }
 
     override fun model(): ILatLngModel {

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data>
-        <variable
-            name="vm"
-            type="ru.android.zheka.vm.ILatLngVM" />
-    </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,19 +9,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
+                android:id="@+id/lat_lng_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_activity_points">
-            </TextView>
+                android:text="@{model.titleText}"></TextView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list_latlng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawSelectorOnTop="false"
-                />
+                android:drawSelectorOnTop="false" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="model"
+            type="ru.android.zheka.model.ILatLngModel" />
+
+        <variable
+            name="vm"
+            type="ru.android.zheka.vm.ILatLngVM" />
+    </data>
 </layout>

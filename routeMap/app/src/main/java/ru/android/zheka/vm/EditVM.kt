@@ -13,12 +13,12 @@ import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.SaveDialog
-import ru.android.zheka.model.EditModel
-import ru.android.zheka.model.IEditModel
+import ru.android.zheka.model.ILatLngModel
+import ru.android.zheka.model.LatLngModel
 
-class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
+open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
     private lateinit var spinerOption: String
-    private var editOptions: List<String>
+    private lateinit var editOptions: List<String>
     private val points: List<Point>
     private lateinit var _pM: IInfoModel
     override var panelModel: IInfoModel
@@ -35,16 +35,15 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
         }
 
     init {
-        editOptions = view.context.resources.getStringArray(R.array.editOptions).asList()
         points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
     }
 
     override val onClickListener: View.OnClickListener?
         get() = View.OnClickListener { view -> onClick(_handler.adapterPosition) }
 
-    private fun onClick(pos: Int) {
+    open fun onClick(pos: Int) {
         if (editOptions[0].equals(spinerOption)) {
-            var saveDialog = MySaveDialog().newInstance(spinerOption) as MySaveDialog
+            var saveDialog = PointSaveDialog().newInstance(spinerOption) as PointSaveDialog
             saveDialog.view = view
             saveDialog.panelModel = _pM
             saveDialog.point = points[pos]
@@ -62,6 +61,8 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
         get() = view.context
 
     override fun onResume() {
+        editOptions = context.resources.getStringArray(R.array.editOptions).asList()
+        model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
         panelModel.spinner.set(SpinnerHandler(Consumer { a -> spinerOption = a }, Consumer { a -> },
@@ -72,12 +73,13 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
 //        DbFunctions.delete(points[adapterPosition])//TODO uncomment
     }
 
-    override fun model(): IEditModel {
+    override fun model(): ILatLngModel {
         return model
     }
 
     override fun onDestroy() {
         panelModel.inputVisible().set(View.GONE)
+        panelModel.action().set("")
     }
 
     class RemoveDialog(var consumer: Consumer<Boolean>,
@@ -107,7 +109,7 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
         }
     }
 
-    class MySaveDialog : SaveDialog() {
+    class PointSaveDialog : SaveDialog() {
         lateinit var point: Point
         lateinit var view: IActivity
         lateinit var panelModel: IInfoModel

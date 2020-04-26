@@ -3,6 +3,7 @@ package ru.android.zheka.coreUI
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -10,7 +11,7 @@ import androidx.fragment.app.FragmentManager
 import ru.android.zheka.gmapexample1.R
 
 abstract class AbstractActivity //RoboFragmentActivity
-<B : ViewDataBinding> : AbstractListActivity(), IActivity {
+<B : ViewDataBinding> : AppCompatActivity(), IActivity {
     private var error: ErrorControl? = null
     var binding: B? = null
     protected abstract val layoutId: Int
