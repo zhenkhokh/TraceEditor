@@ -97,12 +97,12 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
             getContent(view_)
             return AlertDialog.Builder(config.context)
                     .setView(view_)
-                    .setPositiveButton(config.poistiveBtnId, { d, which ->
+                    .setPositiveButton(config.poistiveBtnId) { d, _ ->
                         d.cancel()
                         Observable.just(true).subscribe(config.positiveConsumer,
-                                Consumer { t -> view.showError(t) }).dispose();
-                    })
-                    .setNegativeButton(idNegBtn, { d, which -> d.cancel() })
+                                Consumer { view.showError(it) }).dispose();
+                    }
+                    .setNegativeButton(idNegBtn) { d, _ -> d.cancel() }
                     .create()
         }
     }
@@ -113,30 +113,23 @@ class EditVM(override val view: IActivity, val model: EditModel) : IEditVM {
         lateinit var panelModel: IInfoModel
 
         override fun positiveProcess() {
-            val newName = nameField!!.text.toString()
-            if (DbFunctions.getModelByName(newName, Point::class.java) != null) {
-                val dialog = ru.android.zheka.gmapexample1.AlertDialog("Введеное имя уже существует, введите другое")
-                dialog.show(fragmentManager, "Переименование")
-                return
-            }
-            DbFunctions.delete(point)
-            point.name = newName
-            try {
+            Observable.just(true).subscribe( {
+                val newName = nameField!!.text.toString()
+                if (DbFunctions.getModelByName(newName, Point::class.java) != null) {
+                    throw RuntimeException("Введеное имя уже существует, введите другое")
+                }
+                DbFunctions.delete(point)
+                point.name = newName
                 DbFunctions.add(point)
-            } catch (e: java.lang.InstantiationException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-            var fragment = Edit()
-            fragment.panelModel = panelModel
-            view.switchToFragment(R.id.latLngFragment, fragment)
+                val fragment = Edit()
+                fragment.panelModel = panelModel
+                view.switchToFragment(R.id.latLngFragment, fragment)
+            },
+                     view::showError)
         }
 
         override fun newInstance(): SaveDialog {
-            setCancelable(false)
+            isCancelable = false
             return this
         }
     }

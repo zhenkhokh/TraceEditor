@@ -32,7 +32,7 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
 
     private fun onClick(adapterPosition: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
-                .subscribe({ t->
+                .subscribe({
                     var positionInterceptor = PositionInterceptor(view.activity)
                     positionInterceptor.centerPosition = points[adapterPosition].data
                     positionInterceptor.end = positionInterceptor.end?:positionInterceptor.centerPosition
