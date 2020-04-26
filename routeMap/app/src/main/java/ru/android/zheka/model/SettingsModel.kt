@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import ru.android.zheka.core.AktionMessage
-import ru.android.zheka.core.Message
 import ru.android.zheka.coreUI.PanelModel
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
@@ -33,14 +31,6 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
     override fun getSpinner(): ObservableField<SpinnerHandler> {
         return spinner
     }
-
-    override val input: String?
-        get() = TODO("Not yet implemented")
-    override val action: AktionMessage?
-        get() = TODO("Not yet implemented")
-    override val message: Message?
-        get() = TODO("Not yet implemented")
-
 
     override fun updateLen(): ObservableBoolean {
         return updateLen

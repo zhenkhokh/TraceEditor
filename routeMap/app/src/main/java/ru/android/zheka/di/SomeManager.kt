@@ -1,3 +1,3 @@
 package ru.android.zheka.di
 
-class SomeManger
+class SomeManager

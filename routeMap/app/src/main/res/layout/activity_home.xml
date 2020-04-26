@@ -46,7 +46,7 @@
             </ScrollView>
             <include
                 layout="@layout/lat_lng_fragment"
-                app:vm="@{vm}" />
+                app:vm="@{vm}"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

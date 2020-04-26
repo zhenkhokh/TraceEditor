@@ -1,8 +1,7 @@
 package ru.android.zheka.vm
 
+import ru.android.zheka.core.IInfoModel
+
 interface IEditVM : ILatLngVM {
-//    val onClickListener: View.OnClickListener?
-//    val shownItems: List<String>
-//    val context: Context
-//    val view: IActivity
+    var panelModel: IInfoModel
 }

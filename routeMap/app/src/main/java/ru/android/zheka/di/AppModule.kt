@@ -12,8 +12,8 @@ class AppModule(app: Application) {
 
     @Singleton
     @Provides
-    fun bindSomeManger(): SomeManger {
-        return SomeManger()
+    fun bindSomeManger(): SomeManager {
+        return SomeManager()
     }
 
     @Singleton

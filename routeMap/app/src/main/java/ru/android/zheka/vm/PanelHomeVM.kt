@@ -79,6 +79,7 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
 //        editItem("Point", string.points_column_name, string.points_column_name1)
         view.removeFragment(fragment)
         fragment = Edit()
+        (fragment as Edit).panelModel = model
         view.switchToFragment(id.latLngFragment, fragment)
     }
 
@@ -121,6 +122,7 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
     }
 
     override fun onResume() {
+        model.inputVisible().set(View.GONE)
         model.startButton.set(getButton(Consumer { a: Boolean? -> settings() }, string.home_settings_btn))
         model.stopButton.set(getButton(Consumer { a: Boolean? -> address() }, string.home_address_btn))
         if (isPoints()) {
@@ -132,7 +134,6 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel) : IPanelHomeVM {
         model.startButton2.set(getButton(Consumer { a: Boolean? -> geo() }, string.home_geo_btn))
         model.stopButton2.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
 //TODO        model.stopButton2.set(getButton(Consumer { a: Boolean? -> hide() }, string.home_hide_btn))
-        model.inputVisible().set(View.GONE)
     }
 
     private fun isPoints(): Boolean {

@@ -164,7 +164,7 @@
             android:id="@+id/baseScanBarcode_inputValue"
             android:text="@={model.input()}"
             app:onKeyListener="@{model.keyListener()}"
-            android:visibility="@{safeUnbox(model.inputVisible()==model.INPUT_TEXT_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
+            android:visibility="@{safeUnbox(model.inputVisible()==model.INPUT_TEXT_VISIBLE)}"
             android:layout_width="0sp"
             android:layout_height="45sp"
             android:layout_margin="10sp"
@@ -177,7 +177,7 @@
 
         <Spinner
             android:id="@+id/basicComboBox"
-            android:visibility="@{safeUnbox(model.inputVisible()==model.COMBO_BOX_VISIBLE)?View.VISIBLE:View.INVISIBLE}"
+            android:visibility="@{safeUnbox(model.inputVisible()==model.COMBO_BOX_VISIBLE)}"
             android:onItemSelected="@{(a, b, c, d) -> model.getSpinner().onItemSelected(a, b, c, d)}"
             android:adapter="@{model.getSpinner().getSpinnerAdapter()}"
             android:layout_width="0sp"

@@ -39,4 +39,8 @@
 		<item>1.5</item>
 		<item>3</item>
 	</string-array>
+    <string-array name="editOptions" >
+		<item>@string/title_activity_edit</item>
+		<item>@string/points_column_name1</item>
+	</string-array>
 </resources>

@@ -11,18 +11,16 @@ public interface IPanelModel {
     int COMBO_BOX_VISIBLE = 0;
     int INPUT_TEXT_VISIBLE = 1;
 
-    ObservableField <ButtonHandler>
-            INVISIBLE_BUTTON = new ObservableField <> (new ButtonHandler ());
     ObservableField <SpinnerHandler>
             EMPTY_SPINNER = new ObservableField <> (new SpinnerHandler ());
 
     ObservableField <View.OnKeyListener> keyListener();
 
-    ObservableField <String> input();
+    ObservableField<String> input();
 
-    ObservableField success();// can be translated
+    ObservableField<String> success();// can be translated
 
-    ObservableField action();// can be translated
+    ObservableField<String> action();// can be translated
 
     ObservableInt progressBarVisibility();
 

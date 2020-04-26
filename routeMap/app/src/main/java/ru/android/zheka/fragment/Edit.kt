@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.android.zheka.core.IInfoModel
 import ru.android.zheka.coreUI.AbstractFragment
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     @Inject
     lateinit var viewModel: IEditVM
+    lateinit var panelModel:IInfoModel
 
     override val layoutId
         get() = R.layout.lat_lng_fragment
@@ -25,6 +27,7 @@ class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
 
     override fun onInitBinding(binding: LatLngFragmentBinding) {
         binding.vm = viewModel
+        viewModel.panelModel = panelModel
     }
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {

@@ -8,6 +8,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.databinding.BindingAdapter;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 import ru.android.zheka.core.IInfoModel;
@@ -17,6 +18,10 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class PanelModel implements IPanelModel {
+    @BindingAdapter("android:visibility")
+public static void setVisibility(View view, Boolean value) {
+    view.setVisibility(value ? View.VISIBLE : View.GONE);
+}
     private final ObservableInt progressBarVisibility;
     private final ObservableField action;
     private final ObservableField success;
