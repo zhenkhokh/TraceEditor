@@ -4,7 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
-import ru.android.zheka.di.edit.EditModule
+import ru.android.zheka.di.PanelScope
 import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.EditTraces
 import ru.android.zheka.fragment.IEdit
@@ -13,20 +13,23 @@ import ru.android.zheka.model.HomeModel
 import ru.android.zheka.vm.IPanelHomeVM
 import ru.android.zheka.vm.PanelHomeVM
 
-@Module(includes = [HomeModule::class, EditModule::class])
+@Module(includes = [HomeModule::class])
 class HomeBindingModule {
+    @PanelScope
     @Provides
-    fun bindHomeVM(model: HomeModel?, view: IActivity?, edit: IEdit,editTraces: IEditTraces): IPanelHomeVM {
+    fun bindHomeVM(model: HomeModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces): IPanelHomeVM {
         return PanelHomeVM(view!!, model!!, edit!!, editTraces)
     }
 
+    @PanelScope
     @Provides
-    fun provideEdit(): Edit {
+    fun provideEdit(): IEdit {
         return Edit()
     }
 
+    @PanelScope
     @Provides
-    fun provideEditTraces(): EditTraces {
+    fun provideEditTraces(): IEditTraces {
         return EditTraces()
     }
 

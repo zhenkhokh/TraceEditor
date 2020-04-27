@@ -9,8 +9,5 @@ import ru.android.zheka.gmapexample1.MainActivity
 abstract class MainBinding {
     @ActivityScope
     @ContributesAndroidInjector(modules = [HomeBindingModule::class])
-    abstract fun mainActivity(): MainActivity? //    @Provides
-    //    public static MainActivity provideActivity() {
-    //        return new MainActivity ();
-    //    }
+    abstract fun mainActivity(): MainActivity?
 }
