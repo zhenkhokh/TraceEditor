@@ -19,8 +19,6 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
 
     init {
         points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
-                model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
-
     }
 
     private lateinit var _handler: LatLngHandler
@@ -57,7 +55,7 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
         get() = view.context
 
     override fun onResume() {
-        model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
+        model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
     }
 
     override fun model(): ILatLngModel {

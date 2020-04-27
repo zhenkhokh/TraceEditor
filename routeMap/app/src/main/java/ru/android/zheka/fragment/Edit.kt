@@ -28,6 +28,7 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
 
     override fun onInitBinding(binding: LatLngFragmentBinding) {
         viewModel.panelModel = panelModel
+        binding.model = viewModel.model()
     }
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {

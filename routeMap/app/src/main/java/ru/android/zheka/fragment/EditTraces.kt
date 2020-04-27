@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
 import ru.android.zheka.gmapexample1.databinding.RowBinding
-import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.IEditTracesVM
 import ru.android.zheka.vm.IEditVM
 import javax.inject.Inject
@@ -17,9 +16,6 @@ import javax.inject.Inject
 class EditTraces : Edit(), IEditTraces {
     @Inject
     lateinit var viewModel_: IEditTracesVM
-
-    @Inject
-    lateinit var mm: LatLngModel
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
         viewModel = viewModel_ as IEditVM
@@ -36,9 +32,6 @@ class EditTraceAdapter(viewModel: IEditVM, context: Context) : EditAdapter(viewM
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
                 R.layout.row, parent, false)
-        //TODO
-//        val text: TextView = itemBind.root.findViewById(R.id.lat_lng_textView)
-//        text.setText("Маршрут")
         return super.onCreateViewHolder(parent, viewType)
     }
 

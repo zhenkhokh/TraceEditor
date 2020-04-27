@@ -1,10 +1,8 @@
 package ru.android.zheka.di.edit
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.fragment.IEdit
-import ru.android.zheka.model.EditModel
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
@@ -15,8 +13,8 @@ class EditBindingModule {
         return EditVM(view!!, model!!)
     }
 
-    @Provides
-    fun provideEditModel(view: Context?): EditModel {
-        return EditModel(view!!)
-    }
+//    @Provides
+//    fun provideEditModel(view: Context?): EditModel {
+//        return EditModel(view!!)
+//    }
 }

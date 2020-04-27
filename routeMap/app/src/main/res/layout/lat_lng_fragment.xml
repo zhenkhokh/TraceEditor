@@ -14,7 +14,7 @@
                 android:id="@+id/lat_lng_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{model.titleText}"></TextView>
+                android:text="@{model.titleText()}"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list_latlng"
@@ -26,7 +26,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-
+        <import type="android.view.View" />
         <variable
             name="model"
             type="ru.android.zheka.model.ILatLngModel" />

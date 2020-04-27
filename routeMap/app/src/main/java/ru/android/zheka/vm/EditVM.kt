@@ -17,8 +17,8 @@ import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
-    private lateinit var spinerOption: String
-    private lateinit var editOptions: List<String>
+    protected lateinit var spinerOption: String
+    protected lateinit var editOptions: List<String>
     private val points: List<Point>
     private lateinit var _pM: IInfoModel
     override var panelModel: IInfoModel
@@ -62,10 +62,10 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
 
     override fun onResume() {
         editOptions = context.resources.getStringArray(R.array.editOptions).asList()
-        model.titleText.set(view.activity.resources.getString(R.string.title_activity_points))
+        model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
-        panelModel.spinner.set(SpinnerHandler(Consumer { a -> spinerOption = a }, Consumer { a -> },
+        panelModel.spinner.set(SpinnerHandler(Consumer { spinerOption = it }, Consumer { a -> },
                 editOptions, view))
     }
 
