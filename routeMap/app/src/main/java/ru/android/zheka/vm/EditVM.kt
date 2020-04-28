@@ -17,7 +17,6 @@ import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
-    protected lateinit var spinerOption: String
     protected lateinit var editOptions: List<String>
     private val points: List<Point>
     private lateinit var _pM: IInfoModel
@@ -42,12 +41,12 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         get() = View.OnClickListener { view -> onClick(_handler.adapterPosition) }
 
     open fun onClick(pos: Int) {
-        if (editOptions[0].equals(spinerOption)) {
-            var saveDialog = PointSaveDialog().newInstance(spinerOption) as PointSaveDialog
+        if (editOptions[0].equals(model.spinnerOption)) {
+            var saveDialog = PointSaveDialog().newInstance(model.spinnerOption) as PointSaveDialog
             saveDialog.view = view
             saveDialog.panelModel = _pM
             saveDialog.point = points[pos]
-            saveDialog.show(view.activity.fragmentManager, spinerOption)
+            saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
         }
         RemoveDialog(Consumer { a -> removePoint(pos) }, view, points[pos].name,
@@ -62,11 +61,24 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
 
     override fun onResume() {
         editOptions = context.resources.getStringArray(R.array.editOptions).asList()
+        editOptions = reOrder(editOptions, model.spinnerOption)
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
-        panelModel.spinner.set(SpinnerHandler(Consumer { spinerOption = it }, Consumer { a -> },
+        panelModel.spinner.set(SpinnerHandler(Consumer { model.spinnerOption = it }, Consumer { a -> },
                 editOptions, view))
+    }
+
+    private fun reOrder(editOptions: List<String>, spinnerOption: String): List<String> {
+        if (spinnerOption.isNotEmpty()) {
+            val i = editOptions.lastIndexOf(spinnerOption)
+            if (i != -1) {
+                val out = ArrayList(editOptions.subList(i, editOptions.size))
+                if (out.addAll(editOptions.subList(0, i)))
+                    return out
+            }
+        }
+        return editOptions
     }
 
     private fun removePoint(adapterPosition: Int) {
@@ -115,7 +127,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         lateinit var panelModel: IInfoModel
 
         override fun positiveProcess() {
-            Observable.just(true).subscribe( {
+            Observable.just(true).subscribe({
                 val newName = nameField!!.text.toString()
                 if (DbFunctions.getModelByName(newName, Point::class.java) != null) {
                     throw RuntimeException("Введеное имя уже существует, введите другое")
@@ -127,7 +139,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
                 fragment.panelModel = panelModel
                 view.switchToFragment(R.id.latLngFragment, fragment)
             },
-                     view::showError)
+                    view::showError)
         }
 
         override fun newInstance(): SaveDialog {

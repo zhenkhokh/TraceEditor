@@ -1,22 +1,6 @@
 package ru.android.zheka.gmapexample1;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import roboguice.activity.RoboListActivity;
-import roboguice.inject.InjectView;
-import ru.android.zheka.db.DbFunctions;
-import ru.android.zheka.db.Trace;
-import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.db.UtileTracePointsSerializer;
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
-import ru.android.zheka.jsbridge.JsCallable;
-
-import com.activeandroid.Model;
-
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -29,9 +13,29 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.activeandroid.Model;
 import com.google.android.gms.maps.model.LatLng;
 
-public class TraceActivity extends RoboListActivity implements JsCallable{
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import androidx.databinding.ViewDataBinding;
+import dagger.android.AndroidInjector;
+import dagger.android.HasAndroidInjector;
+import roboguice.inject.InjectView;
+import ru.android.zheka.db.DbFunctions;
+import ru.android.zheka.db.Trace;
+import ru.android.zheka.db.UtilePointSerializer;
+import ru.android.zheka.db.UtileTracePointsSerializer;
+import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE;
+import ru.android.zheka.jsbridge.JsCallable;
+
+public class TraceActivity extends AbstractActivityList_ <ViewDataBinding> implements HasAndroidInjector, JsCallable{
 	public static final String CONNECT_POINT = "connectPoint";
 	public static final String HOME = "home";
 	public static final String GEO_ADD_POINT = "geoAddPoint";
@@ -44,7 +48,43 @@ public class TraceActivity extends RoboListActivity implements JsCallable{
 	static String msg = "";
 	static boolean ready=false;
 	static Object monitor = new Object();
-			//SingleChoiceDialog("Выберете текущую точку маршрута как путевую или как конечную") {
+
+	@Override
+	public AndroidInjector <Object> androidInjector() {
+		return null;
+	}
+
+	@Override
+	protected int getLayoutId() {
+		return 0;
+	}
+
+	@Override
+	protected void initComponent() {
+
+	}
+
+	@Override
+	protected void onInitBinding(@Nullable ViewDataBinding binding) {
+
+	}
+
+	@Override
+	protected void onResumeBinding(@Nullable ViewDataBinding binding) {
+
+	}
+
+	@Override
+	protected void onDestroyBinding(@Nullable ViewDataBinding binding) {
+
+	}
+
+	@Override
+	public Activity getActivity() {
+		return null;
+	}
+
+	//SingleChoiceDialog("Выберете текущую точку маршрута как путевую или как конечную") {
 	static public class MyDialogFragment extends SingleChoiceDialog{
 public MyDialogFragment(){
 	super("");

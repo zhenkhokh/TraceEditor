@@ -177,7 +177,7 @@ import ru.android.zheka.gmapexample1.R;
  * @see #setListAdapter
  * @see android.widget.ListView
  */
-public class AbstractListActivity extends AppCompatActivity {
+public class AppCompatListActivity extends AppCompatActivity {
     /**
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}

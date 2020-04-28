@@ -9,4 +9,12 @@ class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
     override fun titleText(): ObservableField<String> {
         return t
     }
+    private val _checked:HashSet<String> = hashSetOf()
+    override val checked: HashSet<String>
+        get() = _checked
+
+    private var _option:String? = null
+    override var spinnerOption: String
+        get() = _option?:""
+        set(value) {_option = value}
 }

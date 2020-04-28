@@ -8,12 +8,10 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import android.widget.CheckBox
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -23,21 +21,17 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import roboguice.activity.RoboListActivity
-import roboguice.inject.InjectView
-import ru.android.zheka.coreUI.AbstractActivity
-import ru.android.zheka.coreUI.AbstractListActivity
+import ru.android.zheka.coreUI.AppCompatListActivity
 import ru.android.zheka.coreUI.ErrorControl
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.gmapexample1.edit.Editable
-import ru.android.zheka.jsbridge.JsCallable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
-open class EditActivity : AbstractActivity_<ViewDataBinding>(),HasAndroidInjector {
+open class EditActivity : AbstractActivityList_<ViewDataBinding>(),HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -307,8 +301,8 @@ open class EditActivity : AbstractActivity_<ViewDataBinding>(),HasAndroidInjecto
     }
 }
 
-abstract class AbstractActivity_ //RoboFragmentActivity
-<B : ViewDataBinding> : AbstractListActivity(), IActivity {
+abstract class AbstractActivityList_ //RoboFragmentActivity
+<B : ViewDataBinding> : AppCompatListActivity(), IActivity {
     private var error: ErrorControl? = null
     var binding: B? = null
     protected abstract val layoutId: Int

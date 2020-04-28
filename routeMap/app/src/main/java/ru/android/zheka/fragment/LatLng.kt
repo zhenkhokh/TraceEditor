@@ -13,7 +13,7 @@ import ru.android.zheka.gmapexample1.databinding.RowBinding
 import ru.android.zheka.vm.ILatLngVM
 import javax.inject.Inject
 
-class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
+open class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     @Inject
     lateinit var viewModel: ILatLngVM
 
