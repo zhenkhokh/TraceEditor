@@ -18,7 +18,7 @@ import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
     protected lateinit var editOptions: List<String>
-    private val points: List<Point>
+    protected val points: List<Point>
     private lateinit var _pM: IInfoModel
     override var panelModel: IInfoModel
         get() = _pM
@@ -60,13 +60,28 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         get() = view.context
 
     override fun onResume() {
-        editOptions = context.resources.getStringArray(R.array.editOptions).asList()
+        editOptions = getOptions()
         editOptions = reOrder(editOptions, model.spinnerOption)
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
-        panelModel.spinner.set(SpinnerHandler(Consumer { model.spinnerOption = it }, Consumer { a -> },
+        panelModel.spinner.set(SpinnerHandler(spinnerConsumer , Consumer { a -> },
                 editOptions, view))
+    }
+
+    protected open var spinnerConsumer = Consumer<String> { model.spinnerOption = it }
+
+    protected open fun getOptions(): List<String> {
+        return context.resources.getStringArray(R.array.editOptions).asList()
+    }
+
+    protected fun switchFragment(fragment: Edit, option:String) {
+        model.trigered = model.spinnerOption == option
+        model.spinnerOption = option
+        if ( !model.trigered) {
+            fragment.panelModel = panelModel
+            view.switchToFragment(R.id.latLngFragment, fragment)
+        }
     }
 
     private fun reOrder(editOptions: List<String>, spinnerOption: String): List<String> {

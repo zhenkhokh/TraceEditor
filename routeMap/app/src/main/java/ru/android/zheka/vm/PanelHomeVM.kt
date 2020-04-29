@@ -14,7 +14,10 @@ import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.*
-import ru.android.zheka.gmapexample1.*
+import ru.android.zheka.gmapexample1.AddressActivity
+import ru.android.zheka.gmapexample1.EditActivity
+import ru.android.zheka.gmapexample1.GeoPositionActivity
+import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.R.*
 import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.model.IHomeModel
@@ -111,11 +114,15 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel,
     }
 
     override fun createTrace() {
-        val intent = view.activity.intent
-        intent.setClass(view.activity, PointToTraceActivity::class.java)
-        intent.action = Intent.ACTION_VIEW
-        view.activity.startActivity(intent)
-        view.activity.finish()
+        view.removeFragment(fragment)
+        fragment = Trace()
+        (fragment as Edit).panelModel = model
+        view.switchToFragment(id.latLngFragment, fragment)
+//        val intent = view.activity.intent
+//        intent.setClass(view.activity, PointToTraceActivity::class.java)
+//        intent.action = Intent.ACTION_VIEW
+//        view.activity.startActivity(intent)
+//        view.activity.finish()
     }
 
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {

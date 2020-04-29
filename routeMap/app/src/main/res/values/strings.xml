@@ -104,5 +104,16 @@
     <string name="geo_add_waypoints">Передать путевые точки в маршрут</string>
     <string name="geo_maps">Просмотр</string>
 
-    	<string name="errorDialog_windowTitle">Ошибка</string>
+    <string name="errorDialog_windowTitle">Ошибка</string>
+<!--    Trace spinner-->
+    <string name="trace_spinner_load">Загрузка маршрута</string>
+    <string name="trace_spinner_start">Задать начало и сбросить маршрут</string>
+    <string name="trace_spinner_way">@string/title_activity_waypointsToTrace</string>
+    <string name="trace_spinner_end">Задать конец</string>
+<!--    Geo spinner-->
+    <string name="geo_spinner_map">@string/geo_point_to_trace</string>
+    <string name="geo_spinner_start">Вернуться в начало</string>
+    <string name="geo_spinner_way">Добавить путевую</string>
+    <string name="geo_spinner_end">Задать конец и просмотреть</string>
+
 </resources>

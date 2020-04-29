@@ -11,7 +11,6 @@ import ru.android.zheka.fragment.IEditTraces
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.SaveDialog
 import ru.android.zheka.model.LatLngModel
-import kotlin.random.Random
 
 class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model), IEditTracesVM {
     val traces: List<Trace>
@@ -37,9 +36,6 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
     }
 
     private fun removeTrace(pos: Int) {
-        model.checked.add(Random.nextBits(4).toString())
-        println(model.checked)
-        view.switchToFragment(R.id.latLngFragment, view as EditTraces)
 //        DbFunctions.delete(traces[pos])//TODO uncomment
     }
 

@@ -15,6 +15,7 @@ import ru.android.zheka.di.latlng.LatLngBinding
 import ru.android.zheka.di.map.MapBinding
 import ru.android.zheka.di.map.MapMainBinding
 import ru.android.zheka.di.setting.SettingsBinding
+import ru.android.zheka.di.trace.TraceBinding
 import ru.android.zheka.gmapexample1.Application
 import javax.inject.Singleton
 
@@ -30,7 +31,8 @@ import javax.inject.Singleton
     , LatLngBinding::class
     , EditMainBinding::class
     , EditBinding::class
-    , EditTracesBinding::class])
+    , EditTracesBinding::class
+    , TraceBinding::class])
 interface AppComponent : AndroidInjector<Application?> {
     @Component.Builder
     interface Builder {
