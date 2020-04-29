@@ -194,6 +194,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
 		extraPoints = positionUtil.getExtraPoints ();
 		end = lEnd;
 		positionUtil.setEnd (end);
+		positionUtil.centerPass = true;
 		return positionUtil.getIntent ();
 	}
 

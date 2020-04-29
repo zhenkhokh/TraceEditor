@@ -3,10 +3,8 @@ package ru.android.zheka.gmapexample1;
 import java.util.ArrayList;
 
 import ru.android.zheka.db.UtilePointSerializer;
-import ru.android.zheka.route.BellmannFord;
 
 import android.Manifest;
-import android.R.bool;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -46,9 +44,9 @@ public class PositionUtil {
 		Uri uri;
 		if (center != null && zoom > 1) {
 			if (titleMarker != null) {
-				uri = Uri.parse (getGeoPositionFalsePass (center, String.valueOf (zoom), titleMarker));
+				uri = Uri.parse (getGeoPositionTruePass (center, String.valueOf (zoom), titleMarker));
 			} else
-				uri = Uri.parse (getGeoPositionFalsePass (center, String.valueOf (zoom)));
+				uri = Uri.parse (getGeoPositionTruePass (center, String.valueOf (zoom)));
 			try {
 				uri = setUpPassParam (uri, centerPass);
 			} catch (Exception e) {
@@ -58,7 +56,7 @@ public class PositionUtil {
 			intent.setData (uri);
 		}
 		if (start != null) {
-			uri = Uri.parse (getTracePointFalsePass (start, "start"));
+			uri = Uri.parse (getTracePointTruePass (start, "start"));
 			try {
 				uri = setUpPassParam (uri, startPass);
 			} catch (Exception e) {
@@ -67,7 +65,7 @@ public class PositionUtil {
 			intent.putExtra ("start", uri);
 		}
 		if (end != null) {
-			uri = Uri.parse (getTracePointFalsePass (end, "end"));
+			uri = Uri.parse (getTracePointTruePass (end, "end"));
 			try {
 				uri = setUpPassParam (uri, endPass);
 			} catch (Exception e) {
@@ -241,7 +239,7 @@ public class PositionUtil {
 		return titleMarker;
 	}
 
-	private static String getGeoPositionFalsePass(LatLng point, String... zommAndTitle) {
+	private static String getGeoPositionTruePass(LatLng point, String... zommAndTitle) {
 		StringBuilder sb = new StringBuilder ();
 		sb.append ("geo:")
 				.append (point.latitude)
@@ -249,7 +247,7 @@ public class PositionUtil {
 				.append (point.longitude)
 				.append ("?z=")
 				.append (zommAndTitle[0])
-				.append ("?pass=false");
+				.append ("?pass=true");
 		if (zommAndTitle.length > 1) {
 			sb.append ("?").append (TITLE).append ("=")
 					.append (zommAndTitle[1]);
@@ -257,14 +255,14 @@ public class PositionUtil {
 		return sb.toString ();
 	}
 
-	static public String getTracePointFalsePass(LatLng point, String name) {
+	static public String getTracePointTruePass(LatLng point, String name) {
 		StringBuilder sb = new StringBuilder ();
 		return sb.append (name)
 				.append (":")
 				.append (point.latitude)
 				.append (",")
 				.append (point.longitude)
-				.append ("?pass=false")
+				.append ("?pass=true")
 				.toString ();
 	}
 
@@ -429,8 +427,8 @@ public class PositionUtil {
 			if (uriString != null) {
 				//add pass if not specified
 				if (val == null) {
-					uriString.concat ("?pass=false");
-					val = "false";
+					uriString.concat ("?pass=true");
+					val = "true";
 				}
 			} else
 				throw new NullPointerException ("uri cant be a string: specify it correctly");
@@ -548,9 +546,9 @@ public class PositionUtil {
 	static public Intent setDefCommand(Intent intent, TRACE_PLOT_STATE state) throws Exception {
 		// set all false
 		if (intent.getParcelableExtra ("start") != null)
-			intent = createIntentForExistingCenterEndStart (state, ((Uri) intent.getParcelableExtra ("start")).toString (), intent);
+			intent = createIntentForExistingCenterEndStart (state, ((Uri) intent.getParcelableExtra ("start")).toString ().replace("start:",""), intent);
 		if (intent.getParcelableExtra ("end") != null)
-			intent = createIntentForExistingCenterEndStart (state, ((Uri) intent.getParcelableExtra ("end")).toString (), intent);
+			intent = createIntentForExistingCenterEndStart (state, ((Uri) intent.getParcelableExtra ("end")).toString ().replace("end:",""), intent);
 		if (intent.getData () != null)
 			intent = createIntentForExistingCenterEndStart (state, ((Uri) intent.getData ()).toString (), intent);
 		switch (state) {

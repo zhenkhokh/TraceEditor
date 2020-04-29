@@ -7,11 +7,7 @@ import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
-import ru.android.zheka.gmapexample1.MapsActivity
-import ru.android.zheka.gmapexample1.PositionInterceptor
-import ru.android.zheka.gmapexample1.PositionUtil.TRACE_PLOT_STATE
-import ru.android.zheka.gmapexample1.R
-import ru.android.zheka.gmapexample1.SingleChoiceDialog
+import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
@@ -19,36 +15,84 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
 
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
-                .subscribe({
+                .subscribe(marker@{
                     var positionInterceptor = PositionInterceptor(view.activity)
-                    var isStartCmd = false
-                    try {
-                        positionInterceptor.positioning()
-                    } catch (e: Exception) {
-                        isStartCmd = true
-                        println("TraceStartVM.onclick: no center")
-                    }
-                    val state = positionInterceptor.state
-                    if (state == TRACE_PLOT_STATE.CENTER_END_COMMAND) {
-                        val dialog = ShowAskDialog()
-                        dialog.vm = this
-                        dialog.show(view.activity.fragmentManager, "Message")
-                    }
-                    if (state == TRACE_PLOT_STATE.DONOTHING_COMMAND) {
-                        panelModel.success().set("Переопределение старта")
-                    }
-                    resetAndStartTrace(positionInterceptor, points[pos])
+                    if (resetAndStartTrace(positionInterceptor, points[pos])
+                            != PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND)
+                        panelModel.action().set("Начало маршрута задано")
+                    view.activity.intent = positionInterceptor.newIntent
+
+//                    val intent: Intent = view.activity.intent
+//                    val positionUtil = PositionUtil()
+//                    val center: LatLng?
+//                    center = try {
+//                        positionUtil.positionAndBoundInit(intent)
+//                        positionUtil.center
+//                    } catch (e: Exception) {
+//                        try {
+//                            positionUtil.setCenterPosition(intent)
+//                            positionUtil.center
+//                        } catch (ee: Exception) {
+//                            //Toast.makeText(this, "center point is not specified: задайте местоположение" , 15).show();
+//                            val dialog = AlertDialog("center point is not specified: задайте местоположение. "+ee.message)
+//                            dialog.show(view.activity.fragmentManager, "Cooбщение")
+//                            return@marker
+//                        }
+//                    }
+//                    var isStartCmd = false
+//                    var isEndCmd = false
+//                    var state: TRACE_PLOT_STATE? = null
+//                    try {
+//                        positionUtil.positionAndBoundInit(intent)
+//                    } catch (e: Exception) {
+//                        isStartCmd = true
+//                    }
+//                    state = positionUtil.defCommand()
+//                    if (isStartCmd == false && TraceActivity.isOtherMode(state)) {
+//                        //Toast.makeText(this, "Подан другой режим, для сброса вернитесь в начало маршрута " + val, 30).show();
+//                        val dialog = AlertDialog("Подан другой режим, для сброса вернитесь в начало маршрута")
+//                        dialog.show(view.activity.fragmentManager, "Ошибка")
+//                        return@marker
+//                    }
+//                    if (state == TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+//                        Toast.makeText(context, "Маршрут задан, перейдите к просмотру", 15).show()
+//                        return@marker
+//                    }
+//                    if (state == TRACE_PLOT_STATE.CENTER_COMMAND) //<-- reset command
+//                        isStartCmd = true
+//                    if (state == TRACE_PLOT_STATE.CENTER_START_COMMAND) isEndCmd = true
+//                    if (isStartCmd) {
+//                        Toast.makeText(context, "Начало маршрута задано, перейдите к концу", 15).show()
+//                        positionUtil.titleMarker = "Start"
+//                        positionUtil.start = center
+//                        positionUtil.end = center
+//                        positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_START_COMMAND)
+//                        view.activity.intent = positionUtil.getIntent()
+//                    }
+//                    if (state == TRACE_PLOT_STATE.DONOTHING_COMMAND) {
+//                        panelModel.action().set("Переопределение старта")
+//                    }
                 }, view::showError)
     }
 
-    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point) {
+    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE?{
+        val pointData =  point.data
         positionInterceptor.centerPosition = point.data
-        positionInterceptor.end = positionInterceptor.end ?: positionInterceptor.centerPosition
+        positionInterceptor.start = pointData
+        positionInterceptor.end = pointData
         view.activity.intent = positionInterceptor.updatePosition()
+        var state = positionInterceptor.state
+        if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+            val dialog = ShowAskDialog()
+            dialog.vm = this
+            dialog.show(view.activity.fragmentManager, "Message")
+        }
+        if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
+            panelModel.action().set("Переопределение старта")
+        }
+        positionInterceptor.end = null
         positionInterceptor.positioning()
-        positionInterceptor.state = TRACE_PLOT_STATE.CENTER_START_COMMAND
-        view.activity.intent = positionInterceptor.newIntent
-        panelModel.action().set("Начало маршрута задано, перейдите к концу")
+        return state
     }
 
     override fun getOptions(): List<String> {
@@ -59,7 +103,7 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
                 res.getString(R.string.trace_spinner_end))
     }
 
-    override var spinnerConsumer = Consumer<String>{
+    override var spinnerConsumer = Consumer<String> {
         switchFragment(Trace(), it)
     }
 }
@@ -84,5 +128,7 @@ class ShowAskDialog() : SingleChoiceDialog("") {
 
     override fun negativeProcess() {
         vm.resetAndStartTrace(positionInterceptor, point)
+        vm.view.activity.intent = positionInterceptor.newIntent
+        vm.panelModel.action().set("Начало маршрута задано")
     }
 }
