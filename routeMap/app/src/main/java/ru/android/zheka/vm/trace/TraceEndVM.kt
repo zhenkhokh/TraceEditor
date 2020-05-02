@@ -23,4 +23,8 @@ class TraceEndVM(view: ITrace, model : LatLngModel) : EditVM(view, model), ITrac
             res.getString(R.string.trace_spinner_way),
             res.getString(R.string.trace_spinner_end))
     }
+
+    // do destroy job
+    override val shownItems: List<String>
+        get() = points.map { point -> point.name }.toList()
 }

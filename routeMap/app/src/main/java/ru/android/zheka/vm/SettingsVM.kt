@@ -1,5 +1,6 @@
 package ru.android.zheka.vm
 
+import android.view.View
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
@@ -8,9 +9,10 @@ import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
 import ru.android.zheka.db.DbFunctions.add
 import ru.android.zheka.db.DbFunctions.getModelByName
 import ru.android.zheka.gmapexample1.R
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ISettingsModel
 
-class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
+class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel: IHomeModel) : ISettingsVM {
 
     init {
         var data = view.context.getResources().getStringArray(R.array.speedList).asList()
@@ -20,13 +22,13 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
                 as MutableList<String>
         var names = view.context.getResources().getStringArray(R.array.traveluserlist).asList()
                 as MutableList<String>
-        var map = (names zip data).associate { lt -> Pair(lt.first, lt.second) }
+        var map = (names zip data).associate { Pair(it.first, it.second) }
         model.spinnerTravel.set(SpinnerHandler({ a -> travelMode(a) }, { a -> }, map, view))
         data = view.context.getResources().getStringArray(R.array.timerdatalist).asList()
                 as MutableList<String>
         names = view.context.getResources().getStringArray(R.array.timeruserlist).asList()
                 as MutableList<String>
-        map = (names zip data).associate { lt -> Pair(lt.first, lt.second) }
+        map = (names zip data).associate { Pair(it.first, it.second) }
         model.spinnerTimer.set(SpinnerHandler({ a -> updateRatePositionMode(a) }, { a -> }, map, view))
     }
 
@@ -106,6 +108,8 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel) : ISettingsVM {
     }
 
     override fun onResume() {
+        panelModel.inputVisible().set(View.GONE)
+        panelModel.action().set("")
     }
 
     override fun model(): ISettingsModel? {

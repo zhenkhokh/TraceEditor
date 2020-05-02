@@ -13,18 +13,25 @@ import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.SaveDialog
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
     protected lateinit var editOptions: List<String>
     protected val points: List<Point>
-    private lateinit var _pM: IInfoModel
-    override var panelModel: IInfoModel
-        get() = _pM
-        set(value) {
-            _pM = value
-        }
+
+    override lateinit var panelModel: IHomeModel
+
+//    var _panelModel: IInfoModel?
+//        get()  {
+//            if (::panelModel.isInitialized)
+//                return panelModel
+//            else
+//                return null
+//        }
+//        set(value) {panelModel = value!!}
+
     private lateinit var _handler: LatLngHandler
 
     override var handler: LatLngHandler
@@ -44,7 +51,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         if (editOptions[0].equals(model.spinnerOption)) {
             var saveDialog = PointSaveDialog().newInstance(model.spinnerOption) as PointSaveDialog
             saveDialog.view = view
-            saveDialog.panelModel = _pM
+            saveDialog.panelModel = panelModel
             saveDialog.point = points[pos]
             saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
@@ -79,7 +86,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         model.trigered = model.spinnerOption == option
         model.spinnerOption = option
         if ( !model.trigered) {
-            fragment.panelModel = panelModel
+//            fragment.panelModel = panelModel
             view.switchToFragment(R.id.latLngFragment, fragment)
         }
     }
@@ -107,6 +114,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     override fun onDestroy() {
         panelModel.inputVisible().set(View.GONE)
         panelModel.action().set("")
+        panelModel.spinner.set(SpinnerHandler())
     }
 
     class RemoveDialog(var consumer: Consumer<Boolean>,
@@ -151,7 +159,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
                 point.name = newName
                 DbFunctions.add(point)
                 val fragment = Edit()
-                fragment.panelModel = panelModel
+//                fragment.panelModel = panelModel
                 view.switchToFragment(R.id.latLngFragment, fragment)
             },
                     view::showError)

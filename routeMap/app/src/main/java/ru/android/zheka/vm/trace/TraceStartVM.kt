@@ -69,22 +69,19 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
 //                        positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_START_COMMAND)
 //                        view.activity.intent = positionUtil.getIntent()
 //                    }
-//                    if (state == TRACE_PLOT_STATE.DONOTHING_COMMAND) {
-//                        panelModel.action().set("Переопределение старта")
-//                    }
                 }, view::showError)
     }
 
-    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE?{
-        val pointData =  point.data
+    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE? {
+        val pointData = point.data
         positionInterceptor.centerPosition = point.data
         positionInterceptor.start = pointData
         positionInterceptor.end = pointData
         view.activity.intent = positionInterceptor.updatePosition()
-        var state = positionInterceptor.state
+        val state = positionInterceptor.state
         if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
-            val dialog = ShowAskDialog()
-            dialog.vm = this
+            val dialog = StartAskDialog.Builder()
+                    .point(point).vm(this).positionInterceptor(positionInterceptor).build()
             dialog.show(view.activity.fragmentManager, "Message")
         }
         if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
@@ -106,9 +103,31 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
     override var spinnerConsumer = Consumer<String> {
         switchFragment(Trace(), it)
     }
+
+    // do destroy job
+    override val shownItems: List<String>
+        get() = points.map { point -> point.name }.toList()
 }
 
-class ShowAskDialog() : SingleChoiceDialog("") {
+class StartAskDialog : SingleChoiceDialog("") {
+    class Builder {
+        private val dialog: StartAskDialog = StartAskDialog()
+        fun vm(vm: TraceStartVM): Builder{
+            dialog.vm  = vm
+            return this
+        }
+        fun point(point: Point): Builder {
+            dialog.point = point
+            return this
+        }
+        fun positionInterceptor(p:PositionInterceptor): Builder {
+            dialog.positionInterceptor = p
+            return this
+        }
+        fun build(): StartAskDialog {
+            return this.dialog
+        }
+    }
     lateinit var vm: TraceStartVM
     lateinit var point: Point
     lateinit var positionInterceptor: PositionInterceptor

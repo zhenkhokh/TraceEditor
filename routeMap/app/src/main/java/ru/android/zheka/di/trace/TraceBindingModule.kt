@@ -5,6 +5,7 @@ import dagger.Provides
 import ru.android.zheka.di.FragmentChildScope
 import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.ITrace
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.trace.TraceEndVM
 import ru.android.zheka.vm.trace.TraceLoadVM
@@ -29,8 +30,8 @@ class TraceBindingModule {
     }
 
     @Provides
-    fun provideTraceWayVM(model: LatLngModel?, view: ITrace?): TraceWayPointsVM {
-        return TraceWayPointsVM(view!!, model!!)
+    fun provideTraceWayVM(model: LatLngModel?, view: ITrace?, panelModel: IHomeModel): TraceWayPointsVM {
+        return TraceWayPointsVM(view!!, model!!, panelModel)
     }
 
     @FragmentChildScope

@@ -22,7 +22,6 @@ import ru.android.zheka.fragment.Settings
 import ru.android.zheka.gmapexample1.databinding.ActivityHomeBinding
 import ru.android.zheka.jsbridge.JavaScriptMenuHandler
 import ru.android.zheka.jsbridge.JsCallable
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import javax.inject.Inject
 
@@ -30,8 +29,6 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
 {
     @Inject
     lateinit var latLngModel: LatLngModel
-    @Inject
-    lateinit var homeModel: IHomeModel
 
 
     @Inject

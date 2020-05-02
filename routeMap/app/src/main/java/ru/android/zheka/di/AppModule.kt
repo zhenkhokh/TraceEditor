@@ -4,6 +4,8 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.gmapexample1.Application
+import ru.android.zheka.model.HomeModel
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import javax.inject.Singleton
 
@@ -21,6 +23,12 @@ class AppModule(app: Application) {
     @Provides
     fun provideLLModel(view: Context): LatLngModel {
         return LatLngModel(view)
+    }
+
+    @Singleton
+    @Provides
+    fun provideHomeModel(view: Context): IHomeModel {
+        return HomeModel(view)
     }
 
     @Singleton

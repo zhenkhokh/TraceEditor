@@ -1,10 +1,13 @@
 package ru.android.zheka.fragment
 
 import android.content.res.Resources
+import android.view.View
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.vm.IEditVM
+import ru.android.zheka.vm.PanelHomeVM
 import ru.android.zheka.vm.trace.TraceEndVM
 import ru.android.zheka.vm.trace.TraceLoadVM
 import ru.android.zheka.vm.trace.TraceStartVM
@@ -24,13 +27,21 @@ class Trace : Edit(), ITrace {
     @Inject
     lateinit var viewModelEnd: TraceEndVM
 
+    @Inject
+    override lateinit var panelModel: IHomeModel
+
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
         viewModel = defineVM(viewModel.model(), viewModelLoad.view.activity.resources)
+        val way = viewModel.view.activity.resources.getString(R.string.trace_spinner_way)
+        if (viewModel.model().spinnerOption.equals(way))
+            viewModel.model().chekedVisibility = View.VISIBLE
+        else
+            viewModel.model().chekedVisibility = View.GONE
         return super.initAdapter(binding)
     }
 
-    private fun defineVM(model: ILatLngModel, resources : Resources): IEditVM {
+    private fun defineVM(model: ILatLngModel, resources: Resources): IEditVM {
         if (model.spinnerOption.equals(resources.getString(R.string.trace_spinner_way)))
             return viewModelWayPoints
         else if (model.spinnerOption.equals(resources.getString(R.string.trace_spinner_end)))
@@ -41,4 +52,17 @@ class Trace : Edit(), ITrace {
             return viewModelLoad
         return viewModelLoad
     }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModelWayPoints.panelModel = panelModel
+        viewModelWayPoints.onDestroy()
+    }
 }
+
+//class StartTraceAdapter(viewModel: IEditVM, context: Context) : EditAdapter(viewModel, context) {
+//    override fun onBindViewHolder(holder: LatLngHandler, position: Int) {
+//        super.onBindViewHolder(holder, position)
+//
+//    }
+//}

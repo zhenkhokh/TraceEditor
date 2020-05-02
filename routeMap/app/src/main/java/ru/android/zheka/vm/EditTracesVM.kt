@@ -62,7 +62,6 @@ class TraceSaveDialog : SaveDialog() {
             trace.name = newName
             DbFunctions.add(trace)
             editTraces = EditTraces()
-            editTraces.panelModel = panelModel
             view.switchToFragment(R.id.latLngFragment, editTraces)
         },
                 view::showError)

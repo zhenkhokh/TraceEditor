@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.android.zheka.core.IInfoModel
 import ru.android.zheka.coreUI.AbstractFragment
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
 import ru.android.zheka.gmapexample1.databinding.RowBinding
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.vm.IEditVM
 import javax.inject.Inject
 
@@ -18,7 +18,8 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     @Inject
     lateinit var viewModel: IEditVM
 
-    lateinit var panelModel: IInfoModel
+    @Inject
+    open lateinit var panelModel: IHomeModel
 
     override val layoutId
         get() = R.layout.lat_lng_fragment
@@ -32,13 +33,15 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     }
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
-        val adapter = EditAdapter(viewModel, viewModel.context)
+        val adapter = EditAdapter(viewModel, viewModel.context, viewModel.model().chekedVisibility)
         binding.listLatlng.adapter = adapter
         var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding!!.listLatlng.id)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = adapter
         return binding
     }
+
+//    override val chekedVisibility: Int = View.GONE
 
     override fun onResumeBinding(binding: LatLngFragmentBinding) {
         viewModel!!.onResume()
@@ -49,11 +52,11 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     }
 }
 
-open class EditAdapter(val viewModel: IEditVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
+class EditAdapter(val viewModel: IEditVM, val context: Context, val checkedVisibility: Int) : RecyclerView.Adapter<LatLngHandler>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
                 R.layout.row, parent, false)
-        val handler = LatLngHandler(itemBind)
+        val handler = LatLngHandler(itemBind, checkedVisibility)
         itemBind.root.setOnClickListener(viewModel.onClickListener)
         viewModel.handler = handler
         return handler

@@ -24,7 +24,7 @@ import ru.android.zheka.model.IHomeModel
 import java.util.*
 
 class PanelHomeVM(var view: IActivity, var model: IHomeModel,
-                  var edit: IEdit, var editTraces: IEditTraces) : IPanelHomeVM {
+                  var edit: IEdit, var editTraces: IEditTraces, var trace: ITrace) : IPanelHomeVM {
     var fragment: Fragment
 
     init {
@@ -81,7 +81,6 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel,
 //        editItem("Point", string.points_column_name, string.points_column_name1)
         view.removeFragment(fragment)
         fragment = edit as Edit
-        (edit as Edit).panelModel = model
         view.switchToFragment(id.latLngFragment, fragment)
     }
 
@@ -89,7 +88,6 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel,
 //        editItem("Trace", string.traces_column_name, string.traces_column_name1)
         view.removeFragment(fragment)
         fragment = editTraces as EditTraces
-        (fragment as EditTraces).panelModel = model
         view.switchToFragment(id.latLngFragment, fragment)
     }
 
@@ -115,8 +113,7 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel,
 
     override fun createTrace() {
         view.removeFragment(fragment)
-        fragment = Trace()
-        (fragment as Edit).panelModel = model
+        fragment = trace as Trace
         view.switchToFragment(id.latLngFragment, fragment)
 //        val intent = view.activity.intent
 //        intent.setClass(view.activity, PointToTraceActivity::class.java)

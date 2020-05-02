@@ -1,15 +1,11 @@
 package ru.android.zheka.di.home
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.di.PanelScope
-import ru.android.zheka.fragment.Edit
-import ru.android.zheka.fragment.EditTraces
-import ru.android.zheka.fragment.IEdit
-import ru.android.zheka.fragment.IEditTraces
-import ru.android.zheka.model.HomeModel
+import ru.android.zheka.fragment.*
+import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.vm.IPanelHomeVM
 import ru.android.zheka.vm.PanelHomeVM
 
@@ -17,8 +13,9 @@ import ru.android.zheka.vm.PanelHomeVM
 class HomeBindingModule {
     @PanelScope
     @Provides
-    fun bindHomeVM(model: HomeModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces): IPanelHomeVM {
-        return PanelHomeVM(view!!, model!!, edit!!, editTraces)
+    fun bindHomeVM(model: IHomeModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces,
+        trace: ITrace): IPanelHomeVM {
+        return PanelHomeVM(view!!, model!!, edit!!, editTraces, trace)
     }
 
     @PanelScope
@@ -33,8 +30,14 @@ class HomeBindingModule {
         return EditTraces()
     }
 
+    @PanelScope
     @Provides
-    fun provideHomeModel(view: Context?): HomeModel {
-        return HomeModel(view)
+    fun provideTrace(): ITrace {
+        return Trace()
     }
+
+//    @Provides
+//    fun provideHomeModel(view: Context?): HomeModel {
+//        return HomeModel(view)
+//    }
 }

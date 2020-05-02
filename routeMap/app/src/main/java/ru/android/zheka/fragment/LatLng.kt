@@ -28,7 +28,7 @@ open class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     }
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
-        val adapter = LatLngAdapter(viewModel, viewModel.context)
+        val adapter = LatLngAdapter(viewModel, viewModel.context, viewModel.model().chekedVisibility)
         binding.listLatlng.adapter = adapter
         var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding!!.listLatlng.id)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -46,11 +46,12 @@ open class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     }
 }
 
-class LatLngAdapter(val viewModel: ILatLngVM, val context: Context) : RecyclerView.Adapter<LatLngHandler>() {
+class LatLngAdapter(val viewModel: ILatLngVM, val context: Context, val checkedVisibility: Int)
+    : RecyclerView.Adapter<LatLngHandler>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LatLngHandler {
         val itemBind = DataBindingUtil.inflate<RowBinding>(LayoutInflater.from(context),
                 R.layout.row, parent, false)
-        val handler = LatLngHandler(itemBind)
+        val handler = LatLngHandler(itemBind, checkedVisibility)
         itemBind.root.setOnClickListener(viewModel.onClickListener)
         viewModel.handler = handler
         return handler
@@ -65,10 +66,11 @@ class LatLngAdapter(val viewModel: ILatLngVM, val context: Context) : RecyclerVi
     }
 }
 
-class LatLngHandler(var rowBinding: RowBinding) : RecyclerView.ViewHolder(rowBinding.root) {
+class LatLngHandler(var rowBinding: RowBinding, val checkedVisibility: Int) : RecyclerView.ViewHolder(rowBinding.root) {
 
     fun bind(text: String) {
         rowBinding.text = text
+        rowBinding.checkedVisibility = checkedVisibility
         rowBinding.executePendingBindings()
     }
 }
