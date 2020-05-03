@@ -216,7 +216,7 @@ public MyDialogFragment(){
 	       	}
         }
 	        if (val.contentEquals(MAP)){
-	        	try{intent = positionUtil.createIntentForExistingCenterEndStart(TRACE_PLOT_STATE.CENTER_START_COMMAND
+	        	try{intent = positionUtil.createIntentForExistingCenterEndStart(TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND
 	            		,PositionUtil.latLngToString(positionUtil.getStart())
 	            		,intent);
 	        	}catch(Exception e){
@@ -250,14 +250,14 @@ public MyDialogFragment(){
 	            }
 	            if(state==TRACE_PLOT_STATE.CENTER_COMMAND)//<-- reset command
 		            isStartCmd = true;
-	            if(state==TRACE_PLOT_STATE.CENTER_START_COMMAND)
+	            if(state==TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND)
 	            	isEndCmd = true;
 	            if(isStartCmd){
 		            Toast.makeText(this, "Начало маршрута задано, перейдите к концу" , 15).show();
 	            	positionUtil.setTitleMarker("Start");
 	            	positionUtil.setStart(center);
 	            	positionUtil.setEnd(center);
-	            	positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_START_COMMAND);
+	            	positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND);
 	            }
 	            if(isEndCmd){
 	            	//final Object monitor = new Object();
@@ -300,7 +300,7 @@ public MyDialogFragment(){
 	            Toast.makeText(this, "Путевая точка задана" , 15).show();
             	positionUtil.setTitleMarker("Extra");
             	positionUtil.setEnd(center);
-            	positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_START_COMMAND);
+            	positionUtil.setCommand(TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND);
             	ArrayList<String> extraPoints=null;
             	if (intent.getStringArrayListExtra(PositionUtil.EXTRA_POINTS)!=null)
             		extraPoints = intent.getStringArrayListExtra(PositionUtil.EXTRA_POINTS);
@@ -348,9 +348,9 @@ public MyDialogFragment(){
 		return webViewHome;
 	}
 	public static boolean isOtherMode(TRACE_PLOT_STATE state){
-		if(state!=TRACE_PLOT_STATE.CENTER_START_COMMAND
-        		&& state!=TRACE_PLOT_STATE.CENTER_END_COMMAND
-        		&& state!=TRACE_PLOT_STATE.CENTER_COMMAND)
+		if(state!=TRACE_PLOT_STATE.CONNECT_COMMAND
+        		&& state!=TRACE_PLOT_STATE.END_COMMAND
+				&& state!=TRACE_PLOT_STATE.CENTER_START_COMMAND)
 			return true;
 		return false;
 	}

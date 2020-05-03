@@ -1,6 +1,7 @@
 package ru.android.zheka.vm
 
 import android.view.View
+import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
@@ -110,6 +111,7 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel:
     override fun onResume() {
         panelModel.inputVisible().set(View.GONE)
         panelModel.action().set("")
+        panelModel.nextButton2.set(ButtonHandler())
     }
 
     override fun model(): ISettingsModel? {

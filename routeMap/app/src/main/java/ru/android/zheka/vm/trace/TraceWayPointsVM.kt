@@ -1,6 +1,5 @@
 package ru.android.zheka.vm.trace
 
-import android.content.Intent
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
@@ -9,13 +8,13 @@ import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.coreUI.SpinnerHandler
-import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
+import java.lang.RuntimeException
 
 class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel: IHomeModel) : EditVM(view, model), ITraceWayPointsVM {
 
@@ -64,7 +63,7 @@ class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel
 
     private fun add() {
         val position = PositionInterceptor(view.activity)
-        view.activity.intent = try {
+        try {
             position.positioning()
         } catch (e: Exception) {
             Toast.makeText(view.context, "Невозможно выполнить: начало маршрута не задано", 15).show()
@@ -72,30 +71,29 @@ class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel
             return
         }
         if (TraceActivity.isOtherMode(position.state)) {
-            val dialog = AlertDialog("Подан другой режим, для сброса вернитесь в начало маршрута")
-            dialog.show(view.activity.fragmentManager, "Ошибка")
-            return
+            throw RuntimeException("Подан другой режим, для сброса вернитесь в начало маршрута")
         }
-        if (position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+        if (position.state == PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             Toast.makeText(view.activity, "Маршрут задан, перейдите к просмотру", 15).show()
             return
         }
-        if (position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_COMMAND) {
-            Toast.makeText(view.activity, "Невозможно выполнить: начало маршрута не задано", 15).show()
-            return
-        }
-        if (position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
+        if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND
+                || position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
+            view.activity.intent = position.positioning()//?
             val map = (shownItems zip model.checked)
-                        .associate {  Pair(it.first, it.second)}.filter { it.value }.toMap()
+                    .associate { Pair(it.first, it.second) }.filter { it.value }.toMap()
             val names = ArrayList(map.keys)
-            if (names.isEmpty()) {
-                Toast.makeText(view.activity, "Выберете одну или несколько точек", 15).show()
-                return
-            }
-            Toast.makeText(view.activity, "Путевые точки успешно добавлены. Добавьте конец маршрута", 15).show()
+            val source:String
+            if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
+                source = "к старту"
+            } else
+                source = "к промежуточным"
+            Toast.makeText(view.activity, "Путевые точки успешно добавлены к $source. Добавьте конец маршрута", 15).show()
             position.setExtraPointsFromCopy(names)
             view.activity.intent = position.newIntent
-        } else Toast.makeText(view.activity, "Этот случай недостижим.", 15).show()
+            return
+        }
+        throw RuntimeException("Невозможно выполнить: начало маршрута не задано")
     }
 
     override var spinnerConsumer = Consumer<String> {

@@ -115,5 +115,7 @@
     <string name="geo_spinner_start">Вернуться в начало</string>
     <string name="geo_spinner_way">Добавить путевую</string>
     <string name="geo_spinner_end">Задать конец и просмотреть</string>
+<!--    Actions -->
+    <string name="action_traces"></string>
 
 </resources>

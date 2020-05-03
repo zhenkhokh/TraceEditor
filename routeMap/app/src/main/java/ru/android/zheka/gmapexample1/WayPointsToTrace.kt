@@ -38,7 +38,7 @@ class WayPointsToTrace : EditActivity() {
                 Toast.makeText(this, "Невозможно выполнить: начало маршрута не задано", 15).show()
                 return
             }
-            if (position.state == TRACE_PLOT_STATE.CENTER_START_COMMAND) {
+            if (position.state == TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND) {
                 //KeySetView<String, Boolean> names = status.keySet(true);//since 1.8
                 val names: MutableSet<String> = HashSet()
                 run {

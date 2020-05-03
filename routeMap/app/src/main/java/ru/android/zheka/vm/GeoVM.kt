@@ -106,7 +106,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
                     position!!.end = position!!.centerPosition
                 else
                     position!!.end = position!!.start
-            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
+            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND
             var intent = position!!.newIntent
             //if (!position.extraPoints.isEmpty()){
             //	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);

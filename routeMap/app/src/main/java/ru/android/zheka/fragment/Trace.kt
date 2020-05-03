@@ -7,7 +7,6 @@ import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
 import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.vm.IEditVM
-import ru.android.zheka.vm.PanelHomeVM
 import ru.android.zheka.vm.trace.TraceEndVM
 import ru.android.zheka.vm.trace.TraceLoadVM
 import ru.android.zheka.vm.trace.TraceStartVM
@@ -29,7 +28,6 @@ class Trace : Edit(), ITrace {
 
     @Inject
     override lateinit var panelModel: IHomeModel
-
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
         viewModel = defineVM(viewModel.model(), viewModelLoad.view.activity.resources)
@@ -53,16 +51,9 @@ class Trace : Edit(), ITrace {
         return viewModelLoad
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        viewModelWayPoints.panelModel = panelModel
-        viewModelWayPoints.onDestroy()
-    }
-}
-
-//class StartTraceAdapter(viewModel: IEditVM, context: Context) : EditAdapter(viewModel, context) {
-//    override fun onBindViewHolder(holder: LatLngHandler, position: Int) {
-//        super.onBindViewHolder(holder, position)
-//
+//    override fun onDetach() {
+//        super.onDetach()
+//        viewModelWayPoints.panelModel = panelModel
+//        viewModelWayPoints.onDestroy()
 //    }
-//}
+}

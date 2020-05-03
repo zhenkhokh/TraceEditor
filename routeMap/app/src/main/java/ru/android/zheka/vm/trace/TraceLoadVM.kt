@@ -53,6 +53,7 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
 
     override fun onResume() {
         super.onResume()
+        panelModel.action().set(view.activity.resources.getString(R.string.action_traces))
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_traces))
     }
 

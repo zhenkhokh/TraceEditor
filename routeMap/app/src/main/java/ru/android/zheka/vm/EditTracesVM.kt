@@ -42,7 +42,7 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
     override fun onResume() {
         super.onResume()
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_traces))
-        panelModel.action().set("Выберете действие над маршрутом и нажмите на него")
+        panelModel.action().set(view.activity.resources.getString(R.string.action_traces))
     }
 }
 

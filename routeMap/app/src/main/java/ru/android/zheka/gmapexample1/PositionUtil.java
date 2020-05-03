@@ -34,7 +34,7 @@ public class PositionUtil {
 	ArrayList <String> extraPoints = new ArrayList <String> ();
 
 	public enum TRACE_PLOT_STATE {
-		END_COMMAND, START_COMMAND, CONNECT_COMMAND, CENTER_COMMAND, CENTER_END_COMMAND, CENTER_START_COMMAND, CENTER_CONNECT_COMMAND, DONOTHING_COMMAND
+		END_COMMAND, START_COMMAND, CONNECT_COMMAND, CENTER_COMMAND, CENTER_END_COMMAND, CENTER_CONNECT_COMMAND, CENTER_START_COMMAND, DONOTHING_COMMAND
 	}
 
 	;
@@ -96,13 +96,13 @@ public class PositionUtil {
 				centerPass = false;
 				break;
 			}
-			case CENTER_START_COMMAND: {
+			case CENTER_CONNECT_COMMAND: {
 				startPass = true;
 				endPass = false;
 				centerPass = true;
 				break;
 			}
-			case CENTER_CONNECT_COMMAND: {
+			case CENTER_START_COMMAND: {
 				startPass = true;
 				endPass = true;
 				centerPass = true;
@@ -373,7 +373,7 @@ public class PositionUtil {
 		try {
 			endPass = getPassParam (endUri);
 		} catch (Exception e) {/*endUri = startUri; endPass = getPassParam(endUri);*/
-			endPass = false;// do not do CENTER_CONNECT
+			endPass = true;
 			if (extraPoints.size () > 1) {
 				end = (LatLng) new UtilePointSerializer ().deserialize (extraPoints.get (extraPoints.size () - 1));
 			} else {
@@ -464,13 +464,13 @@ public class PositionUtil {
 				break;
 			}
 			case CONNECT_COMMAND: //same with CENTER_CONNECT_COMMAND
-			case CENTER_CONNECT_COMMAND: {
+			case CENTER_START_COMMAND: {
 				LatLng start = util.getEnd ();
 				util.setEnd (center);
 				util.setStart (start);
 				break;
 			}
-			case CENTER_START_COMMAND: {
+			case CENTER_CONNECT_COMMAND: {
 				util.setStart (center);
 				util.setCenter (center);
 				break;
@@ -576,7 +576,7 @@ public class PositionUtil {
 					throw new Exception ("bad intent for CONNECT_COMMAND");
 				break;
 			}
-			case CENTER_CONNECT_COMMAND: {
+			case CENTER_START_COMMAND: {
 				if (intent.getParcelableExtra ("end") != null
 						&& intent.getParcelableExtra ("start") != null
 						&& intent.getData () != null) {
@@ -587,7 +587,7 @@ public class PositionUtil {
 					throw new Exception ("bad intent for CENTER_CONNECT_COMMAND");
 				break;
 			}
-			case CENTER_START_COMMAND: {
+			case CENTER_CONNECT_COMMAND: {
 				if (intent.getParcelableExtra ("start") != null
 						&& intent.getData () != null) {
 					intent.putExtra ("start", setUpPassParam ((Uri) intent.getParcelableExtra ("start"), true));
@@ -625,9 +625,9 @@ public class PositionUtil {
 		if (startPass == true && endPass == true && centerPass == false)
 			return TRACE_PLOT_STATE.CONNECT_COMMAND;
 		if (startPass == true && endPass == false && centerPass == true)
-			return TRACE_PLOT_STATE.CENTER_START_COMMAND;
-		if (startPass == true && endPass == true && centerPass == true)
 			return TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND;
+		if (startPass == true && endPass == true && centerPass == true)
+			return TRACE_PLOT_STATE.CENTER_START_COMMAND;
 		if (startPass == false && endPass == true && centerPass == false)
 			return TRACE_PLOT_STATE.END_COMMAND;
 		if (startPass == false && endPass == true && centerPass == true)

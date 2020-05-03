@@ -74,21 +74,20 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
 
     fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE? {
         val pointData = point.data
-        positionInterceptor.centerPosition = point.data
+        positionInterceptor.centerPosition = pointData
         positionInterceptor.start = pointData
-        positionInterceptor.end = pointData
         view.activity.intent = positionInterceptor.updatePosition()
         val state = positionInterceptor.state
         if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
             val dialog = StartAskDialog.Builder()
                     .point(point).vm(this).positionInterceptor(positionInterceptor).build()
             dialog.show(view.activity.fragmentManager, "Message")
+            return state
         }
         if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
             panelModel.action().set("Переопределение старта")
         }
-        positionInterceptor.end = null
-        positionInterceptor.positioning()
+        view.activity.intent = positionInterceptor.positioning()
         return state
     }
 
@@ -112,22 +111,26 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
 class StartAskDialog : SingleChoiceDialog("") {
     class Builder {
         private val dialog: StartAskDialog = StartAskDialog()
-        fun vm(vm: TraceStartVM): Builder{
-            dialog.vm  = vm
+        fun vm(vm: TraceStartVM): Builder {
+            dialog.vm = vm
             return this
         }
+
         fun point(point: Point): Builder {
             dialog.point = point
             return this
         }
-        fun positionInterceptor(p:PositionInterceptor): Builder {
+
+        fun positionInterceptor(p: PositionInterceptor): Builder {
             dialog.positionInterceptor = p
             return this
         }
+
         fun build(): StartAskDialog {
             return this.dialog
         }
     }
+
     lateinit var vm: TraceStartVM
     lateinit var point: Point
     lateinit var positionInterceptor: PositionInterceptor
