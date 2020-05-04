@@ -10,11 +10,13 @@ import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
-import ru.android.zheka.gmapexample1.*
+import ru.android.zheka.gmapexample1.PositionInterceptor
+import ru.android.zheka.gmapexample1.PositionUtil
+import ru.android.zheka.gmapexample1.R
+import ru.android.zheka.gmapexample1.TraceActivity
 import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
-import java.lang.RuntimeException
 
 class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel: IHomeModel) : EditVM(view, model), ITraceWayPointsVM {
 
@@ -63,13 +65,7 @@ class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel
 
     private fun add() {
         val position = PositionInterceptor(view.activity)
-        try {
-            position.positioning()
-        } catch (e: Exception) {
-            Toast.makeText(view.context, "Невозможно выполнить: начало маршрута не задано", 15).show()
-            e.printStackTrace()
-            return
-        }
+        position.updatePosition()
         if (TraceActivity.isOtherMode(position.state)) {
             throw RuntimeException("Подан другой режим, для сброса вернитесь в начало маршрута")
         }
@@ -79,16 +75,15 @@ class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel
         }
         if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND
                 || position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
-            view.activity.intent = position.positioning()//?
             val map = (shownItems zip model.checked)
                     .associate { Pair(it.first, it.second) }.filter { it.value }.toMap()
             val names = ArrayList(map.keys)
             val source:String
             if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
-                source = "к старту"
-            } else
                 source = "к промежуточным"
-            Toast.makeText(view.activity, "Путевые точки успешно добавлены к $source. Добавьте конец маршрута", 15).show()
+            } else
+                source = "к старту"
+            Toast.makeText(view.activity, "Путевые точки успешно добавлены $source. Добавьте конец маршрута", 15).show()
             position.setExtraPointsFromCopy(names)
             view.activity.intent = position.newIntent
             return

@@ -1,6 +1,7 @@
 package ru.android.zheka.vm.trace
 
 import android.content.Intent
+import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.RxTransformer
@@ -16,11 +17,9 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe(marker@{
-                    var positionInterceptor = PositionInterceptor(view.activity)
-                    if (resetAndStartTrace(positionInterceptor, points[pos])
+                    if (resetAndStartTrace(PositionInterceptor(view.activity), points[pos])
                             != PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND)
                         panelModel.action().set("Начало маршрута задано")
-                    view.activity.intent = positionInterceptor.newIntent
 
 //                    val intent: Intent = view.activity.intent
 //                    val positionUtil = PositionUtil()
@@ -73,22 +72,30 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
     }
 
     fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE? {
-        val pointData = point.data
+        val pointData: LatLng = point.data
         positionInterceptor.centerPosition = pointData
         positionInterceptor.start = pointData
-        view.activity.intent = positionInterceptor.updatePosition()
+        val intent = positionInterceptor.updatePosition()
+        view.activity.intent = intent
         val state = positionInterceptor.state
-        if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+        if (state == PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             val dialog = StartAskDialog.Builder()
                     .point(point).vm(this).positionInterceptor(positionInterceptor).build()
             dialog.show(view.activity.fragmentManager, "Message")
             return state
         }
-        if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
-            panelModel.action().set("Переопределение старта")
+        if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
+                || state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
+            resetTrace()
+            view.activity.intent = intent
+            panelModel.action().set("Переопределение старта и сброс машрута")
         }
-        view.activity.intent = positionInterceptor.positioning()
+        view.activity.intent = positionInterceptor.newIntent
         return state
+    }
+
+    fun resetTrace() {
+        view.activity.intent = Intent()
     }
 
     override fun getOptions(): List<String> {
@@ -112,17 +119,17 @@ class StartAskDialog : SingleChoiceDialog("") {
     class Builder {
         private val dialog: StartAskDialog = StartAskDialog()
         fun vm(vm: TraceStartVM): Builder {
-            dialog.vm = vm
+            StartAskDialog.vm = vm
             return this
         }
 
-        fun point(point: Point): Builder {
-            dialog.point = point
+        fun point(p: Point): Builder {
+            point = p
             return this
         }
 
         fun positionInterceptor(p: PositionInterceptor): Builder {
-            dialog.positionInterceptor = p
+            positionInterceptor = p
             return this
         }
 
@@ -131,9 +138,11 @@ class StartAskDialog : SingleChoiceDialog("") {
         }
     }
 
-    lateinit var vm: TraceStartVM
-    lateinit var point: Point
-    lateinit var positionInterceptor: PositionInterceptor
+    companion object {
+        lateinit var vm: TraceStartVM
+        lateinit var point: Point
+        lateinit var positionInterceptor: PositionInterceptor
+    }
 
     init {
         negativeId = R.string.cancel_plot_trace
@@ -149,8 +158,8 @@ class StartAskDialog : SingleChoiceDialog("") {
     }
 
     override fun negativeProcess() {
+        vm.resetTrace()
         vm.resetAndStartTrace(positionInterceptor, point)
-        vm.view.activity.intent = positionInterceptor.newIntent
         vm.panelModel.action().set("Начало маршрута задано")
     }
 }
