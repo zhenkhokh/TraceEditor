@@ -6,6 +6,9 @@ import android.widget.Toast
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.*
+import ru.android.zheka.db.DbFunctions
+import ru.android.zheka.db.Point
+import ru.android.zheka.db.UtilePointSerializer
 import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.PositionInterceptor
@@ -74,7 +77,7 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
                 || position.state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
             val map = (shownItems zip model.checked)
                     .associate { Pair(it.first, it.second) }.filter { it.value }.toMap()
-            val names = ArrayList(map.keys)
+            val names = ArrayList(convertNamesToLatLngIfNeed(map.keys))
             val source:String
             if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
                 source = "к промежуточным"
@@ -86,6 +89,17 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
             return
         }
         throw RuntimeException("Невозможно выполнить: начало маршрута не задано")
+    }
+
+    private fun  convertNamesToLatLngIfNeed(keys: Set<String>): List<out String>? {
+        val out: ArrayList<String> = ArrayList(keys)
+        val util = UtilePointSerializer()
+        return out.map {
+            val point = DbFunctions.getModelByName(it, Point::class.java) as Point?
+            if (point != null)
+                util.serialize(point.data) as String
+            else
+                it}.toList()
     }
 
     override var spinnerConsumer = Consumer<String> {

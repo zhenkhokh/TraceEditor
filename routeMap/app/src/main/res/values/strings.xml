@@ -116,6 +116,14 @@
     <string name="geo_spinner_way">Добавить путевую</string>
     <string name="geo_spinner_end">Задать конец и просмотреть</string>
     <string name="action_geo">Выберете действие над ЦТ</string>
+<!--    geo-->
+    <string name="map_home">Главная</string>
+    <string name="map_geo">Местоположение</string>
+    <string name="map_saveTrace">Сохранить маршрут</string>
+<!--    <string name="map_trace">Загрузить маршрут</string>-->
+    <string name="map_fakeStart">Старт</string>
+    <string name="map_mapType">Карта</string>
+    <string name="map_goPosition">Гео</string>
 <!--    Actions -->
     <string name="action_traces"></string>
 

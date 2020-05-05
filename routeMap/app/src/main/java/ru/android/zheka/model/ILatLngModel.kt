@@ -10,5 +10,5 @@ interface ILatLngModel {
     var checked: ArrayList<Boolean>
     var spinnerOption:String
     val trigered: Boolean
-    var _customPoints: List<Point>?
+    val _customPoints: ArrayList<Point>
 }

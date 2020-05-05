@@ -33,7 +33,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
 
         if (positionInterceptor.state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND) {
             positionInterceptor.end = pointData
-            positionInterceptor.start = null
+//            positionInterceptor.start = null
             view.activity.intent = positionInterceptor.newIntent
             setGoButton()
             panelModel.action().set("Маршрут задан, перейдите к просмотру")

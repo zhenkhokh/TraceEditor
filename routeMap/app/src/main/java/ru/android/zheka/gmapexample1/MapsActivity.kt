@@ -247,7 +247,7 @@ class MapsActivity //extends AppCompatActivity
             positionReciever = PositionReciever(googleMap, position, this)
             //LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever
             //		, new IntentFilter(TimerService.BROADCAST_ACTION));
-            if (!TimerService.mListners!!.contains(positionReciever)) TimerService.mListners!!.add(positionReciever)
+            TimerService.mListners!!.add(positionReciever)
         }
         //if (this.center==null)
         //	this.center = PositionUtil.getGeoPosition(this);
@@ -919,7 +919,7 @@ class MapsActivity //extends AppCompatActivity
             //new UtileTracePointsSerializer ().serialize (dataTrace).toString ().isEmpty ()
             if (dataTrace!!.extraPoints.size == 0) // null entity case
                 return false
-            val traceOld = DbFunctions.getTraceByName(name) as Trace //back null if add lock
+            val traceOld = DbFunctions.getTraceByName(name)  //back null if add lock
             //traces = new Select ().from (Trace.class).where ("name = ?",currentName).limit (1).execute ();
             //traces = SQLiteUtils.rawQuery (Trace.class, "SELECT * from Trace where name LIKE ?", new String[]{'%'+currentName+'%'});
             val trace = Trace()

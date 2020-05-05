@@ -87,12 +87,18 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         vm.add()
     }
 
+    lateinit var llModel_: LatLngModel
+
     private fun llModel(): LatLngModel {
-        val llModel = LatLngModel(view.context)
+        if (!this::llModel_.isInitialized) {
+            llModel_ = LatLngModel(view.context)
+        }
         val point = Point()
+        point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
-        llModel._customPoints = listOf(point)
-        return llModel
+        llModel_._customPoints.add(point)
+        llModel_.checked.add(true)
+        return llModel_
     }
 
     private fun startCp() {

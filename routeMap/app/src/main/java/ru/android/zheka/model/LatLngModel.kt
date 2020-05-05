@@ -15,10 +15,10 @@ class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
         return t
     }
 
-    override var _customPoints: List<Point>? = null
+    override val _customPoints: ArrayList<Point> = ArrayList()
     override val points: List<Point>
-        get() = if (_customPoints != null)
-            _customPoints!!
+        get() = if (_customPoints.isNotEmpty())
+            _customPoints
         else
             DbFunctions.getTablesByModel(Point::class.java) as List<Point>
 
