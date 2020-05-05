@@ -5,7 +5,6 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
-import ru.android.zheka.core.IInfoModel
 import ru.android.zheka.coreUI.*
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
@@ -13,25 +12,13 @@ import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.SaveDialog
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
     protected lateinit var editOptions: List<String>
     protected val points: List<Point>
-
-    override lateinit var panelModel: IHomeModel
-
-//    var _panelModel: IInfoModel?
-//        get()  {
-//            if (::panelModel.isInitialized)
-//                return panelModel
-//            else
-//                return null
-//        }
-//        set(value) {panelModel = value!!}
-
+    override lateinit var panelModel: IPanelModel
     private lateinit var _handler: LatLngHandler
 
     override var handler: LatLngHandler
@@ -41,7 +28,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         }
 
     init {
-        points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
+        points = model.points
     }
 
     override val onClickListener: View.OnClickListener?
@@ -147,7 +134,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     class PointSaveDialog : SaveDialog() {
         lateinit var point: Point
         lateinit var view: IActivity
-        lateinit var panelModel: IInfoModel
+        lateinit var panelModel: IPanelModel
 
         override fun positiveProcess() {
             Observable.just(true).subscribe({

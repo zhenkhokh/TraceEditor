@@ -1,6 +1,5 @@
 package ru.android.zheka.di.geo
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
@@ -15,8 +14,8 @@ class GeoBindingModule {
         return GeoVM(view!!, model!!)
     }
 
-    @Provides
-    fun provideGeoModel(view: Context?): GeoModel {
-        return GeoModel(view)
-    }
+//    @Provides
+//    fun provideGeoModel(view: Context?): GeoModel {
+//        return GeoModel(view)
+//    }
 }

@@ -2,9 +2,9 @@ package ru.android.zheka.fragment
 
 import android.content.res.Resources
 import android.view.View
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.vm.IEditVM
 import ru.android.zheka.vm.trace.TraceEndVM
@@ -27,7 +27,7 @@ class Trace : Edit(), ITrace {
     lateinit var viewModelEnd: TraceEndVM
 
     @Inject
-    override lateinit var panelModel: IHomeModel
+    override lateinit var panelModel: IPanelModel
 
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
         viewModel = defineVM(viewModel.model(), viewModelLoad.view.activity.resources)

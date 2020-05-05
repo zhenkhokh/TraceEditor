@@ -7,10 +7,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.android.zheka.coreUI.AbstractFragment
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.LatLngFragmentBinding
 import ru.android.zheka.gmapexample1.databinding.RowBinding
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.vm.IEditVM
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
     lateinit var viewModel: IEditVM
 
     @Inject
-    open lateinit var panelModel: IHomeModel
+    open lateinit var panelModel: IPanelModel
 
     override val layoutId
         get() = R.layout.lat_lng_fragment

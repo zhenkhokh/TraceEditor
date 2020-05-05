@@ -3,6 +3,7 @@ package ru.android.zheka.vm
 import android.view.View
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
@@ -10,10 +11,9 @@ import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
 import ru.android.zheka.db.DbFunctions.add
 import ru.android.zheka.db.DbFunctions.getModelByName
 import ru.android.zheka.gmapexample1.R
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.ISettingsModel
 
-class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel: IHomeModel) : ISettingsVM {
+class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel: IPanelModel) : ISettingsVM {
 
     init {
         var data = view.context.getResources().getStringArray(R.array.speedList).asList()

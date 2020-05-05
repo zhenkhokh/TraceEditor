@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.databinding.ObservableField
 import ru.android.zheka.coreUI.PanelModel
+import ru.android.zheka.db.DbFunctions
+import ru.android.zheka.db.Point
 
 class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
     override var trigered: Boolean = false
@@ -12,6 +14,13 @@ class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
     override fun titleText(): ObservableField<String> {
         return t
     }
+
+    override var _customPoints: List<Point>? = null
+    override val points: List<Point>
+        get() = if (_customPoints != null)
+            _customPoints!!
+        else
+            DbFunctions.getTablesByModel(Point::class.java) as List<Point>
 
     private var _chekedVisibility: Int = View.GONE
     override var chekedVisibility: Int

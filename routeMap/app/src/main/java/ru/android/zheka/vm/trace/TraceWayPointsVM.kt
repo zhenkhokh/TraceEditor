@@ -5,20 +5,17 @@ import android.widget.CheckBox
 import android.widget.Toast
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
-import ru.android.zheka.coreUI.ButtonHandler
-import ru.android.zheka.coreUI.RxTransformer
-import ru.android.zheka.coreUI.SpinnerHandler
+import ru.android.zheka.coreUI.*
 import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.PositionUtil
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.TraceActivity
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
-class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel: IHomeModel) : EditVM(view, model), ITraceWayPointsVM {
+class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelModel: IPanelModel) : EditVM(view, model), ITraceWayPointsVM {
 
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
@@ -63,7 +60,7 @@ class TraceWayPointsVM(view: ITrace, model: LatLngModel, override var panelModel
         model.chekedVisibility = View.GONE
     }
 
-    private fun add() {
+    fun add() {
         val position = PositionInterceptor(view.activity)
         position.updatePosition()
         if (TraceActivity.isOtherMode(position.state)) {

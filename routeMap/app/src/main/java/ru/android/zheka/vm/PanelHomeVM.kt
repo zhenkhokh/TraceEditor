@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.*
@@ -20,10 +21,11 @@ import ru.android.zheka.gmapexample1.GeoPositionActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.R.*
 import ru.android.zheka.gmapexample1.edit.EditModel
+import ru.android.zheka.model.HomeModel
 import ru.android.zheka.model.IHomeModel
 import java.util.*
 
-class PanelHomeVM(var view: IActivity, var model: IHomeModel,
+class PanelHomeVM(var view: IActivity, var model: IPanelModel,
                   var edit: IEdit, var editTraces: IEditTraces, var trace: ITrace) : IPanelHomeVM {
     var fragment: Fragment
 
@@ -154,7 +156,7 @@ class PanelHomeVM(var view: IActivity, var model: IHomeModel,
 
     override fun onDestroy() {}
     override fun model(): IHomeModel {
-        return model
+        return model as HomeModel
     }
 
 }

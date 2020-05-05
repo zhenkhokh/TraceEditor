@@ -1,7 +1,7 @@
 package ru.android.zheka.vm
 
-import ru.android.zheka.model.IHomeModel
+import ru.android.zheka.coreUI.IPanelModel
 
 interface IEditVM : ILatLngVM {
-    var panelModel: IHomeModel
+    var panelModel: IPanelModel
 }

@@ -30,21 +30,20 @@ import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.fragment.Geo
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
+import ru.android.zheka.model.GeoModel
 import ru.zheka.android.timer.PositionReciever
 import java.io.File
 import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ViewDataBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnCameraChangeListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ViewDataBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
     var clMain: Class<*>? = null
     var clWayPoints: Class<*>? = null
-    var context_: Context = this
 
     // choose for true statement
-    var position: PositionInterceptor? = null
     var mMap: GoogleMap? = null
 
     var config: Config? = null
@@ -53,6 +52,9 @@ class GeoPositionActivity //AppCompatActivity
     //TimerService timerService = TimerService.getInstance();
     var positionReciever: PositionReciever? = null
     private var mapType: MapTypeHandler? = null
+
+    @Inject
+    lateinit var model: GeoModel
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -67,6 +69,7 @@ class GeoPositionActivity //AppCompatActivity
             googleBug.edit().putBoolean("fixed", true).apply()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public override fun onCreate(savedInstanceState: Bundle?) {
         fixGoogleMapBug()
@@ -79,7 +82,6 @@ class GeoPositionActivity //AppCompatActivity
         switchToFragment(R.id.mapFragment, Geo())
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
-        position = PositionInterceptor(this, R.id.coordinateText)//TODO move to VM
         //TODO remove print
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
@@ -132,16 +134,15 @@ class GeoPositionActivity //AppCompatActivity
             //timerService.startService(intent);
         }
     }
-
     override fun onMapReady(map: GoogleMap) {
         try {
-            position!!.positioning() //getIntent();
+            model.position!!.positioning() //getIntent();
         } catch (e: Exception) {
             Toast.makeText(this, "Нет переданного местоположения", 15).show()
             e.printStackTrace()
         }
         if (positionReciever == null) {
-            positionReciever = PositionReciever(map, position)
+            positionReciever = PositionReciever(map, model.position)
             //LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever
             //		, new IntentFilter(TimerService.BROADCAST_ACTION));
             TimerService.mListners!!.add(positionReciever)
@@ -151,43 +152,34 @@ class GeoPositionActivity //AppCompatActivity
         println(geoIntent.data as Uri)
         if (map != null) {
             mMap = map
-            position!!.markerCenter = map.addMarker(MarkerOptions().position(position!!.centerPosition)
-                    .title(position!!.title)
-                    .snippet(position!!.tracePointName)
+            model.position!!.markerCenter = map.addMarker(MarkerOptions().position(model.position!!.centerPosition)
+                    .title(model.position!!.title)
+                    .snippet(model.position!!.tracePointName)
                     .draggable(true))
             //center = CameraUpdateFactory.newLatLng(centerPosition);
             //zoom = CameraUpdateFactory.zoomBy(positionUtil.getZoom());
-            println("geoPosition.onMapReadymove camera to " + position!!.centerPosition.latitude
-                    + " " + position!!.centerPosition.longitude)
+            println("geoPosition.onMapReadymove camera to " + model.position!!.centerPosition.latitude
+                    + " " + model.position!!.centerPosition.longitude)
             //map.moveCamera(center);
             //map.animateCamera(zoom);
             mapType = MapTypeHandler(MapTypeHandler.userCode)
             mMap!!.mapType = mapType!!.code
             map.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder()
-                    .target(position!!.centerPosition)
-                    .zoom(position!!.zoom).build()))
+                    .target(model.position!!.centerPosition)
+                    .zoom(model.position!!.zoom).build()))
             if (mMap!!.uiSettings != null) {
                 mMap!!.uiSettings.isZoomControlsEnabled = true
                 mMap!!.uiSettings.isMapToolbarEnabled = true
             } else Toast.makeText(this, "Панель не работает", 15).show()
-            map.setOnCameraChangeListener(this)
+            map.setOnCameraChangeListener(model.onCameraChanged)
             map.setOnMapLongClickListener(this)
             map.setOnMarkerClickListener(this)
             map.setOnMarkerDragListener(this)
         } else Toast.makeText(this, "map is not ready: null pointer exception", 15)
     }
 
-    override fun onCameraChange(position: CameraPosition) {
-        if (position != null) {
-            this.position!!.markerCenter.position = position.target
-            this.position!!.zoom = position.zoom
-            this.position!!.centerPosition = position.target
-            if (config!!.uLocation) this.position!!.updateUILocation()
-        }
-    }
-
     override fun onMapLongClick(point: LatLng) {
-        if (point != null) position!!.markerCenter = mMap!!.addMarker(MarkerOptions().position(point)
+        if (point != null) model.position!!.markerCenter = mMap!!.addMarker(MarkerOptions().position(point)
                 .draggable(true))
     }
 
@@ -238,7 +230,7 @@ class GeoPositionActivity //AppCompatActivity
      * @see roboguice.activity.RoboFragmentActivity#onStart()
      */
     override fun onStop() {
-        position!!.mGoogleApiClient.disconnect()
+        model.position!!.mGoogleApiClient.disconnect()
         if (positionReciever != null) TimerService.mListners!!.remove(positionReciever)
         super.onStop()
     }
@@ -264,6 +256,8 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {
+        model.activity = this
+        model.config = this.config!!
     }
 
     override fun onDestroyBinding(binding: ViewDataBinding?) {

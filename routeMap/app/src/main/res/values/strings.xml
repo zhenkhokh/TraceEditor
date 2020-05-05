@@ -111,10 +111,11 @@
     <string name="trace_spinner_way">@string/title_activity_waypointsToTrace</string>
     <string name="trace_spinner_end">Задать конец</string>
 <!--    Geo spinner-->
-    <string name="geo_spinner_map">@string/geo_point_to_trace</string>
+<!--    <string name="geo_spinner_map">@string/geo_point_to_trace</string>-->
     <string name="geo_spinner_start">Вернуться в начало</string>
     <string name="geo_spinner_way">Добавить путевую</string>
     <string name="geo_spinner_end">Задать конец и просмотреть</string>
+    <string name="action_geo">Выберете действие над ЦТ</string>
 <!--    Actions -->
     <string name="action_traces"></string>
 

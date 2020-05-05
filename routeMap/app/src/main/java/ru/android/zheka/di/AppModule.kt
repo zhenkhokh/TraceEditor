@@ -3,9 +3,10 @@ package ru.android.zheka.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.gmapexample1.Application
+import ru.android.zheka.model.GeoModel
 import ru.android.zheka.model.HomeModel
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.model.LatLngModel
 import javax.inject.Singleton
 
@@ -27,7 +28,7 @@ class AppModule(app: Application) {
 
     @Singleton
     @Provides
-    fun provideHomeModel(view: Context): IHomeModel {
+    fun provideHomeModel(view: Context): IPanelModel {
         return HomeModel(view)
     }
 
@@ -35,6 +36,12 @@ class AppModule(app: Application) {
     @Provides
     fun provideContext(): Context {
         return context
+    }
+
+    @Singleton
+    @Provides
+    fun provideGeoModel(view: Context?): GeoModel {
+        return GeoModel(view)
     }
 
     init {

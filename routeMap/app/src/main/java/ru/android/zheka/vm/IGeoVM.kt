@@ -5,9 +5,7 @@ import ru.android.zheka.model.IGeoModel
 
 interface IGeoVM : IVM<IGeoModel?> {
     fun home()
-    fun points()
     fun savePoint()
-    fun pointToTrace()
     fun map()
-    fun addWayPoints()
+    fun addCPoint()
 }

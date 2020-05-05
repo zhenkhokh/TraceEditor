@@ -3,9 +3,9 @@ package ru.android.zheka.di.home
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.di.PanelScope
 import ru.android.zheka.fragment.*
-import ru.android.zheka.model.IHomeModel
 import ru.android.zheka.vm.IPanelHomeVM
 import ru.android.zheka.vm.PanelHomeVM
 
@@ -13,7 +13,7 @@ import ru.android.zheka.vm.PanelHomeVM
 class HomeBindingModule {
     @PanelScope
     @Provides
-    fun bindHomeVM(model: IHomeModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces,
+    fun bindHomeVM(model: IPanelModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces,
         trace: ITrace): IPanelHomeVM {
         return PanelHomeVM(view!!, model!!, edit!!, editTraces, trace)
     }

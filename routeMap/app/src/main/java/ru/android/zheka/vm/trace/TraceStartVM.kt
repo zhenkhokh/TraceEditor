@@ -4,20 +4,19 @@ import android.content.Intent
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
+import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
-import ru.android.zheka.db.Point
-import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
-class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITraceStartVM {
+class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITraceStartVM {
 
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe(marker@{
-                    if (resetAndStartTrace(PositionInterceptor(view.activity), points[pos])
+                    if (resetAndStartTrace(PositionInterceptor(view.activity), points[pos].data)
                             != PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND)
                         panelModel.action().set("Начало маршрута задано")
 
@@ -71,8 +70,7 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
                 }, view::showError)
     }
 
-    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, point: Point): PositionUtil.TRACE_PLOT_STATE? {
-        val pointData: LatLng = point.data
+    fun resetAndStartTrace(positionInterceptor: PositionInterceptor, pointData: LatLng): PositionUtil.TRACE_PLOT_STATE? {
         positionInterceptor.centerPosition = pointData
         positionInterceptor.start = pointData
         val intent = positionInterceptor.updatePosition()
@@ -80,7 +78,7 @@ class TraceStartVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITra
         val state = positionInterceptor.state
         if (state == PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             val dialog = StartAskDialog.Builder()
-                    .point(point).vm(this).positionInterceptor(positionInterceptor).build()
+                    .point(pointData).vm(this).positionInterceptor(positionInterceptor).build()
             dialog.show(view.activity.fragmentManager, "Message")
             return state
         }
@@ -123,7 +121,7 @@ class StartAskDialog : SingleChoiceDialog("") {
             return this
         }
 
-        fun point(p: Point): Builder {
+        fun point(p: LatLng): Builder {
             point = p
             return this
         }
@@ -140,7 +138,7 @@ class StartAskDialog : SingleChoiceDialog("") {
 
     companion object {
         lateinit var vm: TraceStartVM
-        lateinit var point: Point
+        lateinit var point: LatLng
         lateinit var positionInterceptor: PositionInterceptor
     }
 

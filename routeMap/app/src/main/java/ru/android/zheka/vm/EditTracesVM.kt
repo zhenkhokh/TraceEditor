@@ -2,8 +2,8 @@ package ru.android.zheka.vm
 
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
-import ru.android.zheka.core.IInfoModel
 import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Trace
 import ru.android.zheka.fragment.EditTraces
@@ -49,7 +49,7 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
 class TraceSaveDialog : SaveDialog() {
     lateinit var trace: Trace
     lateinit var view: IActivity
-    lateinit var panelModel: IInfoModel
+    lateinit var panelModel: IPanelModel
     lateinit var editTraces: EditTraces
 
     override fun positiveProcess() {

@@ -8,8 +8,7 @@ import ru.android.zheka.fragment.Home
 @Module
 abstract class HomeModule {
 //    @Binds
-//    @ActivityScope
-//    abstract fun bindHomeModel(model: HomeModel?): IHomeModel?
+//    abstract fun bindHomeModel(model: IPanelModel?): IHomeModel?
 
     @Binds
     abstract fun bindActivity(context: Home?): IActivity?
