@@ -1,12 +1,11 @@
 package ru.android.zheka.di.map
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.model.MapModel
-import ru.android.zheka.vm.MapVM
 import ru.android.zheka.vm.IMapVM
+import ru.android.zheka.vm.MapVM
 
 @Module(includes = [MapModule::class])
 class MapBindingModule {
@@ -15,8 +14,8 @@ class MapBindingModule {
         return MapVM(view!!, model!!)
     }
 
-    @Provides
-    fun provideMapModel(view: Context?): MapModel {
-        return MapModel(view)
-    }
+//    @Provides
+//    fun provideMapModel(view: Context?): MapModel {
+//        return MapModel(view)
+//    }
 }

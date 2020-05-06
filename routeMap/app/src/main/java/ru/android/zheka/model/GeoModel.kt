@@ -27,7 +27,7 @@ class GeoModel(view: Context?) : PanelModel(view), IGeoModel {
     override lateinit var config: Config
 
     override val onCameraChanged = GoogleMap.OnCameraChangeListener {
-        if (position_ != null && it.target != null ) {
+        if (position_ != null && position.markerCenter != null ) {
             this.position.markerCenter.position = it.target
             this.position.zoom = it.zoom
             this.position.centerPosition = it.target

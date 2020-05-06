@@ -1,5 +1,8 @@
 package ru.android.zheka.model
 
 import ru.android.zheka.core.IInfoModel
+import ru.android.zheka.gmapexample1.MapsActivity
 
-interface IMapModel : IInfoModel
+interface IMapModel : IInfoModel {
+    var actvity: MapsActivity
+}

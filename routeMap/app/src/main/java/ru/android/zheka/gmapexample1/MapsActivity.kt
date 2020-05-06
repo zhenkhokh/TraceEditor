@@ -28,6 +28,9 @@ import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.*
 import ru.android.zheka.fragment.Home
 import ru.android.zheka.jsbridge.JsCallable
+import ru.android.zheka.model.GeoModel
+import ru.android.zheka.model.IGeoModel
+import ru.android.zheka.model.MapModel
 import ru.android.zheka.route.*
 import ru.android.zheka.route.BellmannFord.MissMatchDataException
 import ru.android.zheka.route.BellmannFord.NoDirectionException
@@ -49,15 +52,16 @@ import com.google.android.gms.location.LocationServices;
 */
 //import android.app.AlertDialog;
 class MapsActivity //extends AppCompatActivity
-    : AbstractActivity<ViewDataBinding>(),HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
+    : AbstractActivity<ViewDataBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
     private val resTextId: Int = R.id.coordinateTextGeo
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
     var context_: Context = this
     private var mMap: GoogleMap? = null
     protected var routing: Routing? = null
+
     @JvmField
-	var position: PositionInterceptor? = null
+    var position: PositionInterceptor? = null
 
     protected var url = "file:///android_asset/map.html"
     protected var resViewId = R.layout.activity_geo //R.layout.activity_maps;
@@ -78,8 +82,9 @@ class MapsActivity //extends AppCompatActivity
     var options: MarkerOptions? = null
     var cursorMarker: Marker? = null
     private var mapType = MapTypeHandler(MapTypeHandler.userCode)
+
     @JvmField
-	var results = ResultRouteHandler(-1) // not available
+    var results = ResultRouteHandler(-1) // not available
     var replaceDialog = ReplaceDialog()
     var wayPoints = ArrayList<LatLng>()
 
@@ -160,11 +165,10 @@ class MapsActivity //extends AppCompatActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
-        switchToFragment(R.id.geoFragment, ru.android.zheka.fragment.Map())
         updateOfflineState(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.map) as SupportMapFragment
+                .findFragmentById(R.id.geoFM) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         println("async map")
@@ -886,7 +890,7 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override fun getActivity(): Activity {
-        return  this
+        return this
     }
 
     /*
@@ -974,14 +978,16 @@ class MapsActivity //extends AppCompatActivity
         const val REMOVE_POINT = "removePoint"
         const val FAKE_START = "fakeStart"
         const val MAP_TYPE = "mapType"
+
         @JvmField
-		var isOffline = false
+        var isOffline = false
         private var cntRun = 0
         private const val maxFailures = 3
         private var failuresCnt = 0
         private var isFakeStart = false
+
         @JvmStatic
-		fun updateOfflineState(ctx: Context) {
+        fun updateOfflineState(ctx: Context) {
             val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
             if (config.offline == ctx.getString(R.string.offlineOn)) isOffline = true else if (config.offline == ctx.getString(R.string.offlineOff)) isOffline = false
             println(" config is $config")
@@ -999,7 +1005,12 @@ class MapsActivity //extends AppCompatActivity
         AndroidInjection.inject(this)
     }
 
+    @Inject
+    lateinit var model: MapModel
+
     override fun onInitBinding(binding: ViewDataBinding?) {
+        switchToFragment(R.id.geoFragment, ru.android.zheka.fragment.Map())
+        model.actvity = this
     }
 
     override fun onResumeBinding(binding: ViewDataBinding?) {

@@ -79,7 +79,6 @@ class GeoPositionActivity //AppCompatActivity
                 .findFragmentById(R.id.map) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
-        switchToFragment(R.id.mapFragment, Geo())
         updateOfflineState(this)
         //getCenter(getIntent()); //do not try init marker<= marker is null
         //TODO remove print
@@ -256,6 +255,7 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {
+        switchToFragment(R.id.mapFragment, Geo())
         model.activity = this
         model.config = this.config!!
     }
