@@ -13,9 +13,10 @@ public class ErrorDialog {
     protected DialogConfig config;
 
     public void showError(Throwable throwable, Consumer <Boolean> consumer) {
+        boolean isValidRes = view.getActivity () != null && view.getActivity ().getResources () != null;
         // translation can be here
         config = DialogConfig.builder()
-                .labelValue(view.getActivity ().getResources ().getString (R.string.errorDialog_windowTitle))
+                .labelValue(isValidRes?view.getActivity ().getResources ().getString (R.string.errorDialog_windowTitle):"")
                 .contentValue(throwable.getMessage ())
                 .context(view.getContext ())
                 .positiveConsumer (consumer)

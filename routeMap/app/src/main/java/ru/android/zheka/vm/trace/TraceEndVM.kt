@@ -62,7 +62,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     }
 
     private fun goAction() {
-        val intent = view.activity.intent
+        val intent = view.activity.intent //TODO back to geo from map
         intent.setClass(view.context, MapsActivity::class.java)
         intent.setAction(Intent.ACTION_VIEW)
         view.activity.startActivity(intent)

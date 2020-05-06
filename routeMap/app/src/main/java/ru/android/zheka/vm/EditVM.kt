@@ -38,7 +38,6 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         if (editOptions[0].equals(model.spinnerOption)) {
             var saveDialog = PointSaveDialog().newInstance(model.spinnerOption) as PointSaveDialog
             saveDialog.view = view
-            saveDialog.panelModel = panelModel
             saveDialog.point = points[pos]
             saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
@@ -91,7 +90,8 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     }
 
     private fun removePoint(adapterPosition: Int) {
-//        DbFunctions.delete(points[adapterPosition])//TODO uncomment
+        DbFunctions.delete(points[adapterPosition])
+        view.switchToFragment(R.id.latLngFragment, Edit())
     }
 
     override fun model(): ILatLngModel {
@@ -134,7 +134,6 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     class PointSaveDialog : SaveDialog() {
         lateinit var point: Point
         lateinit var view: IActivity
-        lateinit var panelModel: IPanelModel
 
         override fun positiveProcess() {
             Observable.just(true).subscribe({
@@ -146,7 +145,6 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
                 point.name = newName
                 DbFunctions.add(point)
                 val fragment = Edit()
-//                fragment.panelModel = panelModel
                 view.switchToFragment(R.id.latLngFragment, fragment)
             },
                     view::showError)

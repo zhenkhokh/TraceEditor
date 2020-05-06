@@ -36,7 +36,8 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
     }
 
     private fun removeTrace(pos: Int) {
-//        DbFunctions.delete(traces[pos])//TODO uncomment
+        DbFunctions.delete(traces[pos])
+        view.switchToFragment(R.id.latLngFragment, EditTraces())
     }
 
     override fun onResume() {

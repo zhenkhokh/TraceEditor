@@ -70,28 +70,6 @@ public class SpinnerHandler {
                         }
                     }
                     ,this.view::showError).dispose ();
-            //TODO
-//            Observable.just (selectedItem).subscribe (name -> {
-//                methodHandler.accept (name);// error stop yesNo dialog here
-//                new YesNoDialog (YesNoDialogConfig.builder ()
-//                        .context (this.view.getContext ())
-//                        .negativeConsumer (a -> {
-//                            if (data.size () == 1)// no other option, just agree
-//                            {
-//                                showArea ();
-//                            }
-//                        }).positiveConsumer (a -> onClick ())// to business model
-//                        .contentValue (name)
-//                        .build ()).show ();
-//            }, this.view::showError).dispose ();
-        }
-    }
-
-    private void onClick() {
-        if (map != null) {
-            Observable.just (map.get (selectedItem)).subscribe (enterHandler, view::showError).dispose ();
-        } else {
-            Observable.just (selectedItem).subscribe (enterHandler, view::showError).dispose ();
         }
     }
 

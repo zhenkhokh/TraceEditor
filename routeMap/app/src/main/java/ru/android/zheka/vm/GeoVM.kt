@@ -1,7 +1,6 @@
 package ru.android.zheka.vm
 
 import android.content.Intent
-import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Single
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.*
@@ -53,7 +52,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //    }
 
     override fun map() {
-        if (position!!.state != PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND) {
+        if (position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             Single.just(true)
                     .doOnSubscribe({ a -> GeoVM.show(view.activity.getFragmentManager(), "Сообщение") })
                     .compose(RxTransformer.singleIoToMain())
@@ -144,21 +143,15 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
         lateinit var view: IActivity
         fun goToMap() {
-            //if (//position.state!=null&&
-            //		TraceActivity.isOtherMode(position.state))
-            //	position.state = TRACE_PLOT_STATE.CENTER_START_COMMAND;
-            if ((position!!.state != PositionUtil.TRACE_PLOT_STATE.CENTER_END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
-                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
-                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
-            if (position!!.end == null)
-                if (position!!.centerPosition != null)
-                    position!!.end = position!!.centerPosition
-                else
-                    position!!.end = position!!.start
-            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_CONNECT_COMMAND
-            var intent = position!!.newIntent
-            //if (!position.extraPoints.isEmpty()){
-            //	intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, position.extraPoints);
+//            if ((position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
+//                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
+//                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
+//            if (position!!.end == null) if (position!!.centerPosition != null) position!!.end = position!!.centerPosition else position!!.end = position!!.start
+//            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
+//            position!!.start = position!!.location
+
+            val intent = position!!.newIntent
+//            val intent = view.activity.intent
             intent.setClass(view.context, MapsActivity::class.java)
             intent.action = Intent.ACTION_VIEW
             if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
@@ -213,6 +206,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     fun initPosition() {
         position = PositionInterceptor(view.activity)
+        view.activity.intent = position!!.newIntent
         GeoVM.view = view
         GeoVM.model = model
     }

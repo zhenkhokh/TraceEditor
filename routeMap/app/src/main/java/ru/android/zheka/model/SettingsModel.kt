@@ -64,12 +64,12 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
         speedTrace = ObservableInt(pos)
         val timerData = view.resources.getStringArray(R.array.timerdatalist)
         var selectedData = config.tenMSTime
-        val c = Comparator { o1: String, o2: String? -> o1.compareTo(o2!!) }
+        val c = Comparator { o1: String, o2: String -> o2.compareTo(o1) }
         posTimer = ObservableInt(Arrays.binarySearch(timerData, selectedData, c))
         spinnerTimer = ObservableField(null as SpinnerHandler?)
         val travelData = view.resources.getStringArray(R.array.travelmodelist)
         selectedData = config.travelMode
-        posTravel = ObservableInt(Arrays.binarySearch(travelData, selectedData, c))
+        posTravel = ObservableInt(Arrays.binarySearch(travelData, selectedData, c))//?
         spinnerTravel = ObservableField(null as SpinnerHandler?)
         avoid = ObservableBoolean(config.avoid.contains(DbFunctions.AVOID_TOLLS))
         avoidHighWays = ObservableBoolean(config.avoid.contains(DbFunctions.AVOID_HIGHWAYS))
