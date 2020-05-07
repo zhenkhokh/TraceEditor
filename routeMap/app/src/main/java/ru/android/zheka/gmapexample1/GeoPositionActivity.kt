@@ -47,7 +47,7 @@ class GeoPositionActivity //AppCompatActivity
     var mMap: GoogleMap? = null
 
     var config: Config? = null
-    protected var resViewId = R.layout.activity_maps
+    protected var resViewId = R.layout.activity_geo
 
     //TimerService timerService = TimerService.getInstance();
     var positionReciever: PositionReciever? = null
@@ -72,11 +72,11 @@ class GeoPositionActivity //AppCompatActivity
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public override fun onCreate(savedInstanceState: Bundle?) {
-        fixGoogleMapBug()
+//        fixGoogleMapBug()
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
         val mapFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.map) as SupportMapFragment
+                .findFragmentById(R.id.geoFM) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         updateOfflineState(this)
@@ -117,7 +117,7 @@ class GeoPositionActivity //AppCompatActivity
         }
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        val coordinate = findViewById(R.id.coordinateText) as TextView
+        val coordinate = findViewById(R.id.coordinateTextGeo) as TextView
         println("get config")
         coordinate.visibility = View.GONE
         if (config != null) if (config!!.uLocation) {
@@ -134,12 +134,12 @@ class GeoPositionActivity //AppCompatActivity
         }
     }
     override fun onMapReady(map: GoogleMap) {
-        try {
-            model.position!!.positioning() //getIntent();
-        } catch (e: Exception) {
-            Toast.makeText(this, "Нет переданного местоположения", 15).show()
-            e.printStackTrace()
-        }
+//        try {
+//            model.position!!.positioning() //getIntent();
+//        } catch (e: Exception) { Toast.makeText(this, "Нет переданного местоположения", 15).show()
+//            e.printStackTrace()
+//        }
+        model.position!!.updatePosition()
         if (positionReciever == null) {
             positionReciever = PositionReciever(map, model.position)
             //LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever
@@ -248,14 +248,14 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override val layoutId
-        get() = R.layout.activity_geo
+        get() = R.layout.activity_maps
 
     override fun initComponent() {
         AndroidInjection.inject(this)
     }
 
     override fun onInitBinding(binding: ViewDataBinding?) {
-        switchToFragment(R.id.mapFragment, Geo())
+        switchToFragment(R.id.geoFragment, Geo())
         model.activity = this
         model.config = this.config!!
     }

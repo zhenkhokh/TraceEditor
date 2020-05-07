@@ -5,4 +5,5 @@ import ru.android.zheka.model.IMapModel
 
 interface IMapVM : IVM<IMapModel?> { //TODO
     fun geo()
+    fun toMap()
 }

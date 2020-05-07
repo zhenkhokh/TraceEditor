@@ -21,7 +21,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     lateinit var spinnerOption: String
 
     override fun home() {
-        val intent = position!!.updatePosition()
+        val intent = model.position!!.updatePosition()
         intent.setClass(view.context, MainActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         view.activity.startActivity(intent)
@@ -40,7 +40,9 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //    }
 
     override fun savePoint() {
-        GeoSaveDialog.newInstance(string.hint_dialog_point)
+        val dialog = GeoSaveDialog()
+        dialog.model = model
+        dialog.newInstance(string.hint_dialog_point)
                 .show(view.activity.getFragmentManager(), "dialog")
     }
 
@@ -52,9 +54,12 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //    }
 
     override fun map() {
-        if (position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
+        if (model.position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             Single.just(true)
-                    .doOnSubscribe({ a -> GeoVM.show(view.activity.getFragmentManager(), "Сообщение") })
+                    .doOnSubscribe({
+                        val dialog = ToMapDialog()
+                        dialog.vm = this
+                        dialog.show(view.activity.getFragmentManager(), "Сообщение") })
                     .compose(RxTransformer.singleIoToMain())
                     .subscribe({ a -> println("Finish successfully") }, { e -> println("Error:" + e.message) })
         }
@@ -127,22 +132,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         return model
     }
 
-    companion object : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
-            , string.cancel_plot_trace
-            , string.ok_plot_trace) {
-        lateinit var model: IGeoModel
-
-        override fun positiveProcess() {
-        }
-
-        override fun negativeProcess() {
-            goToMap()
-        }
-
-        var position: PositionInterceptor? = null
-
-        lateinit var view: IActivity
-        fun goToMap() {
+    fun goToMap() {
 //            if ((position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
 //                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
 //                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
@@ -150,21 +140,39 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
 //            position!!.start = position!!.location
 
-            val intent = position!!.newIntent
+        val intent = model.position!!.newIntent
 //            val intent = view.activity.intent
-            intent.setClass(view.context, MapsActivity::class.java)
-            intent.action = Intent.ACTION_VIEW
-            if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
-            view.activity.startActivity(intent)
-            view.activity.finish()
+        intent.setClass(view.context, MapsActivity::class.java)
+        intent.action = Intent.ACTION_VIEW
+        if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
+        view.activity.startActivity(intent)
+        view.activity.finish()
+    }
+
+    class ToMapDialog: SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
+            , string.cancel_plot_trace
+            , string.ok_plot_trace) {
+
+
+        lateinit var vm: GeoVM
+
+        override fun positiveProcess() {
         }
 
-        class GeoSaveDialog {
-            companion object : SaveDialog() {
-                override fun positiveProcess() {
+        override fun negativeProcess() {
+            vm.goToMap()
+        }
+
+
+
+    }
+
+    class GeoSaveDialog : SaveDialog() {
+        lateinit var model: IGeoModel
+            override fun positiveProcess() {
                     println("start positiveProcess")
                     val point = Point()
-                    point.data = position!!.centerPosition
+                    point.data = model.position!!.centerPosition
                     point.name = nameField!!.text.toString()
                     val dialog = AlertDialog("")
                     if (point.name.isEmpty()) {
@@ -189,14 +197,13 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
                         e.printStackTrace()
                     }
                     println("end positiveProcess")
-                }
+            }
 
-                override fun newInstance(): SaveDialog {
-                    return this
-                }
+            override fun newInstance(): SaveDialog {
+                return this
             }
         }
-    }
+
 
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {
         return ButtonHandler(consumer
@@ -204,15 +211,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
                 , view)
     }
 
-    fun initPosition() {
-        position = PositionInterceptor(view.activity)
-        view.activity.intent = position!!.newIntent
-        GeoVM.view = view
-        GeoVM.model = model
-    }
-
     override fun onResume() {
-        initPosition()
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
         model.nextButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))
         model.stopButton1.set(getButton(Consumer { a: Boolean? -> addCPoint() }, string.geo_point_to_trace))

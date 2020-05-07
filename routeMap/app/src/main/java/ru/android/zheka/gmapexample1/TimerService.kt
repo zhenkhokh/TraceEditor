@@ -14,10 +14,10 @@ class TimerService : IntentService("TimerService") {
     override fun onHandleIntent(intent: Intent) {
         interrupted = false
         var config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
-                , Config::class.java) as Config
+                , Config::class.java) as Config?
         var ms = 0
         try {
-            ms = config.tenMSTime.toInt()
+            ms = config?.tenMSTime?.toInt()?:0
         } catch (e: NumberFormatException) {
             e.printStackTrace()
             return
@@ -35,9 +35,9 @@ class TimerService : IntentService("TimerService") {
             println("current time(ms): $time")
             sendBroadcast(intent)
             config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
-                    , Config::class.java) as Config
+                    , Config::class.java) as Config?
             try {
-                ms = config.tenMSTime.toInt()
+                ms = config?.tenMSTime?.toInt()?:0
             } catch (e: NumberFormatException) {
                 e.printStackTrace()
                 return

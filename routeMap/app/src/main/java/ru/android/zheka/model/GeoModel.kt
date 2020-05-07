@@ -21,7 +21,7 @@ class GeoModel(view: Context?) : PanelModel(view), IGeoModel {
         get() = activity_
         set(value) {
             activity_ = value
-            position_ = PositionInterceptor(activity_.activity, R.id.coordinateText)
+            position_ = PositionInterceptor(activity_.activity, R.id.coordinateTextGeo)
         }
 
     override lateinit var config: Config

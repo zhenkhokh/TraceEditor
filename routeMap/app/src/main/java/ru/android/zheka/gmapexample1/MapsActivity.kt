@@ -53,7 +53,7 @@ import com.google.android.gms.location.LocationServices;
 //import android.app.AlertDialog;
 class MapsActivity //extends AppCompatActivity
     : AbstractActivity<ViewDataBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
-    private val resTextId: Int = R.id.coordinateTextGeo
+    private val resTextId: Int = R.id.coordinateText
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
     var context_: Context = this
@@ -64,7 +64,7 @@ class MapsActivity //extends AppCompatActivity
     var position: PositionInterceptor? = null
 
     protected var url = "file:///android_asset/map.html"
-    protected var resViewId = R.layout.activity_geo //R.layout.activity_maps;
+    protected var resViewId = R.layout.activity_maps //R.layout.activity_maps;
     var dataTrace: DataTrace? = DataTrace()
     private var onRoutingReady = false
     private var cnt = 0
@@ -168,7 +168,7 @@ class MapsActivity //extends AppCompatActivity
         updateOfflineState(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.geoFM) as SupportMapFragment
+                .findFragmentById(R.id.mappp) as SupportMapFragment
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         println("async map")
@@ -999,7 +999,7 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override val layoutId
-        get() = R.layout.activity_maps
+        get() = R.layout.activity_geo
 
     override fun initComponent() {
         AndroidInjection.inject(this)
@@ -1009,7 +1009,7 @@ class MapsActivity //extends AppCompatActivity
     lateinit var model: MapModel
 
     override fun onInitBinding(binding: ViewDataBinding?) {
-        switchToFragment(R.id.geoFragment, ru.android.zheka.fragment.Map())
+        switchToFragment(R.id.mapFragment, ru.android.zheka.fragment.Map())
         model.actvity = this
     }
 

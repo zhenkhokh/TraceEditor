@@ -27,22 +27,16 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
 
     override fun onClick(pos: Int) {
         val trace = traces[pos]
-
         val utilTrace = UtileTracePointsSerializer()
         val position = PositionInterceptor(view.activity)
-        try {
-            position.positioning()
-        } catch (e: Exception) {
-            println("get zoom: " + position.zoom)
-        }
-        position.start = trace!!.start
-        position.end = trace!!.end
-        position.centerPosition = trace!!.end
-        position.setExtraPointsFromCopy(trace!!.data.extraPoints)
-        position.state = TRACE_PLOT_STATE.CENTER_END_COMMAND
-        view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace!!.data.extraPoints)
+        position.start = trace.start
+        position.end = trace.end
+        position.centerPosition = trace.end
+        position.setExtraPointsFromCopy(trace.data.extraPoints)
+        position.state = TRACE_PLOT_STATE.END_COMMAND
+        view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace.data.extraPoints)
         updateOfflineState(view.context)
-        if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace!!.data) as String
+        if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace.data) as String
         PositionUtil.isCenterAddedToTrace = false
         val intent = position.newIntent
         intent.setClass(context, MapsActivity::class.java)
