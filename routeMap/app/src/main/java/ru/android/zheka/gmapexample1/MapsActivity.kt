@@ -294,7 +294,7 @@ class MapsActivity //extends AppCompatActivity
         }
         point = position!!.end
         if (prevPoint != null && point != null) {
-            if (position!!.extraPoints.size <= 1) {
+            if (position!!.extraPoints.size <= 0) {
                 results = ResultRouteHandler(1)
                 traceDebuggingSer = getIntent().getStringExtra(PositionUtil.TITLE)
                 if (isOffline && (traceDebuggingSer == null || traceDebuggingSer == GeoPositionActivity.OFFLINE)) {
@@ -338,7 +338,8 @@ class MapsActivity //extends AppCompatActivity
 									bellManPoits.remove(position.end);
 									bellManPoits.add(position.end);
 								}
-								*/for (i in 1..2) bellManPoits.remove(position!!.end)
+								*/
+//                                for (i in 1..2) bellManPoits.remove(position!!.end)
                                 bellManPoits.add(position!!.end)
                                 bellManPoits = ArrayList(Arrays.asList(
                                         *BellmannFord.process(bellManPoits.toTypedArray()))
