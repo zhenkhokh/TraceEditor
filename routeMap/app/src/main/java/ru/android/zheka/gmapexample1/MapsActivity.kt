@@ -320,8 +320,7 @@ class MapsActivity //extends AppCompatActivity
                         cntCtrl = 0
                         var bellManPoits = ArrayList<LatLng>()
                         val isBellman = config!!.bellmanFord == Application.optimizationBellmanFlag
-                        if ((config!!.optimization
-                                        || isBellman) && !isOffline) {
+                        if (!isOffline) {
                             //ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
                             fetchWayPoints()
                             if (isBellman) {
@@ -389,6 +388,7 @@ class MapsActivity //extends AppCompatActivity
                                     temp[index] = position!!.extraPoints[index_++]
                                 }
                                 position!!.setExtraPointsFromCopy(temp)
+                                position!!.getExtraPoints().add(UtilePointSerializer().serialize(position?.end).toString())
                                 //}
                                 //add end point
                                 //position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
