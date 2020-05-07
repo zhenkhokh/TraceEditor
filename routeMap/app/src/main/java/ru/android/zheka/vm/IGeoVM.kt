@@ -8,4 +8,5 @@ interface IGeoVM : IVM<IGeoModel?> {
     fun savePoint()
     fun map()
     fun addCPoint()
+    fun goPosition()
 }

@@ -213,12 +213,24 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     override fun onResume() {
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
-        model.nextButton.set(getButton(Consumer { a: Boolean? -> savePoint() }, string.geo_save_point))
-        model.stopButton1.set(getButton(Consumer { a: Boolean? -> addCPoint() }, string.geo_point_to_trace))
-        model.stopButton.set(getButton(Consumer { a: Boolean? -> map() }, string.geo_maps))
+        if (isManualOnly())
+            model.startButton1.set(getButton(Consumer { goPosition() }, string.map_goPosition))
+        model.nextButton.set(getButton(Consumer { savePoint() }, string.geo_save_point))
+        model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
+        model.stopButton.set(getButton(Consumer {  map() }, string.geo_maps))
         model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         model.action().set(view.activity.resources.getString(string.action_geo))
         model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
+    }
+
+    private fun isManualOnly(): Boolean {
+        val manual = view.activity.getString(string.timerdata1)
+        return model.config.tenMSTime.equals(manual)
+    }
+
+    override fun goPosition() {
+        val intent = model.position.updatePosition()
+        TimerService.mListners?.first?.onReceive(view.context, intent)
     }
 
     private fun getOptions(): List<String> {
