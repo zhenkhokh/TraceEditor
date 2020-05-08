@@ -199,7 +199,7 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
         positionUtil.setTitleMarker (title);
         extraPoints = positionUtil.getExtraPoints ();
 //		end = lEnd;
-        positionUtil.setStart(start);
+        positionUtil.setStart (start);
         positionUtil.setEnd (end);
         return positionUtil.getIntent ();
     }
@@ -431,15 +431,6 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
                         , mLastLocation.getLongitude ());
         }
         System.out.println ("mLastLocation is not initialized... try PositionUtil.getGeoPosition");
-        LatLng geoPosition = PositionUtil.getGeoPosition (target);
-        if (geoPosition.equals (PositionUtil.LAT_LNG)) {
-            if (mLastLocation != null) {
-                mLastLocation.setLatitude (geoPosition.latitude);
-                mLastLocation.setLongitude (geoPosition.longitude);
-            }
-            return geoPosition;
-        }
-        return PositionUtil.LAT_LNG;
-
-    }
+        return PositionUtil.getGeoPosition (target);
+}
 }

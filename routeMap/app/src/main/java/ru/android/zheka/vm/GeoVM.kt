@@ -1,6 +1,7 @@
 package ru.android.zheka.vm
 
 import android.content.Intent
+import android.view.View
 import io.reactivex.Single
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.*
@@ -59,7 +60,8 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
                     .doOnSubscribe({
                         val dialog = ToMapDialog()
                         dialog.vm = this
-                        dialog.show(view.activity.getFragmentManager(), "Сообщение") })
+                        dialog.show(view.activity.getFragmentManager(), "Сообщение")
+                    })
                     .compose(RxTransformer.singleIoToMain())
                     .subscribe({ a -> println("Finish successfully") }, { e -> println("Error:" + e.message) })
         }
@@ -84,6 +86,8 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         val vm = TraceEndVM(view, LatLngModel(view.context))
         vm.panelModel = model
         vm.finish(model.point)
+        llModel_ = null
+        model.stopButton.get()?.visible?.set(View.GONE)
     }
 
     private fun wayCp() {
@@ -91,23 +95,25 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         vm.add()
     }
 
-    lateinit var llModel_: LatLngModel
+    var llModel_: LatLngModel? = null
 
     private fun llModel(): LatLngModel {
-        if (!this::llModel_.isInitialized) {
+        if (llModel_ == null) {
             llModel_ = LatLngModel(view.context)
         }
         val point = Point()
         point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
-        llModel_._customPoints.add(point)
-        llModel_.checked.add(true)
-        return llModel_
+        llModel_?._customPoints?.add(point)
+        llModel_?.checked?.add(true)
+        return llModel_!!
     }
 
     private fun startCp() {
         val vm = TraceStartVM(view, LatLngModel(view.context))
         vm.panelModel = model
+        vm.resetTrace()
+        vm.resetAndStartTrace(model.position, model.point)
         vm.resetAndStartTrace(model.position, model.point)
     }
 
@@ -149,7 +155,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         view.activity.finish()
     }
 
-    class ToMapDialog: SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
+    class ToMapDialog : SingleChoiceDialog("Маршрут не закончен. Хотите закончить?"
             , string.cancel_plot_trace
             , string.ok_plot_trace) {
 
@@ -164,45 +170,44 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         }
 
 
-
     }
 
     class GeoSaveDialog : SaveDialog() {
         lateinit var model: IGeoModel
-            override fun positiveProcess() {
-                    println("start positiveProcess")
-                    val point = Point()
-                    point.data = model.position!!.centerPosition
-                    point.name = nameField!!.text.toString()
-                    val dialog = AlertDialog("")
-                    if (point.name.isEmpty()) {
-                        //Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
-                        dialog.msg = "Отсутсвует текст, введите название"
-                        dialog.show(fragmentManager, "Ошибка")
-                        return
-                    }
-                    if (DbFunctions.getPointByName(point.name) != null) {
-                        dialog.msg = "Точка с таким именем существует"
-                        dialog.show(fragmentManager, "Ошибка")
-                        return
-                    }
-                    println("start adding point $point")
-                    try {
-                        DbFunctions.add(point)
-                    } catch (e: java.lang.InstantiationException) {
-                        e.printStackTrace()
-                    } catch (e: IllegalAccessException) {
-                        e.printStackTrace()
-                    } catch (e: IllegalArgumentException) {
-                        e.printStackTrace()
-                    }
-                    println("end positiveProcess")
+        override fun positiveProcess() {
+            println("start positiveProcess")
+            val point = Point()
+            point.data = model.position!!.centerPosition
+            point.name = nameField!!.text.toString()
+            val dialog = AlertDialog("")
+            if (point.name.isEmpty()) {
+                //Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
+                dialog.msg = "Отсутсвует текст, введите название"
+                dialog.show(fragmentManager, "Ошибка")
+                return
             }
-
-            override fun newInstance(): SaveDialog {
-                return this
+            if (DbFunctions.getPointByName(point.name) != null) {
+                dialog.msg = "Точка с таким именем существует"
+                dialog.show(fragmentManager, "Ошибка")
+                return
             }
+            println("start adding point $point")
+            try {
+                DbFunctions.add(point)
+            } catch (e: java.lang.InstantiationException) {
+                e.printStackTrace()
+            } catch (e: IllegalAccessException) {
+                e.printStackTrace()
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
+            println("end positiveProcess")
         }
+
+        override fun newInstance(): SaveDialog {
+            return this
+        }
+    }
 
 
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {
@@ -212,15 +217,23 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     override fun onResume() {
+
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
         if (isManualOnly())
             model.startButton1.set(getButton(Consumer { goPosition() }, string.map_goPosition))
         model.nextButton.set(getButton(Consumer { savePoint() }, string.geo_save_point))
         model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
-        model.stopButton.set(getButton(Consumer {  map() }, string.geo_maps))
+        if (isMainToMap()) {
+            model.stopButton.set(getButton(Consumer { map() }, string.geo_maps))
+            model.nextButton2.get()?.visible?.set(View.GONE)
+        }
         model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         model.action().set(view.activity.resources.getString(string.action_geo))
         model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
+    }
+
+    private fun isMainToMap(): Boolean {
+        return llModel_?.nextButton2?.get()?.visible?.get()?.equals(View.GONE)?:true
     }
 
     private fun isManualOnly(): Boolean {
