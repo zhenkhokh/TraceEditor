@@ -2,7 +2,10 @@ package ru.android.zheka.vm
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.*
@@ -19,20 +22,22 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     protected lateinit var editOptions: List<String>
     protected val points: List<Point>
     override lateinit var panelModel: IPanelModel
-    private lateinit var _handler: LatLngHandler
-
-    override var handler: LatLngHandler
-        get() = _handler
-        set(value) {
-            _handler = value
-        }
+    override lateinit var handler: LatLngHandler
 
     init {
         points = model.points
     }
 
     override val onClickListener: View.OnClickListener?
-        get() = View.OnClickListener { view -> onClick(_handler.adapterPosition) }
+        get() = View.OnClickListener { view -> onClick(getPosition(view)) }
+
+    protected fun getPosition(view: View): Int {
+        return (view as ViewGroup).children
+                .filter { it is Button }
+                .map { shownItems.indexOf((it as Button).text)}
+                .filter { it != -1 }
+                .first()
+    }
 
     open fun onClick(pos: Int) {
         if (editOptions[0].equals(model.spinnerOption)) {

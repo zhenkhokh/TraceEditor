@@ -2,6 +2,9 @@ package ru.android.zheka.vm
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.core.view.children
 import io.reactivex.Observable
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
@@ -21,25 +24,26 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
         points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
     }
 
-    private lateinit var _handler: LatLngHandler
-    override var handler: LatLngHandler
-        get() = _handler
-        set(value) {
-            _handler = value
-        }
+    override lateinit var handler: LatLngHandler
 
     override val onClickListener: View.OnClickListener?
-        get() = View.OnClickListener { view -> onClick(_handler.adapterPosition) }
+        get() = View.OnClickListener { view -> onClick(getPosition(view)) }
+
+    private fun getPosition(view: View): Int {
+        return (view as ViewGroup).children
+                .filter { it is Button }
+                .map { shownItems.indexOf((it as Button).text)}
+                .filter { it != -1 }
+                .first()
+    }
 
     private fun onClick(adapterPosition: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe({
-                    var positionInterceptor = PositionInterceptor(view.activity)
+                    val positionInterceptor = PositionInterceptor(view.activity)
                     positionInterceptor.centerPosition = points[adapterPosition].data
                     positionInterceptor.end = positionInterceptor.end?:positionInterceptor.centerPosition
-                    view.activity.intent = positionInterceptor.updatePosition()
-                    positionInterceptor.positioning()
-                    var geoIntent = positionInterceptor.newIntent
+                    val geoIntent = positionInterceptor.newIntent
                     geoIntent.setClass(view.context, GeoPositionActivity::class.java)
 
                     view.activity.startActivity(geoIntent)

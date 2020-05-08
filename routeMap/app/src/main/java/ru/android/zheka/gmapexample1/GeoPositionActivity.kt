@@ -134,12 +134,12 @@ class GeoPositionActivity //AppCompatActivity
         }
     }
     override fun onMapReady(map: GoogleMap) {
-//        try {
-//            model.position!!.positioning() //getIntent();
-//        } catch (e: Exception) { Toast.makeText(this, "Нет переданного местоположения", 15).show()
-//            e.printStackTrace()
-//        }
-        model.position!!.updatePosition()
+        try {
+            model.position.positioning() //getIntent();
+        } catch (e: Exception) { Toast.makeText(this, "Нет переданного местоположения", 15).show()
+            e.printStackTrace()
+        }
+//        model.position!!.updatePosition()
         if (positionReciever == null) {
             positionReciever = PositionReciever(map, model.position)
             //LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever

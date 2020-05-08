@@ -32,10 +32,11 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
 
     override val onClickListener: View.OnClickListener?
         get() = View.OnClickListener { view ->
-            val isChecked = !model.checked[handler.adapterPosition]
+            val pos = getPosition(view)
+            val isChecked = !model.checked[pos]
             view.findViewById<CheckBox>(R.id.rowCheck).isChecked = isChecked
-            model.checked[handler.adapterPosition] = isChecked
-            onClick(handler.adapterPosition)
+            model.checked[pos] = isChecked
+            onClick(pos)
         }
 
     override fun getOptions(): List<String> {
