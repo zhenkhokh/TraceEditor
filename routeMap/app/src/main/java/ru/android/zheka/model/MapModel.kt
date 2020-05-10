@@ -6,5 +6,5 @@ import ru.android.zheka.gmapexample1.MapsActivity
 
 class MapModel(view: Context?) : PanelModel(view), IMapModel {
     override lateinit var actvity: MapsActivity
-
+    override var isFakeStart = false
 }

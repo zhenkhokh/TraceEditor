@@ -16,9 +16,7 @@ class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), I
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe(marker@{
-                    if (resetAndStartTrace(PositionInterceptor(view.activity), points[pos].data)
-                            != PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND)
-                        panelModel.action().set("Начало маршрута задано")
+                    resetAndStartTrace(PositionInterceptor(view.activity), points[pos].data)
 
 //                    val intent: Intent = view.activity.intent
 //                    val positionUtil = PositionUtil()
@@ -71,10 +69,10 @@ class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), I
     }
 
     fun resetAndStartTrace(positionInterceptor: PositionInterceptor, pointData: LatLng): PositionUtil.TRACE_PLOT_STATE? {
+        positionInterceptor.updatePosition()
         positionInterceptor.centerPosition = pointData
         positionInterceptor.start = pointData
-        val intent = positionInterceptor.updatePosition()
-        view.activity.intent = intent
+        view.activity.intent = positionInterceptor.newIntent
         val state = positionInterceptor.state
         if (state == PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             val dialog = StartAskDialog.Builder()
@@ -85,10 +83,11 @@ class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), I
         if (state == PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
                 || state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
             resetTrace()
-            view.activity.intent = intent
-            panelModel.action().set("Переопределение старта и сброс машрута")
+            panelModel.action().set("Cброс маршрута")
+            return state
         }
         view.activity.intent = positionInterceptor.newIntent
+        panelModel.action().set("Начало маршрута задано")
         return state
     }
 
@@ -158,6 +157,5 @@ class StartAskDialog : SingleChoiceDialog("") {
     override fun negativeProcess() {
         vm.resetTrace()
         vm.resetAndStartTrace(positionInterceptor, point)
-        vm.panelModel.action().set("Начало маршрута задано")
     }
 }

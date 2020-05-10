@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -23,17 +22,13 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import roboguice.inject.InjectView
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.*
-import ru.android.zheka.fragment.Home
-import ru.android.zheka.jsbridge.JsCallable
-import ru.android.zheka.model.GeoModel
-import ru.android.zheka.model.IGeoModel
 import ru.android.zheka.model.MapModel
 import ru.android.zheka.route.*
 import ru.android.zheka.route.BellmannFord.MissMatchDataException
 import ru.android.zheka.route.BellmannFord.NoDirectionException
+import ru.android.zheka.vm.trace.TraceEndVM
 import ru.zheka.android.timer.PositionReciever
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -96,14 +91,14 @@ class MapsActivity //extends AppCompatActivity
 
     fun fetchWayPoints(): ArrayList<LatLng> {
         wayPoints = ArrayList()
-        if (isFakeStart) wayPoints.add(position!!.start) else wayPoints.add(position!!.centerPosition)
+        if (model.isFakeStart) wayPoints.add(position!!.start?:TraceEndVM.start) else wayPoints.add(position!!.centerPosition)
         val iterator: Iterator<*> = position!!.extraPoints.iterator()
         while (iterator
                         .hasNext()) {
             val sPoint = iterator.next() as String
             val point = UtilePointSerializer().deserialize(sPoint) as LatLng
             val rPoint = BellmannFord.round(point)
-            if (rPoint != BellmannFord.round(position!!.start)
+            if (rPoint != BellmannFord.round(position!!.start?:TraceEndVM.start)//TODO button in geoPosition
                     && rPoint != BellmannFord.round(position!!.end)) wayPoints.add(point)
         }
         wayPoints.add(position!!.end)
@@ -286,11 +281,11 @@ class MapsActivity //extends AppCompatActivity
         // to know start==end
         position!!.centerPosition = PositionUtil.getGeoPosition(this) // <---?
         //position.centerPosition = position.getLocation ();
-        prevPoint = if (!isFakeStart) {
+        prevPoint = if (!model.isFakeStart) {
             position!!.centerPosition //position.start;
             //position.start = position.centerPosition;// <---?
         } else {
-            position!!.start
+            position!!.start?:TraceEndVM.start
         }
         point = position!!.end
         if (prevPoint != null && point != null) {
@@ -398,8 +393,8 @@ class MapsActivity //extends AppCompatActivity
                         }
                         val iterator: Iterator<*>
                         if (isBellman && !isOffline) {
-                            val iStart = bellManPoits.indexOf(position!!.start)
-                            val rStart = BellmannFord.round(position!!.start)
+                            val iStart = bellManPoits.indexOf(position!!.start?:TraceEndVM.start)
+                            val rStart = BellmannFord.round(position!!.start?:TraceEndVM.start)
                             for (i in 0 until iStart) {
                                 val head = bellManPoits.removeAt(0)
                                 if (rStart != BellmannFord.round(head)) bellManPoits.add(head)
@@ -474,7 +469,7 @@ class MapsActivity //extends AppCompatActivity
                                     return
                                 }
                                 val segmentPoints = dataTrace.nextSegmentArray()
-                                routing = OfflineRouting(*segmentPoints)
+                                routing = OfflineRouting(*segmentPoints)//TODO kotlin.KotlinNullPointerException
                             }
                             routing!!.registerListener(this@MapsActivity)
                             synchronized(traceDrawMonitor /*MapsActivity.this*/) {
@@ -985,7 +980,6 @@ class MapsActivity //extends AppCompatActivity
         private var cntRun = 0
         private const val maxFailures = 3
         private var failuresCnt = 0
-        private var isFakeStart = false
 
         @JvmStatic
         fun updateOfflineState(ctx: Context) {

@@ -82,10 +82,15 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
             val source:String
             if (position.state == PositionUtil.TRACE_PLOT_STATE.CONNECT_COMMAND) {
                 source = "к промежуточным"
-            } else
+                val cp = mutableListOf<String>()
+                        .apply { addAll(position.extraPoints) }
+                        .apply { addAll(names) }
+                position.setExtraPointsFromCopy(ArrayList(cp))
+            } else {
                 source = "к старту"
+                position.setExtraPointsFromCopy(names)
+            }
             Toast.makeText(view.activity, "Путевые точки успешно добавлены $source. Добавьте конец маршрута", 15).show()
-            position.setExtraPointsFromCopy(names)
             view.activity.intent = position.newIntent
             return
         }

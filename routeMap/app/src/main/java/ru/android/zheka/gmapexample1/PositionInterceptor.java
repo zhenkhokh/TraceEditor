@@ -166,7 +166,6 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
         return intent;
     }
 
-    //TODO buggy end update
     public Intent updatePosition() {
 //		LatLng lEnd = end;
         Intent intent = target.getIntent ();

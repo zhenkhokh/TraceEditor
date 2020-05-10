@@ -22,7 +22,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     lateinit var spinnerOption: String
 
     override fun home() {
-        val intent = model.position!!.updatePosition()
+        val intent = model.position.newIntent
         intent.setClass(view.context, MainActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         view.activity.startActivity(intent)
@@ -86,6 +86,8 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         val vm = TraceEndVM(view, LatLngModel(view.context))
         vm.panelModel = model
         vm.finish(model.point)
+//        vm.finish(model.point)
+//        vm.finish(model.point)
         llModel_ = null
         model.stopButton.get()?.visible?.set(View.GONE)
     }
@@ -98,9 +100,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     var llModel_: LatLngModel? = null
 
     private fun llModel(): LatLngModel {
-        if (llModel_ == null) {
-            llModel_ = LatLngModel(view.context)
-        }
+        llModel_ = llModel_?:LatLngModel(view.context)
         val point = Point()
         point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
@@ -112,9 +112,10 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     private fun startCp() {
         val vm = TraceStartVM(view, LatLngModel(view.context))
         vm.panelModel = model
-        vm.resetTrace()
-        vm.resetAndStartTrace(model.position, model.point)
-        vm.resetAndStartTrace(model.position, model.point)
+//        vm.resetTrace()
+         vm.resetAndStartTrace(model.position, model.point)
+//        state = vm.resetAndStartTrace(model.position, model.point)
+//        state = vm.resetAndStartTrace(model.position, model.point)
     }
 
 
@@ -139,15 +140,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     fun goToMap() {
-//            if ((position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND && position!!.start == position!!.end || PositionUtil.LAT_LNG == position!!.end || position!!.end == null)
-//                    && position!!.extraPoints.size > 0) //TODO move to getNewIntent
-//                position!!.end = UtilePointSerializer().deserialize(position!!.extraPoints[position!!.extraPoints.size - 1]) as LatLng
-//            if (position!!.end == null) if (position!!.centerPosition != null) position!!.end = position!!.centerPosition else position!!.end = position!!.start
-//            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_START_COMMAND
-//            position!!.start = position!!.location
-
         val intent = model.position!!.newIntent
-//            val intent = view.activity.intent
         intent.setClass(view.context, MapsActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
@@ -217,10 +210,11 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     override fun onResume() {
-
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
         if (isManualOnly())
             model.startButton1.set(getButton(Consumer { goPosition() }, string.map_goPosition))
+        else
+            model.startButton1.get()?.visible?.set(View.INVISIBLE)
         model.nextButton.set(getButton(Consumer { savePoint() }, string.geo_save_point))
         model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
         if (isMainToMap()) {

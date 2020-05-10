@@ -348,11 +348,9 @@ public MyDialogFragment(){
 		return webViewHome;
 	}
 	public static boolean isOtherMode(TRACE_PLOT_STATE state){
-		if(state!=TRACE_PLOT_STATE.CONNECT_COMMAND
-        		&& state!=TRACE_PLOT_STATE.END_COMMAND
-				&& state!=TRACE_PLOT_STATE.CENTER_START_COMMAND)
-			return true;
-		return false;
+		return state != TRACE_PLOT_STATE.CONNECT_COMMAND
+				&& state != TRACE_PLOT_STATE.END_COMMAND
+				&& state != TRACE_PLOT_STATE.CENTER_START_COMMAND;
 	}
 
 }
