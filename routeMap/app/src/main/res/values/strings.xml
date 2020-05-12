@@ -124,7 +124,12 @@
     <string name="map_fakeStart">Старт</string>
     <string name="map_mapType">Карта</string>
     <string name="map_goPosition">Гео</string>
+<!-- enter_point-->
+    <string name="enter_point_address">Задать по адресу</string>
+    <string name="enter_point_coordinate">Задать по координатам</string>
+
 <!--    Actions -->
-    <string name="action_traces"></string>
+    <string name="action_traces">Выберете действие над маршрутом и нажмите на него</string>
+
 
 </resources>

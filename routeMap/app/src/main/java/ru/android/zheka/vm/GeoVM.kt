@@ -104,6 +104,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         val point = Point()
         point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
+        llModel_?.custom = true
         llModel_?._customPoints?.add(point)
         llModel_?.checked?.add(true)
         return llModel_!!

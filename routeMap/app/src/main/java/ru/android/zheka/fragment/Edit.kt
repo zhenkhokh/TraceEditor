@@ -37,18 +37,18 @@ open class Edit : AbstractFragment<LatLngFragmentBinding>(), IEdit {
         binding.listLatlng.adapter = adapter
         var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding!!.listLatlng.id)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
-        recyclerView!!.adapter = adapter
+        recyclerView.adapter = adapter
         return binding
     }
 
 //    override val chekedVisibility: Int = View.GONE
 
     override fun onResumeBinding(binding: LatLngFragmentBinding) {
-        viewModel!!.onResume()
+        viewModel.onResume()
     }
 
     override fun onDestroyBinding(binding: LatLngFragmentBinding) {
-        viewModel!!.onDestroy()
+        viewModel.onDestroy()
     }
 }
 
@@ -58,7 +58,6 @@ class EditAdapter(val viewModel: IEditVM, val context: Context, val checkedVisib
                 R.layout.row, parent, false)
         val handler = LatLngHandler(itemBind, checkedVisibility)
         itemBind.root.setOnClickListener(viewModel.onClickListener)
-        viewModel.handler = handler
         return handler
     }
 

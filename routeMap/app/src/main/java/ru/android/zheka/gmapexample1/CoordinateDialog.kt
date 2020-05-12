@@ -15,7 +15,7 @@ abstract class CoordinateDialog : DialogFragment() {
         val inflater = activity.layoutInflater
         val builder = AlertDialog.Builder(activity)
         println("start setView")
-        val view = inflater.inflate(R.layout.coordinate_dialog, null)
+        val view = inflater.inflate(R.layout.enter_point, null)
         builder.setView(view)
         latField = view.findViewById<View>(R.id.text_1) as EditText
         lonField = view.findViewById<View>(R.id.text_2) as EditText

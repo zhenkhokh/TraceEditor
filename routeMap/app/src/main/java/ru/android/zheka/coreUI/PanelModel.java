@@ -19,9 +19,9 @@ import static android.view.View.VISIBLE;
 
 public class PanelModel implements IPanelModel {
     @BindingAdapter("android:visibility")
-public static void setVisibility(View view, Boolean value) {
-    view.setVisibility(value ? View.VISIBLE : View.GONE);
-}
+    public static void setVisibility(View view, Boolean value) {
+        view.setVisibility(value ? View.VISIBLE : View.GONE);
+    }
     private final ObservableInt progressBarVisibility;
     private final ObservableField action;
     private final ObservableField success;

@@ -30,19 +30,19 @@ open class LatLng : AbstractFragment<LatLngFragmentBinding>(), ILatLng {
     override fun initAdapter(binding: LatLngFragmentBinding): LatLngFragmentBinding {
         val adapter = LatLngAdapter(viewModel, viewModel.context, viewModel.model().chekedVisibility)
         binding.listLatlng.adapter = adapter
-        var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding!!.listLatlng.id)
+        var recyclerView: RecyclerView? = viewModel.view.activity.findViewById(binding.listLatlng.id)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
-        recyclerView!!.adapter = adapter
+        recyclerView.adapter = adapter
 //        adapter.notifyDataSetChanged()
         return binding
     }
 
     override fun onResumeBinding(binding: LatLngFragmentBinding) {
-        viewModel!!.onResume()
+        viewModel.onResume()
     }
 
     override fun onDestroyBinding(binding: LatLngFragmentBinding) {
-        viewModel!!.onDestroy()
+        viewModel.onDestroy()
     }
 }
 
@@ -53,7 +53,6 @@ class LatLngAdapter(val viewModel: ILatLngVM, val context: Context, val checkedV
                 R.layout.row, parent, false)
         val handler = LatLngHandler(itemBind, checkedVisibility)
         itemBind.root.setOnClickListener(viewModel.onClickListener)
-        viewModel.handler = handler
         return handler
     }
 

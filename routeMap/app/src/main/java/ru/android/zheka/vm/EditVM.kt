@@ -12,7 +12,6 @@ import ru.android.zheka.coreUI.*
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.Edit
-import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.SaveDialog
 import ru.android.zheka.model.ILatLngModel
@@ -20,13 +19,7 @@ import ru.android.zheka.model.LatLngModel
 
 open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditVM {
     protected lateinit var editOptions: List<String>
-    protected val points: List<Point>
     override lateinit var panelModel: IPanelModel
-    override lateinit var handler: LatLngHandler
-
-    init {
-        points = model.points
-    }
 
     override val onClickListener: View.OnClickListener?
         get() = View.OnClickListener { view -> onClick(getPosition(view)) }
@@ -43,16 +36,16 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         if (editOptions[0].equals(model.spinnerOption)) {
             var saveDialog = PointSaveDialog().newInstance(model.spinnerOption) as PointSaveDialog
             saveDialog.view = view
-            saveDialog.point = points[pos]
+            saveDialog.point = model.points[pos]
             saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
         }
-        RemoveDialog(Consumer { a -> removePoint(pos) }, view, points[pos].name,
+        RemoveDialog(Consumer { a -> removePoint(pos) }, view, model.points[pos].name,
                 R.string.cancel_save_point).show()
     }
 
-    override val shownItems: List<String>
-        get() = points.map { point -> point.name }.toList()
+    override val shownItems: MutableList<String>
+        get() = model.points.map { point -> point.name }.toMutableList()
 
     override val context: Context
         get() = view.context
@@ -60,11 +53,12 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     override fun onResume() {
         editOptions = getOptions()
         editOptions = reOrder(editOptions, model.spinnerOption)
-        model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
         panelModel.spinner.set(SpinnerHandler(spinnerConsumer , Consumer { a -> },
                 editOptions, view))
+        model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
+        model.custom = false
     }
 
     protected open var spinnerConsumer = Consumer<String> { model.spinnerOption = it }
@@ -74,10 +68,10 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     }
 
     protected fun switchFragment(fragment: Edit, option:String) {
-        model.trigered = model.spinnerOption == option
+        val triggered = model.spinnerOption == option
         model.spinnerOption = option
-        if ( !model.trigered) {
-//            fragment.panelModel = panelModel
+        if ( !triggered) {
+//            view.removeFragment(view as Fragment)
             view.switchToFragment(R.id.latLngFragment, fragment)
         }
     }
@@ -95,7 +89,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     }
 
     private fun removePoint(adapterPosition: Int) {
-        DbFunctions.delete(points[adapterPosition])
+        DbFunctions.delete(model.points[adapterPosition])
         view.switchToFragment(R.id.latLngFragment, Edit())
     }
 
@@ -106,7 +100,8 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
     override fun onDestroy() {
         panelModel.inputVisible().set(View.GONE)
         panelModel.action().set("")
-        panelModel.spinner.set(SpinnerHandler())
+        model.custom = true
+        model._customPoints -= model()._customPoints
     }
 
     class RemoveDialog(var consumer: Consumer<Boolean>,

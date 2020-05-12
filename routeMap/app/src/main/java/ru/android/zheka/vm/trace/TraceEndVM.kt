@@ -22,7 +22,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe({
-                    finish(points[pos].data)
+                    finish(model.points[pos].data)
                 }, view::showError)
     }
 
@@ -83,8 +83,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     }
 
     private fun canItPlot(positionInterceptor: PositionInterceptor): Boolean {
-        return !(positionInterceptor.start ?: start == null ||
-                (positionInterceptor.start ?: start).equals(LAT_LNG) ||
+        return !((positionInterceptor.start ?: start).equals(LAT_LNG) ||
                 positionInterceptor.end == null || positionInterceptor.end.equals(LAT_LNG)
                 )
     }

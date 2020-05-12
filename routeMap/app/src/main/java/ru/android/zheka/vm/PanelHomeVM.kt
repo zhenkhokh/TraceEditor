@@ -15,7 +15,6 @@ import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.*
-import ru.android.zheka.gmapexample1.AddressActivity
 import ru.android.zheka.gmapexample1.EditActivity
 import ru.android.zheka.gmapexample1.GeoPositionActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
@@ -25,8 +24,8 @@ import ru.android.zheka.model.HomeModel
 import ru.android.zheka.model.IHomeModel
 import java.util.*
 
-class PanelHomeVM(var view: IActivity, var model: IPanelModel,
-                  var edit: IEdit, var editTraces: IEditTraces, var trace: ITrace) : IPanelHomeVM {
+class PanelHomeVM(val view: IActivity, val model: IPanelModel,
+                  val edit: IEdit, val editTraces: IEditTraces, val trace: ITrace, val enterPoint:IEnterPoint) : IPanelHomeVM {
     var fragment: Fragment
 
     init {
@@ -61,12 +60,15 @@ class PanelHomeVM(var view: IActivity, var model: IPanelModel,
                 .show()
     }
 
-    override fun address() {
-        val intent = view.activity.intent
-        intent.action = Intent.ACTION_VIEW
-        intent.setClass(view.activity, AddressActivity::class.java)
-        view.activity.startActivity(intent)
-        view.activity.finish()
+    override fun enterPoint() {
+        view.removeFragment(fragment)
+        fragment = enterPoint as EnterPoint
+        view.switchToFragment(id.latLngFragment, fragment)
+//        val intent = view.activity.intent
+//        intent.action = Intent.ACTION_VIEW
+//        intent.setClass(view.activity, AddressActivity::class.java)
+//        view.activity.startActivity(intent)
+//        view.activity.finish()
     }
 
     override fun geo() {
@@ -132,16 +134,16 @@ class PanelHomeVM(var view: IActivity, var model: IPanelModel,
 
     override fun onResume() {
         model.inputVisible().set(View.GONE)
-        model.startButton.set(getButton(Consumer { a: Boolean? -> settings() }, string.home_settings_btn))
-        model.stopButton.set(getButton(Consumer { a: Boolean? -> address() }, string.home_address_btn))
+        model.startButton.set(getButton(Consumer { settings() }, string.home_settings_btn))
+        model.stopButton.set(getButton(Consumer { enterPoint() }, string.home_address_btn))
         if (isPoints()) {
-            model.nextButton.set(getButton(Consumer { a: Boolean? -> pointNavigate() }, string.home_points_btn))
-            model.stopButton1.set(getButton(Consumer { a: Boolean? -> editPoints() }, string.home_editPoint_btn))
-            model.nextButton1.set(getButton(Consumer { a: Boolean? -> createTrace() }, string.home_toTrace_btn))
+            model.nextButton.set(getButton(Consumer { pointNavigate() }, string.home_points_btn))
+            model.stopButton1.set(getButton(Consumer { editPoints() }, string.home_editPoint_btn))
+            model.nextButton1.set(getButton(Consumer { createTrace() }, string.home_toTrace_btn))
         }
-        model.startButton1.set(getButton(Consumer { a: Boolean? -> editTraces() }, string.home_editTrace_btn))
-        model.startButton2.set(getButton(Consumer { a: Boolean? -> geo() }, string.home_geo_btn))
-        model.stopButton2.set(getButton(Consumer { a: Boolean? -> info() }, string.home_info_btn))
+        model.startButton1.set(getButton(Consumer { editTraces() }, string.home_editTrace_btn))
+        model.startButton2.set(getButton(Consumer { geo() }, string.home_geo_btn))
+        model.stopButton2.set(getButton(Consumer { info() }, string.home_info_btn))
 //TODO        model.stopButton2.set(getButton(Consumer { a: Boolean? -> hide() }, string.home_hide_btn))
     }
 

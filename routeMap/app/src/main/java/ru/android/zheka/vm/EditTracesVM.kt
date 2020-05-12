@@ -13,14 +13,14 @@ import ru.android.zheka.gmapexample1.SaveDialog
 import ru.android.zheka.model.LatLngModel
 
 class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model), IEditTracesVM {
-    val traces: List<Trace>
+    val traces: MutableList<Trace>
 
     init {
-        traces = DbFunctions.getTablesByModel(Trace::class.java) as List<Trace>
+        traces = DbFunctions.getTablesByModel(Trace::class.java) as MutableList<Trace>
     }
 
-    override val shownItems: List<String>
-        get() = traces.map { point -> point.name }.toList()
+    override val shownItems: MutableList<String>
+        get() = traces.map { trace -> trace.name }.toMutableList()
 
     override fun onClick(pos: Int) {
         if (editOptions[0].equals(model.spinnerOption)) {
@@ -44,6 +44,11 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
         super.onResume()
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_traces))
         panelModel.action().set(view.activity.resources.getString(R.string.action_traces))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        traces.removeAll(traces)
     }
 }
 

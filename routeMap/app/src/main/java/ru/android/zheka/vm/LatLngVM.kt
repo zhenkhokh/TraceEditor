@@ -10,7 +10,6 @@ import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
-import ru.android.zheka.fragment.LatLngHandler
 import ru.android.zheka.gmapexample1.GeoPositionActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.R
@@ -18,13 +17,11 @@ import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
 class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM {
-    val points: List<Point>
+    val points: MutableList<Point>
 
     init {
-        points = DbFunctions.getTablesByModel(Point::class.java) as List<Point>
+        points = DbFunctions.getTablesByModel(Point::class.java) as MutableList<Point>
     }
-
-    override lateinit var handler: LatLngHandler
 
     override val onClickListener: View.OnClickListener?
         get() = View.OnClickListener { view -> onClick(getPosition(view)) }
@@ -52,8 +49,8 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
                     view::showError)
     }
 
-    override val shownItems: List<String>
-        get() = points.map { point -> point.name }.toList()
+    override val shownItems: MutableList<String>
+        get() = points.map { point -> point.name }.toMutableList()
 
     override val context: Context
         get() = view.context
@@ -67,5 +64,6 @@ class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM
     }
 
     override fun onDestroy() {
+        points.removeAll(points)
     }
 }

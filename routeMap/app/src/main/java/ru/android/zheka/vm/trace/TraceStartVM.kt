@@ -11,12 +11,12 @@ import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
-class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITraceStartVM {
+class TraceStartVM(override val view: IActivity, model: LatLngModel) : EditVM(view, model), ITraceStartVM {
 
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe(marker@{
-                    resetAndStartTrace(PositionInterceptor(view.activity), points[pos].data)
+                    resetAndStartTrace(PositionInterceptor(view.activity), model.points[pos].data)
 
 //                    val intent: Intent = view.activity.intent
 //                    val positionUtil = PositionUtil()
@@ -106,10 +106,6 @@ class TraceStartVM(view: IActivity, model: LatLngModel) : EditVM(view, model), I
     override var spinnerConsumer = Consumer<String> {
         switchFragment(Trace(), it)
     }
-
-    // do destroy job
-    override val shownItems: List<String>
-        get() = points.map { point -> point.name }.toList()
 }
 
 class StartAskDialog : SingleChoiceDialog("") {

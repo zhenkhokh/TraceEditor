@@ -8,19 +8,17 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 
 class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
-    override var trigered: Boolean = false
-
     private var t = ObservableField<String>()
     override fun titleText(): ObservableField<String> {
         return t
     }
-
-    override val _customPoints: ArrayList<Point> = ArrayList()
-    override val points: List<Point>
-        get() = if (_customPoints.isNotEmpty())
+    override var custom: Boolean = false
+    override val _customPoints: MutableList<Point> = mutableListOf()
+    override val points: MutableList<Point>
+        get() = if (custom)
             _customPoints
         else
-            DbFunctions.getTablesByModel(Point::class.java) as List<Point>
+            DbFunctions.getTablesByModel(Point::class.java) as MutableList<Point>
 
     private var _chekedVisibility: Int = View.GONE
     override var chekedVisibility: Int

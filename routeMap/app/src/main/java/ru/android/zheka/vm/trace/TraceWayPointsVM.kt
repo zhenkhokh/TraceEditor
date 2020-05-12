@@ -5,11 +5,13 @@ import android.widget.CheckBox
 import android.widget.Toast
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
-import ru.android.zheka.coreUI.*
+import ru.android.zheka.coreUI.ButtonHandler
+import ru.android.zheka.coreUI.IActivity
+import ru.android.zheka.coreUI.IPanelModel
+import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.UtilePointSerializer
-import ru.android.zheka.fragment.ITrace
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.PositionUtil
@@ -56,9 +58,9 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
 
     override fun onDestroy() {
         super.onDestroy()
-        panelModel.inputVisible().set(View.GONE)
-        panelModel.action().set("")
-        panelModel.spinner.set(SpinnerHandler())
+//        panelModel.inputVisible().set(View.GONE)
+//        panelModel.action().set("")
+//        panelModel.spinner.set(SpinnerHandler())
         panelModel.nextButton2.set(ButtonHandler())
         model.checked.clear()
         model.chekedVisibility = View.GONE

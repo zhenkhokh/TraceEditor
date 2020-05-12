@@ -6,7 +6,7 @@ import ru.android.zheka.model.IHomeModel
 interface IPanelHomeVM : IVM<IHomeModel?> {
     fun settings()
     fun info()
-    fun address()
+    fun enterPoint()
     fun geo()
     fun editPoints()
     fun editTraces()

@@ -1,0 +1,40 @@
+<layout >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/text_1"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.COORDINATE_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_latitude"
+                android:inputType="numberDecimal"
+                android:text="@={vm.model().lat}" />
+
+            <EditText
+                android:id="@+id/text_2"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.COORDINATE_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_longitude"
+                android:inputType="numberDecimal"
+                android:text="@={vm.model().lng}" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+        <variable name="staticSpace"
+            type="ru.android.zheka.model.IEnterPointModel.Companion"/>
+
+        <variable name="vm"
+            type="ru.android.zheka.vm.jump.ICoordinatePointVM" />
+    </data>
+</layout>
