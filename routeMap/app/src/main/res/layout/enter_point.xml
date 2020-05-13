@@ -27,6 +27,49 @@
                 android:hint="@string/hint_longitude"
                 android:inputType="numberDecimal"
                 android:text="@={vm.model().lng}" />
+            <!-- Address -->
+            <EditText
+                android:id="@+id/text_region_1"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.ADDRESS_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_region"
+                android:inputType="text"
+                android:text="@={vm.model().region}" />
+
+            <EditText
+                android:id="@+id/text_city_1"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.ADDRESS_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_city"
+                android:inputType="text"
+                android:text="@={vm.model().city}" />
+
+            <EditText
+                android:id="@+id/text_street_1"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.ADDRESS_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_street"
+                android:inputType="text"
+                android:text="@={vm.model().street}" />
+
+            <EditText
+                android:id="@+id/text_house_1"
+                android:visibility="@{safeUnbox(vm.model().visiability == staticSpace.ADDRESS_ON)}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_house"
+                android:inputType="text"
+                android:text="@={vm.model().house}" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="@{() -> vm.model().clearButton.onClick()}"
+                android:visibility="@{vm.model().clearButton.getVisible()}"
+                android:text="@{vm.model().clearButton.getLabel()}"/>
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

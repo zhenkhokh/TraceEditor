@@ -79,7 +79,7 @@ class AddressActivity : RoboActivity(), JsCallable {
                     GeoParserImpl(region!!.text.toString()
                             , city!!.text.toString()
                             , street!!.text.toString()
-                            , house!!.text.toString()).parse()
+                            , house!!.text.toString()).parse("")
                 } catch (e: YandexGeoCoderException) {
                     Toast.makeText(this, "Данные не получены, проверьте интернет соединение", 30).show()
                     return

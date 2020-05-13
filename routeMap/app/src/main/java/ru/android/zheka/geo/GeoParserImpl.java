@@ -12,8 +12,8 @@ public class GeoParserImpl extends GeoParser {
     }
 
     @Override
-    public GeoCoder parse() {
-        String url = "https://geocode-maps.yandex.ru/1.x/?geocode=";
+    public GeoCoder parse(String key) {
+        String url = "https://geocode-maps.yandex.ru/1.x/?apikey="+key+"&geocode=";
         StringBuilder sb = new StringBuilder ();
         sb.append (url);
         try {
@@ -22,13 +22,13 @@ public class GeoParserImpl extends GeoParser {
             e.printStackTrace ();
         }
         try {
-            if (!region.equals ("-"))
+            if (!region.isEmpty ())
                 sb.append (URLEncoder.encode(region,encode)).append ("+");
-            if (!city.equals ("-"))
+            if (!city.isEmpty ())
                 sb.append (URLEncoder.encode(city,encode)).append ("+");
-            if (!street.equals ("-"))
+            if (!street.isEmpty ())
                 sb.append (URLEncoder.encode(street,encode)).append ("+");
-            if (!house.equals ("-"))
+            if (!house.isEmpty ())
                 sb.append (URLEncoder.encode(house,encode));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace ();

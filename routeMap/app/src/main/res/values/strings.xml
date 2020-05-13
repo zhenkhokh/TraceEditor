@@ -127,7 +127,7 @@
 <!-- enter_point-->
     <string name="enter_point_address">Задать по адресу</string>
     <string name="enter_point_coordinate">Задать по координатам</string>
-
+    <string name="address_clear">Очистить</string>
 <!--    Actions -->
     <string name="action_traces">Выберете действие над маршрутом и нажмите на него</string>
 

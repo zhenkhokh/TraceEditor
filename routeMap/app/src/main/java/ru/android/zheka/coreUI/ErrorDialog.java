@@ -17,7 +17,7 @@ public class ErrorDialog {
         // translation can be here
         config = DialogConfig.builder()
                 .labelValue(isValidRes?view.getActivity ().getResources ().getString (R.string.errorDialog_windowTitle):"")
-                .contentValue(throwable.getMessage ())
+                .contentValue(throwable.getMessage () != null ? throwable.getMessage () : throwable.toString ())
                 .context(view.getContext ())
                 .positiveConsumer (consumer)
                 .layoutId (R.layout.dialog_error)

@@ -40,7 +40,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
             saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
         }
-        RemoveDialog(Consumer { a -> removePoint(pos) }, view, model.points[pos].name,
+        RemoveDialog(Consumer { removePoint(pos) }, view, model.points[pos].name,
                 R.string.cancel_save_point).show()
     }
 

@@ -12,6 +12,7 @@ import ru.android.zheka.di.geo.GeoMainBinding
 import ru.android.zheka.di.home.HomeBinding
 import ru.android.zheka.di.home.MainBinding
 import ru.android.zheka.di.jpoint.EnterPointBinding
+import ru.android.zheka.di.jpoint.JumpPointBinding
 import ru.android.zheka.di.latlng.LatLngBinding
 import ru.android.zheka.di.map.MapBinding
 import ru.android.zheka.di.map.MapMainBinding
@@ -35,6 +36,7 @@ import javax.inject.Singleton
     , EditTracesBinding::class
     , TraceBinding::class
     , EnterPointBinding::class
+    , JumpPointBinding::class
     ])
 interface AppComponent : AndroidInjector<Application?> {
     @Component.Builder
