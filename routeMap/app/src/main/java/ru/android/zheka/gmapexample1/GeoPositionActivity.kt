@@ -8,10 +8,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.databinding.ViewDataBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.*
@@ -29,14 +29,16 @@ import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.fragment.Geo
+import ru.android.zheka.fragment.HideGeo
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
+import ru.android.zheka.gmapexample1.databinding.ActivityGeoBinding
 import ru.android.zheka.model.GeoModel
 import ru.zheka.android.timer.PositionReciever
 import java.io.File
 import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ViewDataBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ActivityGeoBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
@@ -75,8 +77,10 @@ class GeoPositionActivity //AppCompatActivity
 //        fixGoogleMapBug()
         super.onCreate(savedInstanceState)
         setContentView(resViewId)
-        val mapFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.geoFM) as SupportMapFragment
+        val frameLayout =
+                findViewById(R.id.geoFM) as FrameLayout
+        val mapFragment = SupportMapFragment.newInstance()
+        getSupportFragmentManager().beginTransaction().replace(frameLayout.id, mapFragment).commit()
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         updateOfflineState(this)
@@ -248,21 +252,25 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override val layoutId
-        get() = R.layout.activity_maps
+        get() = R.layout.activity_geo
 
     override fun initComponent() {
         AndroidInjection.inject(this)
     }
+@Inject
+lateinit var geoModel: GeoModel
 
-    override fun onInitBinding(binding: ViewDataBinding?) {
-        switchToFragment(R.id.geoFragment, Geo())
+    override fun onInitBinding(binding: ActivityGeoBinding?) {
+        binding?.model = geoModel
+//        switchToFragment(R.id.geoFragment1, Geo())
+        switchToFragment(R.id.geoFragment1, HideGeo())
         model.activity = this
         model.config = this.config!!
     }
 
-    override fun onDestroyBinding(binding: ViewDataBinding?) {
+    override fun onDestroyBinding(binding: ActivityGeoBinding?) {
     }
 
-    override fun onResumeBinding(binding: ViewDataBinding?) {
+    override fun onResumeBinding(binding: ActivityGeoBinding?) {
     }
 }

@@ -16,8 +16,8 @@ import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
-class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM {
-    val points: MutableList<Point>
+open class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILatLngVM {
+    open val points: MutableList<Point>
 
     init {
         points = DbFunctions.getTablesByModel(Point::class.java) as MutableList<Point>

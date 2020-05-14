@@ -9,4 +9,5 @@ interface IGeoVM : IVM<IGeoModel?> {
     fun map()
     fun addCPoint()
     fun goPosition()
+    fun hide()
 }

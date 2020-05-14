@@ -8,6 +8,7 @@ import ru.android.zheka.coreUI.*
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.db.UtilePointSerializer
+import ru.android.zheka.fragment.HideGeo
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.gmapexample1.GeoPositionActivity.Companion.OFFLINE
 import ru.android.zheka.gmapexample1.R.string
@@ -100,7 +101,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     var llModel_: LatLngModel? = null
 
     private fun llModel(): LatLngModel {
-        llModel_ = llModel_?:LatLngModel(view.context)
+        llModel_ = llModel_ ?: LatLngModel(view.context)
         val point = Point()
         point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
@@ -114,7 +115,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         val vm = TraceStartVM(view, LatLngModel(view.context))
         vm.panelModel = model
 //        vm.resetTrace()
-         vm.resetAndStartTrace(model.position, model.point)
+        vm.resetAndStartTrace(model.position, model.point)
 //        state = vm.resetAndStartTrace(model.position, model.point)
 //        state = vm.resetAndStartTrace(model.position, model.point)
     }
@@ -134,7 +135,9 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //        view.activity.finish()
 //    }
 
-    override fun onDestroy() {}
+    override fun onDestroy() {
+        model.hidePanel.set(View.VISIBLE)
+    }
 
     override fun model(): IGeoModel {
         return model
@@ -225,10 +228,16 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         model.action().set(view.activity.resources.getString(string.action_geo))
         model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
+        model.startButton2.set(getButton(Consumer { hide() }, string.hide_panel_open))
+        model.hidePanel.set(View.GONE)
+    }
+
+    override fun hide() {
+        view.switchToFragment(R.id.geoFragment1, HideGeo())
     }
 
     private fun isMainToMap(): Boolean {
-        return llModel_?.nextButton2?.get()?.visible?.get()?.equals(View.GONE)?:true
+        return llModel_?.nextButton2?.get()?.visible?.get()?.equals(View.GONE) ?: true
     }
 
     private fun isManualOnly(): Boolean {

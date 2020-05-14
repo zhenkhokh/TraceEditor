@@ -1,5 +1,6 @@
 package ru.android.zheka.model
 
+import androidx.databinding.ObservableInt
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import ru.android.zheka.core.IInfoModel
@@ -13,4 +14,5 @@ interface IGeoModel : IInfoModel {
     var activity: IActivity
     val onCameraChanged: GoogleMap.OnCameraChangeListener
     var config: Config
+    var hidePanel: ObservableInt
 }

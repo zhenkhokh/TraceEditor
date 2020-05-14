@@ -3,15 +3,21 @@ package ru.android.zheka.model
 import android.content.Context
 import android.view.View
 import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import ru.android.zheka.coreUI.PanelModel
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 
 class LatLngModel(view: Context?) : PanelModel(view), ILatLngModel {
-    private var t = ObservableField<String>()
+    private val _hideTitle = ObservableInt(View.VISIBLE)
+    private val t = ObservableField<String>()
     override fun titleText(): ObservableField<String> {
         return t
     }
+
+    override var hideTitle: ObservableInt
+        get() = _hideTitle
+        set(value) {}
     override var custom: Boolean = false
     override val _customPoints: MutableList<Point> = mutableListOf()
     override val points: MutableList<Point>
