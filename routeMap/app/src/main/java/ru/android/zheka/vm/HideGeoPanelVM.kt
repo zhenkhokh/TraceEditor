@@ -7,7 +7,7 @@ import ru.android.zheka.fragment.IHideGeo
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.LatLngModel
 
-class HideGeoPanelVM(view: IHideGeo, model: LatLngModel) : LatLngVM(view, model) {
+open class HideGeoPanelVM(view: IHideGeo, model: LatLngModel) : LatLngVM(view, model) {
 
     private val item: Point = Point()
     private val items = mutableListOf(item)
@@ -20,7 +20,7 @@ class HideGeoPanelVM(view: IHideGeo, model: LatLngModel) : LatLngVM(view, model)
 
     override val onClickListener: View.OnClickListener?
         get() = View.OnClickListener {
-            view.switchToFragment(R.id.geoFragment1, Geo())
+            view.switchToFragment(R.id.geoFragment, Geo())
         }
 
     override fun onDestroy() {

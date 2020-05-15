@@ -233,7 +233,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     override fun hide() {
-        view.switchToFragment(R.id.geoFragment1, HideGeo())
+        view.switchToFragment(R.id.geoFragment, HideGeo())
     }
 
     private fun isMainToMap(): Boolean {

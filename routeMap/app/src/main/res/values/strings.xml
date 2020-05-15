@@ -132,7 +132,7 @@
     <string name="hide_panel_open">Скрыть</string>
     <string name="hide_panel_expand">Раскрыть</string>
 <!--    Actions -->
-    <string name="action_traces">Выберете действие над маршрутом и нажмите на него</string>
+    <string name="action_traces">Выберете маршрут и нажмите на него</string>
 
 
 </resources>

@@ -38,7 +38,7 @@ import java.io.File
 import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
-    : AbstractActivity<ActivityGeoBinding>(), OnMapReadyCallback,HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
+    : AbstractActivity<ActivityGeoBinding>(), OnMapReadyCallback, HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
     var clTrace: Class<*>? = null
     var clMap: Class<*>? = null
     var clPoints: Class<*>? = null
@@ -63,6 +63,7 @@ class GeoPositionActivity //AppCompatActivity
     override fun androidInjector(): AndroidInjector<Any> {
         return androidInjector!!
     }
+
     private fun fixGoogleMapBug() {
         val googleBug: SharedPreferences = getSharedPreferences("google_bug", Context.MODE_PRIVATE)
         if (!googleBug.contains("fixed")) {
@@ -137,10 +138,12 @@ class GeoPositionActivity //AppCompatActivity
             //timerService.startService(intent);
         }
     }
+
     override fun onMapReady(map: GoogleMap) {
         try {
             model.position.positioning() //getIntent();
-        } catch (e: Exception) { Toast.makeText(this, "Нет переданного местоположения", 15).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Нет переданного местоположения", 15).show()
             e.printStackTrace()
         }
 //        model.position!!.updatePosition()
@@ -257,13 +260,14 @@ class GeoPositionActivity //AppCompatActivity
     override fun initComponent() {
         AndroidInjection.inject(this)
     }
-@Inject
-lateinit var geoModel: GeoModel
+
+    @Inject
+    lateinit var geoModel: GeoModel
 
     override fun onInitBinding(binding: ActivityGeoBinding?) {
         binding?.model = geoModel
-//        switchToFragment(R.id.geoFragment1, Geo())
-        switchToFragment(R.id.geoFragment1, HideGeo())
+        switchToFragment(R.id.geoFragment, Geo())
+//        switchToFragment(R.id.geoFragment, HideGeo())
         model.activity = this
         model.config = this.config!!
     }

@@ -18,7 +18,7 @@
             tools:context="ru.android.zheka.gmapexample1.GeoPositionActivity">
 
             <FrameLayout
-                android:id="@+id/geoFragment1"
+                android:id="@+id/geoFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
@@ -47,11 +47,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-            <FrameLayout
-                android:id="@+id/geoFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </FrameLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <data>

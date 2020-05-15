@@ -8,4 +8,6 @@ interface IMapVM : IVM<IMapModel?> { //TODO
     fun toMap()
     fun fakeStart()
     fun home()
+    fun hide()
+    fun mapType()
 }

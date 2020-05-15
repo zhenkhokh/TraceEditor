@@ -6,10 +6,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.databinding.ViewDataBinding
 import com.activeandroid.Model
 import com.activeandroid.query.Delete
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -24,6 +24,8 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.*
+import ru.android.zheka.fragment.HideMap
+import ru.android.zheka.gmapexample1.databinding.ActivityMapsBinding
 import ru.android.zheka.model.MapModel
 import ru.android.zheka.route.*
 import ru.android.zheka.route.BellmannFord.MissMatchDataException
@@ -47,7 +49,7 @@ import com.google.android.gms.location.LocationServices;
 */
 //import android.app.AlertDialog;
 class MapsActivity //extends AppCompatActivity
-    : AbstractActivity<ViewDataBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
+    : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
     private val resTextId: Int = R.id.coordinateText
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
@@ -76,7 +78,7 @@ class MapsActivity //extends AppCompatActivity
     var positionReciever: PositionReciever? = null
     var options: MarkerOptions? = null
     var cursorMarker: Marker? = null
-    private var mapType = MapTypeHandler(MapTypeHandler.userCode)
+    var mapType = MapTypeHandler(MapTypeHandler.userCode)
 
     @JvmField
     var results = ResultRouteHandler(-1) // not available
@@ -162,8 +164,10 @@ class MapsActivity //extends AppCompatActivity
         setContentView(resViewId)
         updateOfflineState(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.mappp) as SupportMapFragment
+        val frameLayout =
+                findViewById(R.id.mappp) as FrameLayout
+        val mapFragment = SupportMapFragment.newInstance()
+        getSupportFragmentManager().beginTransaction().replace(frameLayout.id, mapFragment).commit()
         println("map fragment is got $mapFragment")
         mapFragment.getMapAsync(this)
         println("async map")
@@ -994,7 +998,7 @@ class MapsActivity //extends AppCompatActivity
     }
 
     override val layoutId
-        get() = R.layout.activity_geo
+        get() = R.layout.activity_maps
 
     override fun initComponent() {
         AndroidInjection.inject(this)
@@ -1003,14 +1007,15 @@ class MapsActivity //extends AppCompatActivity
     @Inject
     lateinit var model: MapModel
 
-    override fun onInitBinding(binding: ViewDataBinding?) {
-        switchToFragment(R.id.mapFragment, ru.android.zheka.fragment.Map())
+    override fun onInitBinding(binding: ActivityMapsBinding?) {
+//        switchToFragment(R.id.mapFragment, ru.android.zheka.fragment.Map())
+        switchToFragment(R.id.mapFragment, HideMap())
         model.actvity = this
     }
 
-    override fun onResumeBinding(binding: ViewDataBinding?) {
+    override fun onResumeBinding(binding: ActivityMapsBinding?) {
     }
 
-    override fun onDestroyBinding(binding: ViewDataBinding?) {
+    override fun onDestroyBinding(binding: ActivityMapsBinding?) {
     }
 }
