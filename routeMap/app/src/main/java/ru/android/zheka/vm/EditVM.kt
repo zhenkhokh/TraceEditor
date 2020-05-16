@@ -13,7 +13,7 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.Edit
 import ru.android.zheka.gmapexample1.R
-import ru.android.zheka.gmapexample1.SaveDialog
+import ru.android.zheka.coreUI.SaveDialog
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 

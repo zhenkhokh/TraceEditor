@@ -36,20 +36,7 @@ import java.util.*
 import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 
-/*
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.internal.GetServiceRequest;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationRequestCreator;
-import com.google.android.gms.location.LocationServices;
-*/
-//import android.app.AlertDialog;
-class MapsActivity //extends AppCompatActivity
-    : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
+class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector, OnMapReadyCallback, RoutingListener, OnCameraChangeListener {
     private val resTextId: Int = R.id.coordinateText
     private var traceDebugging: DataTrace? = null
     private var traceDebuggingSer: String? = null
@@ -60,7 +47,6 @@ class MapsActivity //extends AppCompatActivity
     @JvmField
     var position: PositionInterceptor? = null
 
-    protected var url = "file:///android_asset/map.html"
     protected var resViewId = R.layout.activity_maps //R.layout.activity_maps;
     var dataTrace: DataTrace? = DataTrace()
     private var onRoutingReady = false
@@ -74,7 +60,6 @@ class MapsActivity //extends AppCompatActivity
     private var clTrace: Class<*>? = null
     private var config: Config? = null
 
-    //TimerService timerService=TimerService.getInstance();
     var positionReciever: PositionReciever? = null
     var options: MarkerOptions? = null
     var cursorMarker: Marker? = null
@@ -82,7 +67,6 @@ class MapsActivity //extends AppCompatActivity
 
     @JvmField
     var results = ResultRouteHandler(-1) // not available
-    var replaceDialog = ReplaceDialog()
     var wayPoints = ArrayList<LatLng>()
 
     @Inject
@@ -105,57 +89,6 @@ class MapsActivity //extends AppCompatActivity
         }
         wayPoints.add(position!!.end)
         return wayPoints
-    }
-
-    class MySaveDialog : SaveDialog() {
-        var map: MapsActivity? = null
-        var position: PositionInterceptor? = null
-        var dataTrace: DataTrace? = null
-        override fun positiveProcess() {
-            if (dataTrace != null && position!!.start != null && position!!.end != null) {
-                name = nameField!!.text.toString()
-                val dialog = AlertDialog("")
-                if (name!!.isEmpty()) {
-                    //Toast.makeText(GeoPositionActivity.this, "text must not be empty", 15);
-                    dialog.msg = "Отсутсвует текст, введите название"
-                    dialog.show(fragmentManager, "Ошибка")
-                    return
-                }
-                if (DbFunctions.getTraceByName(name) != null) {
-                    //dialog.msg = "Маршрут с таким именем существует, повторите сохранение";
-                    //dialog.show(getFragmentManager(), "Ошибка");
-                    val replaceDialog = map!!.replaceDialog!!
-                    replaceDialog.map = map
-                    replaceDialog.show(map!!.fragmentManager, "dialog")
-                    return
-                }
-                if (!map!!.saveOrReplaceTrace(name)) {
-                    Toast.makeText(map, "Маршрут не задан, сохранение отменено", 15).show()
-                }
-            } else {
-                Toast.makeText(map, "Маршрут не инициализирован", 15).show()
-            }
-        }
-
-        override fun newInstance(): SaveDialog {
-            return this
-        }
-
-        companion object {
-            var name: String? = null
-        }
-    }
-
-    class ReplaceDialog : SingleChoiceDialog("Заменить существующий маршрут?", R.string.cancel_plot_trace
-            , R.string.ok_plot_trace) {
-        var map: MapsActivity? = null
-        override fun positiveProcess() {
-            if (!map!!.saveOrReplaceTrace(MySaveDialog.name)) {
-                Toast.makeText(map, "Маршрут не задан, сохранение отменено", 15).show()
-            }
-        }
-
-        override fun negativeProcess() {}
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -324,26 +257,12 @@ class MapsActivity //extends AppCompatActivity
                             fetchWayPoints()
                             if (isBellman) {
                                 bellManPoits = wayPoints
-                                /*int iEnd = bellManPoits.indexOf(position.end);
-								if (iEnd < bellManPoits.size ()-1 &&
-										bellManPoits.subList (iEnd+1,bellManPoits.size ()).contains (position.end)
-										) {
-									bellManPoits.remove (position.end);
-								}
-								iEnd = bellManPoits.indexOf(position.end);
-								// end must be once and in the end
-								if (iEnd<bellManPoits.size ()-1){
-									bellManPoits.remove(position.end);
-									bellManPoits.add(position.end);
-								}
-								*/
-//                                for (i in 1..2) bellManPoits.remove(position!!.end)
+                                //                                for (i in 1..2) bellManPoits.remove(position!!.end)
                                 bellManPoits.add(position!!.end)
                                 bellManPoits = ArrayList(Arrays.asList(
                                         *BellmannFord.process(bellManPoits.toTypedArray()))
                                 )
-                            } ///else
-                            //	wayPoints.remove(wayPoints.size()-1);//end point
+                            }
                             if (!isBellman) {
                                 routing = Routing()
                                 val task = routing!!.execute(*wayPoints.toTypedArray())
@@ -373,12 +292,6 @@ class MapsActivity //extends AppCompatActivity
                                     }
                                 }
                                 var index_ = 0
-                                /*if (config.bellmanFord.equals ( Application.optimizationBellmanFlag)) {
-								position.extraPoints = new ArrayList <String> ();
-								for (int i=0; i < wayPoints.size ();i++) {
-									position.extraPoints.add((String)new UtilePointSerializer().serialize(wayPoints.get(i)));
-								}
-							}else {*/
                                 val iterator: Iterator<*> = order.iterator()
                                 while (iterator
                                                 .hasNext()) {
@@ -403,16 +316,6 @@ class MapsActivity //extends AppCompatActivity
                                 val head = bellManPoits.removeAt(0)
                                 if (rStart != BellmannFord.round(head)) bellManPoits.add(head)
                             }
-                            /*LatLng tmp = bellManPoits.get(1);
-		        			bellManPoits.set (1,bellManPoits.get (2));
-		        			bellManPoits.set (2,tmp);
-
-							bellManPoits.add (bellManPoits.get(bellManPoits.size ()-2));
-							bellManPoits.add (position.end);*/
-                            /*iterator = bellManPoits.iterator ();
-							if (iterator.hasNext ())
-								iterator.next ();//miss start
-							*/
                             val tmp = ArrayList<String>()
                             val iterator1: Iterator<*> = bellManPoits.iterator()
                             if (iterator1.hasNext()) // miss start
@@ -455,9 +358,7 @@ class MapsActivity //extends AppCompatActivity
                         failuresCnt = 0
                         val curCnt = cntRun + 1
                         cntRun++
-                        while ( //Iterator iterator = position.extraPoints.iterator(); iterator
-                                iterator
-                                        .hasNext()) {
+                        while (iterator.hasNext()) {
                             if (failuresCnt >= maxFailures) {
                                 return
                             }
@@ -488,8 +389,6 @@ class MapsActivity //extends AppCompatActivity
                                 }
                                 onRoutingReady = false
                             }
-
-//}while(cnt<cntRun);
 //							if (curCnt<cntRun)//do not touch prevPoint
 //								break;
                             if (curCnt == cntRun) {
@@ -518,57 +417,7 @@ class MapsActivity //extends AppCompatActivity
 
     override fun onRoutingFailure() {
         println("onRoutingFailure")
-        /*
-		//cntRun++;
-		Runnable r = new Runnable () {
-			@Override
-			public void run() {
-				Iterator iterator = position.extraPoints.iterator ();
-				int skip = 0;
-				//TODO do not copy from previouse
-				//cnt--;cntCtrl--;
-				final int curCnt = cntRun+1;
-				cntRun++;
-				for (//Iterator iterator = position.extraPoints.iterator(); iterator
-						; iterator
-						.hasNext (); ) {
-					if (skip++ >= cnt) {
-						String sPoint = (String) iterator.next ();
-						point = (LatLng) (new UtilePointSerializer ().deserialize (sPoint));
-						try {
-							if (curCnt == cntRun)
-								routing.execute (prevPoint, point);
-						}catch (IllegalStateException e){continue; }
-							synchronized (traceDrawMonitor) {
-								System.out.println ("wait for onRoutingSuccess cnt=" + cnt);
-								int goFromDad = 3;
-								while (!onRoutingReady && goFromDad-->0) {
-									try {
-										traceDrawMonitor.wait (rateLimit_ms);
-									} catch (InterruptedException e) {
-										e.printStackTrace ();
-									}
-								}
-								onRoutingReady = false;
-							}
-						//Cannot execute task: the task is already running
-						routing = new Routing ();
-						routing.registerListener (MapsActivity.this);
-
-						if (curCnt==cntRun) {
-							prevPoint = point;
-							cnt++;
-						}
-					} else
-						prevPoint = (LatLng) (new UtilePointSerializer ().deserialize ((String) iterator.next ()));
-
-				}
-
-			}
-		};
-			Thread t = new Thread (r);
-			t.start();
-*/if (isOffline) {
+        if (isOffline) {
             offlineIncorrectData()
             return
         }
@@ -610,10 +459,6 @@ class MapsActivity //extends AppCompatActivity
                 e.printStackTrace()
             }
         }
-        /*			routing = new Routing ();
-			routing.registerListener (MapsActivity.this);
-			routing.execute (prevPoint, point);
-*/
     }
 
     override fun onRoutingStart() {
@@ -695,140 +540,6 @@ class MapsActivity //extends AppCompatActivity
         return DbFunctions.getNamePointByData(point) ?: return ""
     }
 
-//    override fun nextView(`val`: String) {
-//        var intent = position!!.updatePosition() //new Intent();
-//        if (`val`.contentEquals(HOME)) {
-//            intent.setClass(context_, clMain)
-//            intent.action = Intent.ACTION_VIEW
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val`.contentEquals(GEO)) {
-//            val mapIntent = position!!.updatePosition() //new Intent(Intent.ACTION_VIEW, geoUri);
-//            mapIntent.action = Intent.ACTION_VIEW
-//            mapIntent.setClass(context_, clGeo)
-//            startActivity(mapIntent)
-//            finish()
-//        }
-//        // SQLite pojo: name, (?)trace, (String)traceLight
-//        if (`val`.contentEquals(SAVE_TRACE)) {
-//            val dialog = MySaveDialog().newInstance(R.string.hint_dialog_trace) as MySaveDialog
-//            dialog.map = this@MapsActivity
-//            dialog.dataTrace = dataTrace
-//            dialog.position = position
-//            //dialog.show(getSupportFragmentManager(), "dialog");
-//            dialog.show(getFragmentManager(), "dialog")
-//        }
-//        if (`val` == TRACE) {
-//            Toast.makeText(this, "Trace view called: $`val`", 15).show()
-//            intent.setClass(context_, clTrace)
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val`.contains(GO_POSITION)) {
-//            goPosition(false)
-//        }
-//        if (`val`.contains(ADD_POINT)) {
-//            Toast.makeText(this
-//                    , "Для добавления путевой точки перейдите в местоположение и установите ее по центру, далее вернитесь к просмотру"
-//                    , 25).show()
-//        }
-//        if (`val`.contains(REMOVE_POINT)) {
-//            while (position!!.isWriteExtra == true) {
-//            } // or remove, copy, block new writers&readers until finished
-//            println("extraPoint before removing " + position!!.extraPoints)
-//            var tmp = ArrayList(position!!.extraPoints)
-//            val sz = tmp.size
-//            if (sz < 2) {
-//                Toast.makeText(this, "Нет путевых точек для удаления", 15).show()
-//                return
-//            }
-//            val newStart = UtilePointSerializer().deserialize(tmp[0]) as LatLng
-//            //String[] temp = Arrays.copyOf (position.getExtraPoints ().toArray (new String[0]),sz);//remove(0)
-//            val temp = arrayOfNulls<String>(sz - 1)
-//            System.arraycopy(position!!.extraPoints.toTypedArray()
-//                    , 1, temp, 0, sz - 1)
-//            if (position!!.isWriteExtra == true || sz != temp.size + 1) {
-//                Toast.makeText(this, "Ресурс занят, повторите операцию", 15).show()
-//                return
-//            }
-//            tmp = ArrayList(Arrays.asList(*temp))
-//            position!!.setExtraPointsFromCopy(tmp)
-//            println("extraPoint after removing " + position!!.extraPoints)
-//            println("extraPoint tmp " + Arrays.asList(*temp) + " len=" + temp.size)
-//            //LatLng end = position.end;
-//            setIntent(intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, tmp))
-//            if (isOffline) {
-//                //Trace trace = (Trace)DbFunctions.getModelByName (currentNameOffline,Trace.class);
-//                var dataTrace = traceDebugging!!.copy(false)
-//                if (dataTrace != null) {
-//                    if (dataTrace.removeFirstSegment() == null) {
-//                        Toast.makeText(this, "Данные сегмента не доступны", 15).show()
-//                        return
-//                    }
-//                    dataTrace.extraPoints = tmp
-//                    dataTrace = dataTrace.copy(true)
-//                    position!!.title = UtileTracePointsSerializer().serialize(dataTrace) as String
-//                } else {
-//                    Toast.makeText(this, "Данные маршрута не доступны", 15).show()
-//                    return
-//                }
-//            }
-//            position!!.start = newStart
-//            println("from remove way-point:position.end " + position!!.end + " position.start: " + position!!.start)
-//            //if (position.end==null && point!=null )
-//            //	position.end = point;
-//            setIntent(position!!.newIntent)
-//            intent = position!!.updatePosition()
-//
-//            //position.end = end;
-//            intent.setClass(context_, MapsActivity::class.java)
-//            intent.action = Intent.ACTION_VIEW
-//            Toast.makeText(this, "Ближайшая путевая точка удалена", 15).show()
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val` == FAKE_START) {
-//            isFakeStart = if (isFakeStart) false else true
-//            if (isFakeStart) {
-//                Toast.makeText(this, "Задан псевдо старт", 15).show()
-//            } else {
-//                Toast.makeText(this, "Дан старт из местоположения", 15).show()
-//            }
-//            intent.setClass(context_, MapsActivity::class.java)
-//            intent.action = Intent.ACTION_VIEW
-//            startActivity(intent)
-//            finish()
-//        }
-//        if (`val` == MAP_TYPE) {
-//            //if (mMap==null) {
-//            //	Toast.makeText (this, "Ошибка: карта не определена", 15).show ();
-//            //	return;
-//            //}
-//            when (mapType.type) {
-//                MapTypeHandler.Type.NORMAL -> {
-//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_SATELLITE
-//                    Toast.makeText(this, "Изменена на спутниковую, поверните экран", 15).show()
-//                }
-//                MapTypeHandler.Type.SATELLITE -> {
-//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_TERRAIN
-//                    Toast.makeText(this, "Изменена на рельефную, повторите просмотр", 15).show()
-//                }
-//                MapTypeHandler.Type.TERRAIN -> {
-//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_HYBRID
-//                    Toast.makeText(this, "Изменена на гибридную, поверните экран", 15).show()
-//                }
-//                MapTypeHandler.Type.HYBRID -> {
-//                    MapTypeHandler.userCode = GoogleMap.MAP_TYPE_NORMAL
-//                    Toast.makeText(this, "Изменена на обычную, повторите просмотр", 15).show()
-//                }
-//            }
-//            mapType = MapTypeHandler(MapTypeHandler.userCode)
-//            //mMap.setMapType (mapType.getCode ());// setting has no effect
-//            //goPosition (false);//?
-//        }
-//    }
-
     fun goPosition(isBeforeAnimation: Boolean) {
         runOnUiThread(Runnable {
             if (mMap != null) {
@@ -850,15 +561,7 @@ class MapsActivity //extends AppCompatActivity
                 } catch (e: MissMatchDataException) {
                     e.printStackTrace()
                     Toast.makeText(this@MapsActivity, "Все точки маршрута одинаковы, задайте маршрут", 15).show()
-                } /*
-						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition
-							.Builder()
-							.target(position.getLocation())
-							.bearing (BellmannFord.bearing)//(float) (Math.random ()*360.0)
-							.zoom(position.zoom).build()));
-						if (config.uLocation)
-							position.updateUILocation();
-							*/
+                }
                 if (!isBeforeAnimation) positionReciever!!.onReceive(this@MapsActivity, this@MapsActivity.getIntent())
                 println("from geo: move to " + position!!.location)
             }
@@ -910,13 +613,6 @@ class MapsActivity //extends AppCompatActivity
         super.onPause()
     }
 
-    override fun onDestroy() {
-        //saveEmergency ();
-        super.onDestroy()
-    }
-
-    private val traces: List<Trace>? = null
-
     //private static Long idTrace = new Long (-1);
     private fun saveOrReplaceTrace(name: String?): Boolean { // or use id, load and save
         if (dataTrace != null && position != null && position!!.start != null && position!!.end != null) {
@@ -949,36 +645,13 @@ class MapsActivity //extends AppCompatActivity
                         "Для починки маршрут с именем: \"" + name + "\"" + " был удален")
                 dialog.show(getFragmentManager(), "Ошибка")
             }
-
-            //idTrace = trace.save ();
-            /*try {
-				DbFunctions.add (trace);
-			} catch (java.lang.InstantiationException e) {
-				e.printStackTrace ();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace ();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace ();
-			}
-			*/return true
+        return true
         }
         return false
     }
 
     companion object {
         private val traceDrawMonitor = Object()
-        const val GO_POSITION = "goPosition"
-        const val TRACE = "trace"
-
-        //public static final String SAVE_POINT = "savePoint";
-        const val SAVE_TRACE = "saveTrace"
-        const val GEO = "geo"
-        const val HOME = "home"
-        const val ADD_POINT = "addPoint"
-        const val REMOVE_POINT = "removePoint"
-        const val FAKE_START = "fakeStart"
-        const val MAP_TYPE = "mapType"
-
         @JvmField
         var isOffline = false
         private var cntRun = 0
@@ -994,7 +667,6 @@ class MapsActivity //extends AppCompatActivity
 
         private const val currentName = "last_trace"
         private const val currentNameOffline = "last_offline_trace"
-        private const val currentQuiry = "where name is $currentName"
     }
 
     override val layoutId

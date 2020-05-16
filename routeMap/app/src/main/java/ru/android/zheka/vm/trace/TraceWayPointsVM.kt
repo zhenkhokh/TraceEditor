@@ -16,7 +16,6 @@ import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.PositionUtil
 import ru.android.zheka.gmapexample1.R
-import ru.android.zheka.gmapexample1.TraceActivity
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
@@ -69,7 +68,7 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
     fun add() {
         val position = PositionInterceptor(view.activity)
         position.updatePosition()
-        if (TraceActivity.isOtherMode(position.state)) {
+        if (PositionInterceptor.isOtherMode(position.state)) {
             throw RuntimeException("Подан другой режим, для сброса вернитесь в начало маршрута")
         }
         if (position.state == PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {

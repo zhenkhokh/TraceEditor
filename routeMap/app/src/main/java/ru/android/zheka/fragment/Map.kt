@@ -1,5 +1,6 @@
 package ru.android.zheka.fragment
 
+import kotlinx.android.synthetic.main.home_fragment.view.*
 import ru.android.zheka.coreUI.AbstractFragment
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.MapFragmentBinding
@@ -24,5 +25,16 @@ class Map : AbstractFragment<MapFragmentBinding>() {
 
     override fun onDestroyBinding(binding: MapFragmentBinding) {
         viewModel!!.onDestroy()
+    }
+    companion object {
+        const val sp = 100
+    }
+
+    override fun initAdapter(binding: MapFragmentBinding): MapFragmentBinding {
+        val scale = context?.resources?.displayMetrics?.density
+        var value: Int = ((scale ?: 0F).times(sp.toFloat())).toInt()
+        value = if (value == 0) 230 else value
+        binding.root.baseScanBarcode_background?.layoutParams?.height = value
+        return binding
     }
 }

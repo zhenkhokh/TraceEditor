@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
+import ru.android.zheka.coreUI.SingleChoiceDialog
 import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.*
 import ru.android.zheka.model.LatLngModel

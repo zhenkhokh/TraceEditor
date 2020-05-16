@@ -17,9 +17,9 @@ class MapVM(var view: IActivity, var model: IMapModel) : IMapVM {
     override fun onResume() {
         model.stopButton.set(ButtonHandler({ geo() }, R.string.map_goPosition, view))
         model.stopButton1.set(ButtonHandler({ toMap() }, R.string.map_geo, view))
-        model.nextButton2.set(ButtonHandler({ fakeStart() }, R.string.map_fakeStart, view))
+        model.nextButton1.set(ButtonHandler({ fakeStart() }, R.string.map_fakeStart, view))
         model.startButton.set(ButtonHandler({ home() }, R.string.map_home, view))
-        model.startButton2.set(ButtonHandler({ hide() }, R.string.hide_panel_open, view))
+        model.startButton1.set(ButtonHandler({ hide() }, R.string.hide_panel_open, view))
         model.nextButton.set(ButtonHandler({ mapType() }, R.string.map_mapType, view))
     }
 

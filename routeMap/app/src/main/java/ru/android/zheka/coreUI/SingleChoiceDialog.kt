@@ -1,4 +1,4 @@
-package ru.android.zheka.gmapexample1
+package ru.android.zheka.coreUI
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -6,6 +6,7 @@ import android.app.DialogFragment
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import ru.android.zheka.gmapexample1.R
 
 abstract class SingleChoiceDialog(msg: String?) : DialogFragment() {
     lateinit var msg: String

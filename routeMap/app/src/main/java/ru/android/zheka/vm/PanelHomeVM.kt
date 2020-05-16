@@ -15,11 +15,9 @@ import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.*
-import ru.android.zheka.gmapexample1.EditActivity
 import ru.android.zheka.gmapexample1.GeoPositionActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.R.*
-import ru.android.zheka.gmapexample1.edit.EditModel
 import ru.android.zheka.model.HomeModel
 import ru.android.zheka.model.IHomeModel
 import java.util.*
@@ -64,11 +62,6 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         view.removeFragment(fragment)
         fragment = enterPoint as EnterPoint
         view.switchToFragment(id.latLngFragment, fragment)
-//        val intent = view.activity.intent
-//        intent.action = Intent.ACTION_VIEW
-//        intent.setClass(view.activity, AddressActivity::class.java)
-//        view.activity.startActivity(intent)
-//        view.activity.finish()
     }
 
     override fun geo() {
@@ -95,20 +88,6 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         view.switchToFragment(id.latLngFragment, fragment)
     }
 
-    fun editItem(item: String?, nameId: Int, name1Id: Int) {
-        val intent = view.activity.intent
-        val model = EditModel()
-        model.clsName = item
-        model.clsPkg = "ru.android.zheka.db"
-        model.name1Id = name1Id
-        model.nameId = nameId
-        intent.putExtra(EditActivity.EDIT_MODEL, model)
-        intent.action = Intent.ACTION_VIEW
-        intent.setClass(view.context, EditActivity::class.java)
-        view.activity.startActivity(intent)
-        view.activity.finish()
-    }
-
     override fun pointNavigate() {
         view.removeFragment(fragment)
         fragment = LatLng()
@@ -119,11 +98,6 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         view.removeFragment(fragment)
         fragment = trace as Trace
         view.switchToFragment(id.latLngFragment, fragment)
-//        val intent = view.activity.intent
-//        intent.setClass(view.activity, PointToTraceActivity::class.java)
-//        intent.action = Intent.ACTION_VIEW
-//        view.activity.startActivity(intent)
-//        view.activity.finish()
     }
 
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {
@@ -144,7 +118,6 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         model.startButton1.set(getButton(Consumer { editTraces() }, string.home_editTrace_btn))
         model.startButton2.set(getButton(Consumer { geo() }, string.home_geo_btn))
         model.stopButton2.set(getButton(Consumer { info() }, string.home_info_btn))
-//TODO        model.stopButton2.set(getButton(Consumer { a: Boolean? -> hide() }, string.home_hide_btn))
     }
 
     private fun isPoints(): Boolean {
@@ -152,13 +125,8 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         return list != null && list.isNotEmpty()
     }
 
-    private fun hide() {
-
-    }
-
     override fun onDestroy() {}
     override fun model(): IHomeModel {
         return model as HomeModel
     }
-
 }

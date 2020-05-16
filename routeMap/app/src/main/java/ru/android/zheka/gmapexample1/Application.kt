@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.multidex.MultiDex
 import com.activeandroid.ActiveAndroid
 import com.activeandroid.Configuration
-import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import ru.android.zheka.db.*
 import ru.android.zheka.di.AppComponent
 import ru.android.zheka.di.AppModule
 import ru.android.zheka.di.DaggerAppComponent
+import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.route.Routing.TravelMode
 import java.util.*
 
@@ -65,7 +65,7 @@ class Application : DaggerApplication() //extends MultiDexApplication
                 config.avoid = "tolls" // tolls, highways, ferries, indoor or empty
                 config.bellmanFord = ""
                 //config.reserved2 = "";
-                config.address = AddressActivity.aDelimiter + AddressActivity.aDelimiter + AddressActivity.aDelimiter
+                config.address = aDelimiter + aDelimiter + aDelimiter
                 config.rateLimit_ms = "800"
                 config.offline = DbFunctions.DEFAULT_CONFIG_OFFLINE
                 val w: TravelMode = TravelMode.valueOf(config.travelMode)

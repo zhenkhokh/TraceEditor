@@ -16,7 +16,7 @@ import ru.android.zheka.fragment.EnterPoint
 import ru.android.zheka.fragment.IEnterPoint
 import ru.android.zheka.fragment.JumpPoint
 import ru.android.zheka.geo.GeoParserImpl
-import ru.android.zheka.gmapexample1.AddressActivity.Companion.aDelimiter
+import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.AddressModel
 import ru.android.zheka.model.IAddressModel

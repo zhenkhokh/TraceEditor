@@ -22,6 +22,7 @@ public class PanelModel implements IPanelModel {
     public static void setVisibility(View view, Boolean value) {
         view.setVisibility(value ? View.VISIBLE : View.GONE);
     }
+
     private final ObservableInt progressBarVisibility;
     private final ObservableField action;
     private final ObservableField success;

@@ -41,6 +41,7 @@ class AddressModel(context: Context) : PanelModel(context), IAddressModel {
         lateinit var geoCoder: GeoCoder
         var point: LatLng? = null
         var spinnerOptions: String? = null
+        const val aDelimiter = "#"
     }
 
     private var _lng = ObservableField(point?.longitude?.toString() ?: "")

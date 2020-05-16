@@ -13,27 +13,27 @@
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/baseScanBarcode_background"
-            android:layout_width="0sp"
-            android:layout_height="300sp"
+            android:layout_width="match_parent"
+            android:layout_height="230sp"
             android:background="@color/basic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/baseScanBarcode_progressBar"
-            android:visibility="@{safeUnbox(View.GONE)}"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="28sp"
-            android:layout_height="28sp"
-            android:layout_margin="8sp"
-            android:theme="@android:style/Animation"
-            app:layout_constraintStart_toStartOf="@+id/baseScanBarcode_background"
-            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton2" />
+<!--        <ProgressBar-->
+<!--            android:id="@+id/baseScanBarcode_progressBar"-->
+<!--            android:visibility="gone"-->
+<!--            style="?android:attr/progressBarStyle"-->
+<!--            android:layout_width="28sp"-->
+<!--            android:layout_height="28sp"-->
+<!--            android:layout_margin="8sp"-->
+<!--            android:theme="@android:style/Animation"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/baseScanBarcode_background"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton2" />-->
 
         <TextView
             android:id="@+id/baseScanBarcode_actionLabel"
@@ -44,33 +44,34 @@
             android:maxLines="1"
             android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_startButton2"
-            app:layout_constraintStart_toEndOf="@id/baseScanBarcode_progressBar" />
+            app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background" />
 
-        <ImageView
-            android:id="@+id/baseScanBarcode_successImage"
-            android:visibility="visible"
-            android:layout_width="28sp"
-            android:layout_height="28sp"
-            android:layout_margin="8sp"
-            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar"
-            app:layout_constraintStart_toStartOf="@+id/baseScanBarcode_background"
-            />
+<!--        <ImageView-->
+<!--            android:id="@+id/baseScanBarcode_successImage"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_width="28sp"-->
+<!--            android:layout_height="28sp"-->
+<!--            android:layout_margin="8sp"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/baseScanBarcode_background"-->
+<!--            />-->
 <!--        app:srcCompat="@{model.successImage()}"-->
 
-        <TextView
-            android:id="@+id/baseScanBarcode_successLabel"
-            android:text="@{model.success()}"
-            android:textColor="@color/basic"
-            android:layout_width="0sp"
-            android:layout_height="28sp"
-            android:layout_margin="8sp"
-            android:maxLines="2"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="8sp"
-            app:autoSizeMaxTextSize="16sp"
-            app:autoSizeStepGranularity="1sp"
-            app:layout_constraintStart_toEndOf="@+id/baseScanBarcode_successImage"
-            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar" />
+<!--        <TextView-->
+<!--            android:id="@+id/baseScanBarcode_successLabel"-->
+<!--            android:text="@{model.success()}"-->
+<!--            android:visibility="gone"-->
+<!--            android:textColor="@color/basic"-->
+<!--            android:layout_width="0sp"-->
+<!--            android:layout_height="28sp"-->
+<!--            android:layout_margin="8sp"-->
+<!--            android:maxLines="2"-->
+<!--            app:autoSizeTextType="uniform"-->
+<!--            app:autoSizeMinTextSize="8sp"-->
+<!--            app:autoSizeMaxTextSize="16sp"-->
+<!--            app:autoSizeStepGranularity="1sp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/baseScanBarcode_successImage"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_progressBar" />-->
 <!--        @{ContextCompat.getColor(context, model.successColor())}-->
 
         <!--            style="@{safeUnbox(model.startButtonStyle==model.DEFAULT_STYLE)?@style/BUTTONS_THEME:@style/BUTTONS_THEME_ALTR}"-->
@@ -172,7 +173,7 @@
             android:inputType="textPersonName"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
-            app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_progressBar" />
+            app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_actionLabel" />
 
 
         <Spinner
@@ -190,7 +191,7 @@
             android:inputType="textPersonName"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="@id/baseScanBarcode_background"
-            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_successLabel"
+            app:layout_constraintTop_toBottomOf="@+id/baseScanBarcode_actionLabel"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

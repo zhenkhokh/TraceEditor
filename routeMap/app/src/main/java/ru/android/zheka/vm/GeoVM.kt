@@ -30,30 +30,12 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         view.activity.finish()
     }
 
-//    override fun points() {
-//        if ( //position.state!=null&&
-//                TraceActivity.isOtherMode(position!!.state))
-//            position!!.state = PositionUtil.TRACE_PLOT_STATE.CENTER_COMMAND
-//        val intent = position!!.newIntent
-//        intent.setClass(view.context, TraceActivity::class.java)
-//        intent.action = Intent.ACTION_VIEW
-//        view.activity.startActivity(intent)
-//        view.activity.finish()
-//    }
-
     override fun savePoint() {
         val dialog = GeoSaveDialog()
         dialog.model = model
         dialog.newInstance(string.hint_dialog_point)
                 .show(view.activity.getFragmentManager(), "dialog")
     }
-
-//    override fun pointToTrace() {
-//        val intent = position!!.updatePosition()
-//        intent.setClass(view.context, TraceActivity::class.java)
-//        view.activity.startActivity(intent)
-//        view.activity.finish()
-//    }
 
     override fun map() {
         if (model.position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
@@ -120,21 +102,6 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 //        state = vm.resetAndStartTrace(model.position, model.point)
     }
 
-
-//    override fun addWayPoints() {
-//        val model = EditModel()
-//        model.clsName = "Point"
-//        model.clsPkg = "ru.android.zheka.db"
-//        model.name1Id = R.string.points_column_name1
-//        model.nameId = R.string.points_column_name
-//        val intent = position!!.updatePosition()
-//        intent.putExtra(EditActivity.EDIT_MODEL, model)
-//        intent.action = Intent.ACTION_VIEW
-//        intent.setClass(view.context, WayPointsToTrace::class.java)
-//        view.activity.startActivity(intent)
-//        view.activity.finish()
-//    }
-
     override fun onDestroy() {
         model.hidePanel.set(View.VISIBLE)
     }
@@ -156,7 +123,6 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
             , string.cancel_plot_trace
             , string.ok_plot_trace) {
 
-
         lateinit var vm: GeoVM
 
         override fun positiveProcess() {
@@ -165,8 +131,6 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         override fun negativeProcess() {
             vm.goToMap()
         }
-
-
     }
 
     class GeoSaveDialog : SaveDialog() {

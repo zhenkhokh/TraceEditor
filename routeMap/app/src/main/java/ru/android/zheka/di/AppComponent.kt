@@ -7,7 +7,6 @@ import dagger.android.support.AndroidSupportInjectionModule
 import ru.android.zheka.di.cpanel.HideGeoBinding
 import ru.android.zheka.di.cpanel.HideMapBinding
 import ru.android.zheka.di.edit.EditBinding
-import ru.android.zheka.di.edit.EditMainBinding
 import ru.android.zheka.di.edit.EditTracesBinding
 import ru.android.zheka.di.geo.GeoBinding
 import ru.android.zheka.di.geo.GeoMainBinding
@@ -33,7 +32,6 @@ import javax.inject.Singleton
     , MapMainBinding::class
     , SettingsBinding::class
     , LatLngBinding::class
-    , EditMainBinding::class
     , EditBinding::class
     , EditTracesBinding::class
     , TraceBinding::class
