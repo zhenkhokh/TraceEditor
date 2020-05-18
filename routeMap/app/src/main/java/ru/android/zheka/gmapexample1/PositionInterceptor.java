@@ -46,6 +46,26 @@ public class PositionInterceptor implements ConnectionCallbacks, OnConnectionFai
     Location mLastLocation = null;
     static final public int resViewId = R.id.coordinateText;
 
+    @Override
+    public String toString() {
+        return "PositionInterceptor{" +
+                "resTextId=" + resTextId +
+                ", markerCenter=" + markerCenter +
+                ", centerPosition=" + centerPosition +
+                ", isWriteExtra=" + isWriteExtra +
+                ", start=" + start +
+                ", end=" + end +
+                ", title='" + title + '\'' +
+                ", zoom=" + zoom +
+                ", target=" + target +
+                ", tracePointName='" + tracePointName + '\'' +
+                ", state=" + state +
+                ", extraPoints=" + extraPoints +
+                ", mGoogleApiClient=" + mGoogleApiClient +
+                ", mLastLocation=" + mLastLocation +
+                '}';
+    }
+
     public static boolean isOtherMode(TRACE_PLOT_STATE state){
         return state != TRACE_PLOT_STATE.CONNECT_COMMAND
                 && state != TRACE_PLOT_STATE.END_COMMAND

@@ -45,8 +45,8 @@ android {
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 26//27 next is 28
-        versionName "2.9"//2.9.1
+        versionCode 28
+        versionName "3.0"
         multiDexEnabled = true
         //robolectric
         javaCompileOptions {

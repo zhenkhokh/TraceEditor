@@ -20,6 +20,10 @@ import ru.android.zheka.vm.trace.TraceWayPointsVM
 
 class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
+    companion object {
+        lateinit var model: IGeoModel
+    }
+
     lateinit var spinnerOption: String
 
     override fun home() {
@@ -180,20 +184,33 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     override fun onResume() {
         model.startButton.set(getButton(Consumer { a: Boolean? -> home() }, string.geo_home))
         if (isManualOnly())
-            model.startButton1.set(getButton(Consumer { goPosition() }, string.map_goPosition))
+            model.stopButton.set(getButton(Consumer { goPosition() }, string.map_goPosition))
         else
             model.startButton1.get()?.visible?.set(View.INVISIBLE)
         model.nextButton.set(getButton(Consumer { savePoint() }, string.geo_save_point))
-        model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
-        if (isMainToMap()) {
-            model.stopButton.set(getButton(Consumer { map() }, string.geo_maps))
+        val isMaiToMap = isMainToMap()
+        val isOnline = isOnline()
+        if (isMaiToMap && isOnline) {
+            model.startButton2.set(getButton(Consumer { map() }, string.geo_maps))
+        }
+        if (isMaiToMap) {
             model.nextButton2.get()?.visible?.set(View.GONE)
         }
-        model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
-        model.action().set(view.activity.resources.getString(string.action_geo))
-        model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
-        model.startButton2.set(getButton(Consumer { hide() }, string.hide_panel_open))
+        if (isOnline) {
+            model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
+            model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
+            model.action().set(view.activity.resources.getString(string.action_geo))
+            model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
+        } else {
+            model.action().set(view.activity.resources.getString(string.action_geo_offline))
+            model.inputVisible().set(View.GONE) // fit size
+        }
+        model.startButton1.set(getButton(Consumer { hide() }, string.hide_panel_open))
         model.hidePanel.set(View.GONE)
+    }
+
+    private fun isOnline(): Boolean {
+        return !model.config.offline.toBoolean()
     }
 
     override fun hide() {

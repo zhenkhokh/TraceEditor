@@ -59,9 +59,11 @@ class GeoPositionActivity //AppCompatActivity
     lateinit var model: GeoModel
 
     @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    lateinit var androidInjecto: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector!!
+        MainActivity._androidInjector = if (::androidInjecto.isInitialized ) androidInjecto
+        else MainActivity._androidInjector
+        return MainActivity._androidInjector
     }
 
     private fun fixGoogleMapBug() {

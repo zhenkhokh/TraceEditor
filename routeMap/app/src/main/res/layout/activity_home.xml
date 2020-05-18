@@ -16,27 +16,24 @@
                 android:id="@+id/homeFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-<!--just initialize LatLng-->
-            <FrameLayout
-                android:id="@+id/latLngFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <!--just initialize LatLng-->
+
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <FrameLayout
-                    android:id="@+id/mainFragment"
+                    android:id="@+id/latLngFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                     />
+                    android:layout_height="match_parent" />
             </ScrollView>
-            <include
-                layout="@layout/lat_lng_fragment"/>
+
+            <include layout="@layout/lat_lng_fragment" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
+
         <variable
             name="model"
             type="ru.android.zheka.model.IHomeModel" />

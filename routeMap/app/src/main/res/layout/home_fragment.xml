@@ -38,6 +38,7 @@
         <TextView
             android:id="@+id/baseScanBarcode_actionLabel"
             android:text="@{model.action()}"
+            app:autoSizeTextType="uniform"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_margin="8sp"
@@ -100,12 +101,14 @@
             android:visibility="@{model.getNextButton().getVisible()}"
             android:text="@{model.getNextButton().getLabel()}"
             style="@style/BUTTONS_THEME_ALTR"
+            app:autoSizeTextType="uniform"
             app:layout_constraintTop_toTopOf="@id/baseScanBarcode_background"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
 <!--row 1-->
         <Button
             android:id="@+id/baseScanBarcode_startButton1"
             style="@style/BUTTONS_THEME_ALTR"
+            app:autoSizeTextType="uniform"
             android:onClick="@{() -> model.getStartButton1().onClick()}"
             android:text="@{model.getStartButton1().getLabel()}"
             android:visibility="@{model.getStartButton1().getVisible()}"
@@ -158,6 +161,7 @@
             android:visibility="@{model.getNextButton2().getVisible()}"
             android:text="@{model.getNextButton2().getLabel()}"
             style="@style/BUTTONS_THEME_ALTR"
+            app:autoSizeTextType="uniform"
             app:layout_constraintTop_toBottomOf="@id/baseScanBarcode_startButton1"
             app:layout_constraintEnd_toEndOf="@id/baseScanBarcode_background" />
 

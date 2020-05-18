@@ -1,6 +1,5 @@
 package ru.android.zheka.gmapexample1.geo
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import org.mockito.Mockito
@@ -16,10 +15,5 @@ class TestGeoBindingModule {
     @Provides
     fun bindGeoVM(view: IGeo?, model: IGeoModel?): IGeoVM {
         return GeoVM(view!!,model!!)
-    }
-
-    @Provides
-    fun provideGeoModel(view: Context?): GeoModel {
-        return GeoModel(view)
     }
 }

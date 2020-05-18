@@ -133,6 +133,6 @@
     <string name="hide_panel_expand">Раскрыть</string>
 <!--    Actions -->
     <string name="action_traces">Выберете маршрут и нажмите на него</string>
-
+    <string name="action_geo_offline">Просмотр возможен при загруке оффлайн-маршрута</string>
 
 </resources>

@@ -6,12 +6,17 @@ import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
+import ru.android.zheka.gmapexample1.edit.TestEditBinding;
+import ru.android.zheka.gmapexample1.edit.TestEditBindingModule;
+import ru.android.zheka.gmapexample1.editTraces.TestEditTracesBinding;
+import ru.android.zheka.gmapexample1.enterPoint.TestEnterPointBinding;
 import ru.android.zheka.gmapexample1.geo.TestGeoBinding;
 import ru.android.zheka.gmapexample1.geo.TestGeoBindingModule;
 import ru.android.zheka.gmapexample1.geo.TestGeoBinding_GeoFragment;
 import ru.android.zheka.gmapexample1.home.TestHomeBinding;
 import ru.android.zheka.gmapexample1.home.TestHomeBindingModule;
 import ru.android.zheka.gmapexample1.home.TestHomeBinding_HomeFragment;
+import ru.android.zheka.gmapexample1.trace.TestTraceBinding;
 
 @Singleton
 @Component(modules = {AndroidSupportInjectionModule.class,
@@ -19,7 +24,14 @@ import ru.android.zheka.gmapexample1.home.TestHomeBinding_HomeFragment;
         TestHomeBindingModule.class,
         TestGeoBinding.class,
         TestGeoBindingModule.class,
-        TestApplicationModule.class
+        TestEditBinding.class,
+        TestEditBindingModule.class,
+        TestEditTracesBinding.class,
+//        TestEditTracesBindingModule.class,
+        TestEnterPointBinding.class,
+//        TestEnterPointBindingModule.class,
+        TestTraceBinding.class,
+        TestApplicationModule.class,
 //        AppModule.class
 })
 public interface TestAppComponent extends AndroidInjector <RobolectricMainApp> {
@@ -31,7 +43,8 @@ public interface TestAppComponent extends AndroidInjector <RobolectricMainApp> {
         TestAppComponent.Builder testApplicationModule(TestApplicationModule appModule);
         TestAppComponent.Builder testHomeBindingModule(TestHomeBindingModule module);
         TestAppComponent.Builder testGeoBindingModule(TestGeoBindingModule module);
-
+//        TestAppComponent.Builder testEditBindingModule(TestEditBindingModule module);
+//        TestAppComponent.Builder testEnterPointBindingModule(TestEnterPointBindingModule module);
 //        Builder homeModule(HomeModule appModule);
 
         TestAppComponent build();

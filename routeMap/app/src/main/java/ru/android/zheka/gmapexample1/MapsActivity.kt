@@ -70,9 +70,11 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     var wayPoints = ArrayList<LatLng>()
 
     @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    lateinit var androidInjecto: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector!!
+        MainActivity._androidInjector = if (::androidInjecto.isInitialized ) androidInjecto
+        else MainActivity._androidInjector
+        return MainActivity._androidInjector
     }
 
     fun fetchWayPoints(): ArrayList<LatLng> {
@@ -512,7 +514,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_red))
             //end
             if (cnt == 0) options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-            if (position!!.extraPoints != null && cnt == position!!.extraPoints.size - 1) {
+            if (position!!.extraPoints != null && cnt >= position!!.extraPoints.size - 1) {
                 options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
                 position!!.updateUILocation(resTextId)
                 val tmp = ArrayList(position!!.extraPoints)
@@ -615,10 +617,13 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 
     //private static Long idTrace = new Long (-1);
     private fun saveOrReplaceTrace(name: String?): Boolean { // or use id, load and save
-        if (dataTrace != null && position != null && position!!.start != null && position!!.end != null) {
-            //new UtileTracePointsSerializer ().serialize (dataTrace).toString ().isEmpty ()
-            if (dataTrace!!.extraPoints.size == 0) // null entity case
-                return false
+        println("MapsActivity.saveOrReplaceTrace:dataTrace=${dataTrace.toString()}, position=${position.toString()}")
+        if (dataTrace != null && TraceEndVM.isStart(position?.start) && position?.end != null) {
+            if (dataTrace!!.extraPoints.size == 0) { // null entity case
+                val utilPoint = UtilePointSerializer()
+//                dataTrace!!.extraPoints.add(utilPoint.serialize(position!!.start?:TraceEndVM.start) as String?)
+                dataTrace!!.extraPoints.add(utilPoint.serialize(position!!.end) as String?)
+            }
             val traceOld = DbFunctions.getTraceByName(name)  //back null if add lock
             //traces = new Select ().from (Trace.class).where ("name = ?",currentName).limit (1).execute ();
             //traces = SQLiteUtils.rawQuery (Trace.class, "SELECT * from Trace where name LIKE ?", new String[]{'%'+currentName+'%'});
@@ -627,11 +632,12 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             //else if (trace==null)
             //trace = Model.load (Trace.class, idTrace.longValue ());
             trace.data = dataTrace
-            trace.start = position!!.start
+            trace.start = position!!.start?:TraceEndVM.start
             trace.end = position!!.end
             trace.name = name
             trace.save()
             val traceNew = DbFunctions.getTraceByName(name)
+            println("MapsActivity: traceNew=${traceNew}, traceOld=${traceOld}, ")
             if (traceNew == null && traceOld != null) {
                 Delete().from(Trace::class.java).where("name=?", name).execute<Model>()
                 traceOld.save()

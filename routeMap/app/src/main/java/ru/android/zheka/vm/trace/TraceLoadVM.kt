@@ -2,7 +2,10 @@ package ru.android.zheka.vm.trace
 
 import android.content.Intent
 import io.reactivex.functions.Consumer
+import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
+import ru.android.zheka.db.DbFunctions.DEFAULT_CONFIG_NAME
+import ru.android.zheka.db.DbFunctions.getModelByName
 import ru.android.zheka.db.Trace
 import ru.android.zheka.db.UtileTracePointsSerializer
 import ru.android.zheka.fragment.ITrace
@@ -19,7 +22,12 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
     val traces: MutableList<Trace>
 
     init {
-        traces = DbFunctions.getTablesByModel(Trace::class.java) as MutableList<Trace>
+        val config = getModelByName(DEFAULT_CONFIG_NAME
+                , Config::class.java) as Config
+        val isOffline = config.offline.toBoolean()
+        traces = DbFunctions.getTablesByModel(Trace::class.java)
+                ?.filter { (isOffline && (it as Trace).data != null) || !isOffline }?.toMutableList()
+                as MutableList<Trace>
     }
 
     override val shownItems: MutableList<String>
@@ -35,9 +43,11 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
         position.start = trace.start
         position.end = trace.end
         position.centerPosition = trace.end
-        position.setExtraPointsFromCopy(trace.data.extraPoints)
+        val extraPoints = trace.data?.extraPoints
+                ?: ArrayList()//arrayListOf(UtilePointSerializer().serialize(position.end) as String)
+        position.setExtraPointsFromCopy(extraPoints)
         position.state = TRACE_PLOT_STATE.END_COMMAND
-        view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, trace.data.extraPoints)
+        view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, extraPoints)
         updateOfflineState(view.context)
         if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace.data) as String
         PositionUtil.isCenterAddedToTrace = false

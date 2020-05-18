@@ -30,11 +30,18 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
     @Inject
     lateinit var latLngModel: LatLngModel
 
+    companion object {
+        @kotlin.jvm.JvmField
+        var googleKey = ""
+        lateinit var _androidInjector: DispatchingAndroidInjector<Any>
+    }
 
     @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    lateinit var androidInjecto: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector!!
+        _androidInjector = if (::androidInjecto.isInitialized ) androidInjecto
+        else _androidInjector
+        return _androidInjector
     }
 
     protected var url = "file:///android_asset/home.html"
@@ -50,7 +57,7 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
     }
 
     override fun onInitBinding(binding: ActivityHomeBinding?) {
-        switchToFragment(R.id.mainFragment, Settings())
+        switchToFragment(R.id.latLngFragment, Settings())
         switchToFragment(R.id.homeFragment, Home())
 //        val adapter = LatLngAdapter(this)
 //        binding!!.latLngFragments .adapter = adapter
@@ -96,19 +103,6 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
 
     override fun getActivity(): Activity {
         return this
-    }
-    companion object {
-        @kotlin.jvm.JvmField
-        var googleKey = ""
-        const val SETTINGS = "settings"
-        const val EDIT_TRACE = "editTrace"
-        const val EDIT_POINT = "editPoint"
-        const val GEO = "geo"
-        const val TO_TRACE = "toTrace"
-        const val POINTS = "points"
-        const val GO = "address"
-        const val INFO = "info"
-
     }
 }
 

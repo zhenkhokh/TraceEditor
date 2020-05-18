@@ -28,6 +28,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
 
     companion object {
         var start: LatLng = LAT_LNG
+        fun isStart(start_ : LatLng? ):Boolean = start_ != null || !start.equals(LAT_LNG)
     }
 
     fun finish(pointData: LatLng?) {

@@ -23,18 +23,25 @@ import ru.android.zheka.model.IHomeModel
 import java.util.*
 
 class PanelHomeVM(val view: IActivity, val model: IPanelModel,
-                  val edit: IEdit, val editTraces: IEditTraces, val trace: ITrace, val enterPoint:IEnterPoint) : IPanelHomeVM {
-    var fragment: Fragment
+                  val edit: IEdit, val editTraces: IEditTraces,
+                  val trace: ITrace, val enterPoint: IEnterPoint
+) : IPanelHomeVM {
+    var fragment: Fragment?
 
     init {
-        fragment = view.manager.findFragmentById(id.mainFragment)!!
+        fragment = view.manager?.findFragmentById(id.latLngFragment)
     }
 
-
     override fun settings() {
-        view.removeFragment(fragment)
-        fragment = Settings()
-        view.switchToFragment(id.mainFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, Settings())
+    }
+
+    private fun removeAndSwitchFragmentFromContainer(id: Int, fragment_: Fragment) {
+        if (fragment != null) {
+            view.removeFragment(fragment!!)
+        }
+        fragment = fragment_
+        view.switchToFragment(id, fragment!!)
     }
 
     override fun info() {
@@ -59,9 +66,7 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
     }
 
     override fun enterPoint() {
-        view.removeFragment(fragment)
-        fragment = enterPoint as EnterPoint
-        view.switchToFragment(id.latLngFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, enterPoint as EnterPoint)
     }
 
     override fun geo() {
@@ -76,28 +81,20 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
 
     override fun editPoints() {
 //        editItem("Point", string.points_column_name, string.points_column_name1)
-        view.removeFragment(fragment)
-        fragment = edit as Edit
-        view.switchToFragment(id.latLngFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, edit as Edit)
     }
 
     override fun editTraces() {
 //        editItem("Trace", string.traces_column_name, string.traces_column_name1)
-        view.removeFragment(fragment)
-        fragment = editTraces as EditTraces
-        view.switchToFragment(id.latLngFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, editTraces as EditTraces)
     }
 
     override fun pointNavigate() {
-        view.removeFragment(fragment)
-        fragment = LatLng()
-        view.switchToFragment(id.latLngFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, LatLng())
     }
 
     override fun createTrace() {
-        view.removeFragment(fragment)
-        fragment = trace as Trace
-        view.switchToFragment(id.latLngFragment, fragment)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, trace as Trace)
     }
 
     private fun getButton(consumer: Consumer<Boolean>, nameId: Int): ButtonHandler {

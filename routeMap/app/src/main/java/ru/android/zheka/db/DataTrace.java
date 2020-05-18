@@ -2,20 +2,31 @@ package ru.android.zheka.db;
 
 import android.graphics.Color;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import ru.android.zheka.route.BellmannFord;
 
 public class DataTrace{
 	public ArrayList<String> extraPoints = new ArrayList<String>();
 	private Iterator<List<LatLng>> cursor = null;
+
+	@Override
+	public String toString() {
+		return "DataTrace{" +
+				"extraPoints=" + extraPoints +
+				", cursor=" + cursor +
+				", allPoints=" + allPoints +
+				", segmentPoints=" + segmentPoints +
+				", restPoints=" + restPoints +
+				", segments=" + segments +
+				'}';
+	}
 
 	private PolylineOptions allPoints;
 	private List<LatLng> segmentPoints = null;
@@ -159,6 +170,11 @@ public class DataTrace{
 			}
 
 			addPoints (restPoints);
+			return true;
+		}
+		if (allPoints.getPoints ().size () == segmentPoints.size ()) {
+			segments.add (segmentPoints);
+			restPoints.add (point); // end point
 			return true;
 		}
 		return false;

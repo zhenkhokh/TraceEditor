@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import ru.android.zheka.fragment.Geo
 import ru.android.zheka.fragment.IGeo
+import ru.android.zheka.model.GeoModel
 import ru.android.zheka.model.IGeoModel
 
 @Module

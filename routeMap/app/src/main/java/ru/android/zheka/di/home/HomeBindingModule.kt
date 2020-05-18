@@ -15,7 +15,7 @@ class HomeBindingModule {
     @Provides
     fun bindHomeVM(model: IPanelModel?, view: IActivity?, edit: IEdit, editTraces: IEditTraces,
         trace: ITrace, enterPoint: IEnterPoint): IPanelHomeVM {
-        return PanelHomeVM(view!!, model!!, edit!!, editTraces, trace, enterPoint)
+        return PanelHomeVM(view!!, model!!, edit, editTraces, trace, enterPoint)
     }
 
     @PanelScope
