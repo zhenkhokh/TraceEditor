@@ -32,12 +32,12 @@ class EnterPoint : AbstractFragment<EnterPointBinding>(), IEnterPoint{
     override fun initComponent() {
         val res = activity?.resources
         val model = viewModelAddress.model()
-        val raw = res?.getString(R.string.enter_point_address)
+        val raw = res?.getString(R.string.enter_point_coordinate)
         if (raw.equals(model.spinnerOptions)) {
-            viewModel = viewModelAddress
+            viewModel = viewModelCoordinate
             return
         }
-        viewModel = viewModelCoordinate
+        viewModel = viewModelAddress
     }
 
     override fun onInitBinding(binding: EnterPointBinding) {

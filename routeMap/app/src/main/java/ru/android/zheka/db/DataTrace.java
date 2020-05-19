@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.android.zheka.route.BellmannFord;
-
 public class DataTrace{
 	public ArrayList<String> extraPoints = new ArrayList<String>();
 	private Iterator<List<LatLng>> cursor = null;
@@ -123,10 +121,6 @@ public class DataTrace{
 		cursor = segments.iterator ();
 	}
 
-//	public float getLength(){
-//		return (float) BellmannFord.getPathLength (allPoints.getPoints ().toArray (new LatLng[0]));
-//	}
-
 	public boolean removeHead(LatLng removedWayPoint){
 		if (getHeadOrTail (removedWayPoint,true)){
 			allPoints = configPolyOptions ();
@@ -182,7 +176,6 @@ public class DataTrace{
 
 	private boolean getHeadOrTail(LatLng wayPoint,boolean forTail){
 		boolean pass = forTail?false:true;
-		LatLng bound = BellmannFord.round (wayPoint);
 		segmentPoints = new LinkedList <> ();
 		restPoints = new LinkedList <> ();
 		for (LatLng point:allPoints.getPoints ()){

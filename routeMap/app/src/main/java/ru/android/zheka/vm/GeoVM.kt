@@ -108,6 +108,8 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     override fun onDestroy() {
         model.hidePanel.set(View.VISIBLE)
+        model.stopButton1.get()?.visible?.set(View.GONE)// add point
+        model.startButton2.get()?.visible?.set(View.GONE)// show
     }
 
     override fun model(): IGeoModel {

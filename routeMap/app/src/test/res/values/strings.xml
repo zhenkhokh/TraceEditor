@@ -7,7 +7,7 @@
     <string name="title_activity_geo">Местоположение</string>
     <string name="title_activity_maps">Просмотр</string>
     <string name="title_activity_toTrace">Точки для маршрута</string>
-    <string name="title_activity_edit">Редактирование</string>
+    <string name="title_activity_edit">Перименование</string>
     <string name="title_activity_waypointsToTrace">Путевые точки для маршрута</string>
     <string name="title_activity_settings">Настройки</string>
     <string name="title_activity_address">Переход</string>

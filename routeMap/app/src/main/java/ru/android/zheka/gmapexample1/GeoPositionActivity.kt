@@ -29,7 +29,6 @@ import ru.android.zheka.coreUI.AbstractActivity
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.fragment.Geo
-import ru.android.zheka.fragment.HideGeo
 import ru.android.zheka.gmapexample1.MapsActivity.Companion.updateOfflineState
 import ru.android.zheka.gmapexample1.databinding.ActivityGeoBinding
 import ru.android.zheka.model.GeoModel
@@ -39,20 +38,13 @@ import javax.inject.Inject
 
 class GeoPositionActivity //AppCompatActivity
     : AbstractActivity<ActivityGeoBinding>(), OnMapReadyCallback, HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
-    var clTrace: Class<*>? = null
-    var clMap: Class<*>? = null
-    var clPoints: Class<*>? = null
-    var clMain: Class<*>? = null
-    var clWayPoints: Class<*>? = null
-
     // choose for true statement
     var mMap: GoogleMap? = null
-
     var config: Config? = null
-    protected var resViewId = R.layout.activity_geo
+    private var resViewId = R.layout.activity_geo
 
     //TimerService timerService = TimerService.getInstance();
-    var positionReciever: PositionReciever? = null
+    private var positionReceiver: PositionReciever? = null
     private var mapType: MapTypeHandler? = null
 
     @Inject
@@ -92,36 +84,6 @@ class GeoPositionActivity //AppCompatActivity
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
         println(geoIntent.data as Uri)
-        try {
-            clTrace = Class.forName("ru.android.zheka.gmapexample1.TraceActivity")
-            println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.TraceActivity")
-        } catch (e: ClassNotFoundException) {
-            println("---------- from GeoPositionActivity " + e.message)
-        }
-        try {
-            clMap = Class.forName("ru.android.zheka.gmapexample1.MapsActivity")
-            println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.MapsActivity")
-        } catch (e: ClassNotFoundException) {
-            println("---------- from GeoPositionActivity " + e.message)
-        }
-        try {
-            clMain = Class.forName("ru.android.zheka.gmapexample1.MainActivity")
-            println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.MainActivity")
-        } catch (e: ClassNotFoundException) {
-            println("---------- from GeoPositionActivity " + e.message)
-        }
-        try {
-            clPoints = Class.forName("ru.android.zheka.gmapexample1.LatLngActivity")
-            println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.LatLngActivity")
-        } catch (e: ClassNotFoundException) {
-            println("---------- from GeoPositionActivity " + e.message)
-        }
-        try {
-            clWayPoints = Class.forName("ru.android.zheka.gmapexample1.WayPointsToTrace")
-            println("----------  from GeoPositionActivity: find  ru.android.zheka.gmapexample1.WayPointsToTrace")
-        } catch (e: ClassNotFoundException) {
-            println("---------- from GeoPositionActivity " + e.message)
-        }
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         val coordinate = findViewById(R.id.coordinateTextGeo) as TextView
@@ -149,11 +111,11 @@ class GeoPositionActivity //AppCompatActivity
             e.printStackTrace()
         }
 //        model.position!!.updatePosition()
-        if (positionReciever == null) {
-            positionReciever = PositionReciever(map, model.position)
+        if (positionReceiver == null) {
+            positionReceiver = PositionReciever(map, model.position)
             //LocalBroadcastManager.getInstance(this).registerReceiver(positionReciever
             //		, new IntentFilter(TimerService.BROADCAST_ACTION));
-            TimerService.mListners!!.add(positionReciever)
+            TimerService.mListners!!.add(positionReceiver)
         }
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
@@ -218,8 +180,8 @@ class GeoPositionActivity //AppCompatActivity
     override fun onStart() {
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        if (positionReciever != null) {
-            if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReciever)) TimerService.mListners!!.add(positionReciever)
+        if (positionReceiver != null) {
+            if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReceiver)) TimerService.mListners!!.add(positionReceiver)
         }
         super.onStart()
     }
@@ -229,7 +191,7 @@ class GeoPositionActivity //AppCompatActivity
     }
 
     override fun onPause() {
-        if (positionReciever != null) TimerService.mListners!!.remove(positionReciever)
+        if (positionReceiver != null) TimerService.mListners!!.remove(positionReceiver)
         super.onPause()
     }
 
@@ -239,21 +201,12 @@ class GeoPositionActivity //AppCompatActivity
      */
     override fun onStop() {
         model.position!!.mGoogleApiClient.disconnect()
-        if (positionReciever != null) TimerService.mListners!!.remove(positionReciever)
+        if (positionReceiver != null) TimerService.mListners!!.remove(positionReceiver)
         super.onStop()
     }
 
     companion object {
-        const val ADD_WAYPOINTS = "addWaypoints"
-        const val TRACE = "trace"
-        const val MAP = "map"
-        const val SAVE_POINT = "savePoint"
-        const val POINTS = "points"
-        const val HOME = "home"
         const val OFFLINE = "offline"
-        var ready = false
-        var monitor = Object()
-        var msg = ""
     }
 
     override val layoutId

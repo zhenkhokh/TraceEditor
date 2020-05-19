@@ -55,9 +55,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     private var rateLimit_ms = 800
     private var prevPoint: LatLng? = null
     private var point: LatLng? = null
-    private var clMain: Class<*>? = null
-    private var clGeo: Class<*>? = null
-    private var clTrace: Class<*>? = null
     private var config: Config? = null
 
     var positionReciever: PositionReciever? = null
@@ -107,13 +104,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
         mapFragment.getMapAsync(this)
         println("async map")
         position = PositionInterceptor(this, resTextId)
-        val classes = loadClasses("ru.android.zheka.gmapexample1.MainActivity"
-                , "ru.android.zheka.gmapexample1.GeoPositionActivity"
-                , "ru.android.zheka.gmapexample1.TraceActivity"
-                , "ru.android.zheka.db.Config")
-        clMain = classes[0]
-        clGeo = classes[1]
-        clTrace = classes[2]
         config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         rateLimit_ms = config!!.rateLimit_ms.toBigDecimal().intValueExact()
@@ -138,19 +128,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             //timerService.startService(intent);
         }
         println("end onCreate")
-    }
-
-    private fun loadClasses(vararg strings: String): Array<Class<*>?> {
-        val classes: Array<Class<*>?> = arrayOfNulls(strings.size)
-        for (i in 0 until strings.size) {
-            try {
-                classes[i] = Class.forName(strings[i])
-                println("----------  from " + javaClass.name + " find  " + strings[i])
-            } catch (e: ClassNotFoundException) {
-                println("---------- from " + javaClass.name + " " + e.message)
-            }
-        }
-        return classes
     }
 
     /**
@@ -617,7 +594,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 
     //private static Long idTrace = new Long (-1);
     private fun saveOrReplaceTrace(name: String?): Boolean { // or use id, load and save
-        println("MapsActivity.saveOrReplaceTrace:dataTrace=${dataTrace.toString()}, position=${position.toString()}")
         if (dataTrace != null && TraceEndVM.isStart(position?.start) && position?.end != null) {
             if (dataTrace!!.extraPoints.size == 0) { // null entity case
                 val utilPoint = UtilePointSerializer()
@@ -637,7 +613,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             trace.name = name
             trace.save()
             val traceNew = DbFunctions.getTraceByName(name)
-            println("MapsActivity: traceNew=${traceNew}, traceOld=${traceOld}, ")
             if (traceNew == null && traceOld != null) {
                 Delete().from(Trace::class.java).where("name=?", name).execute<Model>()
                 traceOld.save()

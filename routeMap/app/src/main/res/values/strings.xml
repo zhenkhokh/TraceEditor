@@ -7,7 +7,7 @@
     <string name="title_activity_geo">Местоположение</string>
     <string name="title_activity_maps">Просмотр</string>
     <string name="title_activity_toTrace">Точки для маршрута</string>
-    <string name="title_activity_edit">Редактирование</string>
+    <string name="title_activity_edit">Переименование</string>
     <string name="title_activity_waypointsToTrace">Путевые точки</string>
     <string name="title_activity_settings">Настройки</string>
     <string name="title_activity_address">Переход</string>
@@ -133,6 +133,6 @@
     <string name="hide_panel_expand">Раскрыть</string>
 <!--    Actions -->
     <string name="action_traces">Выберете маршрут и нажмите на него</string>
-    <string name="action_geo_offline">Просмотр возможен при загруке оффлайн-маршрута</string>
+    <string name="action_geo_offline">Просмотр возможен при загруке офлайн-маршрута</string>
 
 </resources>
