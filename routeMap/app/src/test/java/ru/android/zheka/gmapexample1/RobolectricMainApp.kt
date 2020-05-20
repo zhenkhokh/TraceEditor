@@ -34,12 +34,8 @@ class RobolectricMainApp : DaggerApplication() {
     //    }
 
     override fun attachBaseContext(base: Context) {
-        try {
-            super.attachBaseContext(base)
-            MultiDex.install(this)
-        } catch (ignored: RuntimeException) {
-            // Multidex support doesn't play well with Robolectric yet
-        }
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {

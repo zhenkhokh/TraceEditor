@@ -17,6 +17,7 @@ import ru.android.zheka.gmapexample1.home.TestHomeBinding;
 import ru.android.zheka.gmapexample1.home.TestHomeBindingModule;
 import ru.android.zheka.gmapexample1.home.TestHomeBinding_HomeFragment;
 import ru.android.zheka.gmapexample1.trace.TestTraceBinding;
+import ru.android.zheka.gmapexample1.trace.TestTraceBinding_TraceFragment;
 
 @Singleton
 @Component(modules = {AndroidSupportInjectionModule.class,
@@ -52,6 +53,7 @@ public interface TestAppComponent extends AndroidInjector <RobolectricMainApp> {
     void inject(ExampleUnitTest app);
     TestHomeBinding_HomeFragment.HomeSubcomponent.Factory homeSubcomponent();
     TestGeoBinding_GeoFragment.GeoSubcomponent.Factory geoSubcomponent();
+    TestTraceBinding_TraceFragment.TraceSubcomponent.Factory traceSubcomponent();
 
 //    IPanelHomeVM homeVM();
 //    Home homeFragment();

@@ -8,11 +8,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.doNothing
 import org.robolectric.RobolectricTestRunner
 import ru.android.zheka.fragment.Home
 import ru.android.zheka.fragment.IHome
+import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.BaseRobolectricTest
 import ru.android.zheka.model.HomeModel
 import ru.android.zheka.vm.IPanelHomeVM
@@ -39,6 +43,9 @@ open class HomeTest : BaseRobolectricTest() {
     var homeModel: HomeModel? = null
 
     @Mock
+    lateinit var traceFragment: Trace
+
+    @Mock
     var view: IHome? = null
 
     @get:Rule
@@ -62,6 +69,13 @@ open class HomeTest : BaseRobolectricTest() {
     fun testInjectFromComponent() {
         assert(ipanelHomeVM != null)
         assert(ipanelHomeVM == handler.vm)
+    }
+
+    @Test
+    fun testCreateTrace() {
+        doNothing().`when`(view)?.switchToFragment(isA(Int::class.java), any())
+        homeVM.createTrace()
+        Mockito.verify(view)?.switchToFragment(anyInt(), any())
     }
 
     @After
