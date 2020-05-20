@@ -9,5 +9,5 @@ import ru.android.zheka.fragment.EnterPoint
 abstract class TestEnterPointBinding {
     @FragmentScope
     @ContributesAndroidInjector(modules = [TestEnterPointBindingModule::class])
-    abstract fun EnterPointFragment(): EnterPoint?
+    abstract fun EnterPointFragment(): EnterPoint
 }

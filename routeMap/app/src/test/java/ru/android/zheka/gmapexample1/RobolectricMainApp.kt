@@ -22,7 +22,7 @@ class RobolectricMainApp : DaggerApplication() {
                 .create()
         ActiveAndroid.initialize(dbConfiguration)
         initConfig()
-        if (Application.optimizationBellmanFlag.isEmpty()) Application.optimizationBellmanFlag = getString(R.string.optimizationdata3)
+//        if (Application.optimizationBellmanFlag.isEmpty()) Application.optimizationBellmanFlag = getString(R.string.optimizationdata3)
     }
 
     //    @Inject
@@ -34,8 +34,12 @@ class RobolectricMainApp : DaggerApplication() {
     //    }
 
     override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        MultiDex.install(this)
+        try {
+            super.attachBaseContext(base)
+            MultiDex.install(this)
+        } catch (ignored: RuntimeException) {
+            // Multidex support doesn't play well with Robolectric yet
+        }
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {

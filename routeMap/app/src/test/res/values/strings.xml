@@ -7,20 +7,17 @@
     <string name="title_activity_geo">Местоположение</string>
     <string name="title_activity_maps">Просмотр</string>
     <string name="title_activity_toTrace">Точки для маршрута</string>
-    <string name="title_activity_edit">Перименование</string>
-    <string name="title_activity_waypointsToTrace">Путевые точки для маршрута</string>
+    <string name="title_activity_edit">Переименование</string>
+    <string name="title_activity_waypointsToTrace">Путевые точки</string>
     <string name="title_activity_settings">Настройки</string>
     <string name="title_activity_address">Переход</string>
     <string name="title_activity_address_go">Переход по адрессу</string>
-    <!-- AIzaSyBXFtw9dCnIF6qQoo49ESbO8HsLHI37EnU
-    AIzaSyDXKazqugD9FL1crhHy8rygvYG1Wk3AigA maven
-    AIzaSyDnjwwaIveNi54bElsua5vrwS-_l-AAXn4 - new
-    -->
+    <!-- use google_maps_api.xml instead -->
     <!--string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDMSQdJ-_asTHWkp-jmmdBJ3YPIkgbTxJw</string-->
-
+    
     <string name="cancel_save_point">Отмена</string>
     <string name="ok_save_point">Ok</string>
-
+    
     <string name="cancel_plot_trace">Нет</string>
     <string name="ok_plot_trace">Да</string>
 
@@ -29,29 +26,31 @@
     <string name="hint_street">улица/-</string>
     <string name="hint_house">дом/стр/кор/-</string>
 
-    <string name="hint_latitude">Широта</string>
-    <string name="hint_longitude">Долгота</string>
-
-    <string name="cancel_choice">Конечная</string>
-    <string name="ok_choice">Путевая</string>
-
+    <string name="hint_latitude">Широта</string>        
+    <string name="hint_longitude">Долгота</string>        
+    
+    <string name="cancel_choice">Конечная</string>        
+    <string name="ok_choice">Путевая</string>    
+    
     <string name="hint_dialog_point">Имя точки</string>
     <string name="hint_dialog_trace">Имя маршрута</string>
     <string name="points_column_name">Точки</string>
-    <string name="points_column_name1">Удаление</string>
-    <string name="traces_column_name">Маршруты</string>
+    <string name="points_column_name1">Удаление</string>    
+    <string name="traces_column_name">Маршруты</string> 
     <string name="traces_column_name1">Удаление</string>
-
+    
     <string name="optimization_text">Оптимизация маршрута</string>
-    <string name="update_text">Отображение координат</string>
+    <string name="update_text">Отображение координат и оценки длины</string>
     <string name="avoid_text">Игнорирование платных дорог</string>
+    <string name="avoid_high_roads_text">Игнорирование шоссе</string>
+    <string name="avoid_in_doors_text">Игнорирование планировки зданий</string>
     <string name="offline_text">Офлайн загрузка</string>
     <string name="segment_text">Скорость построения (c)</string>
-    <string name="travelmodelabel">Способ прокладки маршрута</string>
+    <string name="travelmodelabel">Способ прокладки маршрута</string> 
     <string name="timerlabel">Время обновления местоположения при просмотре</string>
-
-    <string
-        name="feedbacktitle">Enter feedback details to send to the developer:
+   
+       <string
+            name="feedbacktitle">Enter feedback details to send to the developer:
     </string>
     <string name="feedbackname">Your Name</string>
     <string name="feedbackemail">Your Email</string>
@@ -64,28 +63,76 @@
     <string name="feedbacktype2">Gripe</string>
     <string name="feedbacktype3">Suggestion</string>
     <string name="feedbacktype4">Bug</string>
-    <!-- see Routing.java -->
+<!-- see Routing.java -->
     <string name="travelmode1">BIKING</string>
     <string name="travelmode2">DRIVING</string>
     <string name="travelmode3">WALKING</string>
     <string name="travelmode4">TRANSIT</string>
-    <string name="traveluser1">Мотоцикл (Biking)</string>
-    <string name="traveluser2">Авто (Driving)</string>
-    <string name="traveluser3">Пешеход (Walking)</string>
-    <string name="traveluser4">Общественный транспорт (Transit)</string>
+        <string name="traveluser1">Мотоцикл (Biking)</string>
+        <string name="traveluser2">Авто (Driving)</string>
+        <string name="traveluser3">Пешеход (Walking)</string>
+        <string name="traveluser4">Общественный транспорт (Transit)</string>
     <string name="timerdata1">0</string>
     <string name="timerdata2">300000</string>
     <string name="timerdata3">30000</string>
     <string name="timerdata4">3000</string>
-    <string name="timeruser1">Никогда</string>
-    <string name="timeruser2">Редко (раз в 5 минут)</string>
-    <string name="timeruser3">Иногда (раз в пол минуты)</string>
-    <string name="timeruser4">Часто (раз в 3 секунды)</string>
+        <string name="timeruser1">Никогда</string>
+        <string name="timeruser2">Редко (раз в 5 минут)</string>
+        <string name="timeruser3">Иногда (раз в пол минуты)</string>
+        <string name="timeruser4">Часто (раз в 3 секунды)</string>
     <!-- 1 and 2 options use boolean optimization field-->
     <string name="optimizationdata3">bellmanFord</string>
-    <string name="optimizationuser1">Нет</string>
-    <string name="optimizationuser2">Google</string>
-    <string name="optimizationuser3">Бэллман-Форд</string>
+        <string name="optimizationuser1">Нет</string>
+        <string name="optimizationuser2">Google</string>
+        <string name="optimizationuser3">Бэллман-Форд</string>
     <string name="offlineOff">false</string>
     <string name="offlineOn">true</string>
+<!--    home buttons-->
+		<string name="home_settings_btn">Настройки</string>
+		<string name="home_toTrace_btn">Создать маршрут</string>
+		<string name="home_points_btn">Навигация по точкам</string>
+		<string name="home_editTrace_btn">Правка маршрутов</string>
+		<string name="home_editPoint_btn">Правка точек</string>
+		<string name="home_address_btn">Переход</string>
+		<string name="home_geo_btn">Местоположение</string>
+		<string name="home_info_btn">Помощь</string>
+<!--    geo buttons-->
+    <string name="geo_home">Главная</string>
+    <string name="geo_points">Навигация по точкам</string>
+    <string name="geo_save_point">Сохранить точку</string>
+    <string name="geo_point_to_trace">Передать ЦТ в маршрут</string>
+    <string name="geo_add_waypoints">Передать путевые точки в маршрут</string>
+    <string name="geo_maps">Просмотр</string>
+
+    <string name="errorDialog_windowTitle">Ошибка</string>
+<!--    Trace spinner-->
+    <string name="trace_spinner_load">Загрузка маршрута</string>
+    <string name="trace_spinner_start">Задать начало и сбросить маршрут</string>
+    <string name="trace_spinner_way">@string/title_activity_waypointsToTrace</string>
+    <string name="trace_spinner_end">Задать конец</string>
+<!--    Geo spinner-->
+<!--    <string name="geo_spinner_map">@string/geo_point_to_trace</string>-->
+    <string name="geo_spinner_start">Вернуться в начало</string>
+    <string name="geo_spinner_way">Добавить путевую</string>
+    <string name="geo_spinner_end">Задать конец и просмотреть</string>
+    <string name="action_geo">Выберете действие над ЦТ</string>
+<!--    geo-->
+    <string name="map_home">Главная</string>
+    <string name="map_geo">Местоположение</string>
+    <string name="map_saveTrace">Сохранить маршрут</string>
+<!--    <string name="map_trace">Загрузить маршрут</string>-->
+    <string name="map_fakeStart">Старт</string>
+    <string name="map_mapType">Карта</string>
+    <string name="map_goPosition">Гео</string>
+<!-- enter_point-->
+    <string name="enter_point_address">Задать по адресу</string>
+    <string name="enter_point_coordinate">Задать по координатам</string>
+    <string name="address_clear">Очистить</string>
+<!--    hide panel-->
+    <string name="hide_panel_open">Скрыть</string>
+    <string name="hide_panel_expand">Раскрыть</string>
+<!--    Actions -->
+    <string name="action_traces">Выберете маршрут и нажмите на него</string>
+    <string name="action_geo_offline">Просмотр возможен при загруке офлайн-маршрута</string>
+
 </resources>

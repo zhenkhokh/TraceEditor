@@ -13,10 +13,9 @@ class TestHomeBindingModule {
     var mockVM = Mockito.mock(IPanelHomeVM::class.java)
 
     @Provides
-    fun bindHomeVM(model: IHomeModel?, view: IHome?, edit: IEdit?, editTraces: IEditTraces?, trace: ITrace?, enterPoint: IEnterPoint?)
-         : IPanelHomeVM {
-        return PanelHomeVM(view!!, model!!, edit!!, editTraces!!, trace!!, enterPoint!!)
-        //new PanelHomeVM (Mockito.mock(IActivity.class), Mockito.mock(HomeModel.class));//mockVM;// Mockito.mock (IPanelHomeVM.class)
+    fun bindHomeVM(model: IHomeModel?, view: IHome?, edit: IEdit, editTraces: IEditTraces, trace: ITrace, enterPoint: IEnterPoint)
+            : IPanelHomeVM {
+        return PanelHomeVM(view!!, model!!, edit, editTraces, trace, enterPoint)
     }
 
     @Provides

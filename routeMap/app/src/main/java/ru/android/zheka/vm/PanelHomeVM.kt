@@ -23,8 +23,8 @@ import ru.android.zheka.model.IHomeModel
 import java.util.*
 
 class PanelHomeVM(val view: IActivity, val model: IPanelModel,
-                  val edit: IEdit, val editTraces: IEditTraces,
-                  val trace: ITrace, val enterPoint: IEnterPoint
+                  val edit: IEdit?, val editTraces: IEditTraces?,
+                  val trace: ITrace?, val enterPoint: IEnterPoint?
 ) : IPanelHomeVM {
     var fragment: Fragment?
 
@@ -36,7 +36,7 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
         removeAndSwitchFragmentFromContainer(id.latLngFragment, Settings())
     }
 
-    private fun removeAndSwitchFragmentFromContainer(id: Int, fragment_: Fragment) {
+    private fun removeAndSwitchFragmentFromContainer(id: Int, fragment_: Fragment?) {
         if (fragment != null) {
             view.removeFragment(fragment!!)
         }
@@ -66,7 +66,7 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
     }
 
     override fun enterPoint() {
-        removeAndSwitchFragmentFromContainer(id.latLngFragment, enterPoint as EnterPoint)
+        removeAndSwitchFragmentFromContainer(id.latLngFragment, enterPoint as EnterPoint )
     }
 
     override fun geo() {
