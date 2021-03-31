@@ -11,11 +11,16 @@ import ru.android.zheka.geo.GeoCoder
 class AddressModel(context: Context) : PanelModel(context), IAddressModel {
 
     private var _clearButton =  ObservableField(ButtonHandler())
+    private var _recordButton =  ObservableField(ButtonHandler())
     private var _house: ObservableField<String> = ObservableField("")
     private var _street: ObservableField<String> = ObservableField("")
     private var _city: ObservableField<String> = ObservableField("")
     private var _region: ObservableField<String> = ObservableField("")
 
+
+    override var recordButton: ObservableField<ButtonHandler>
+        get() = _recordButton
+        set(value) {}
     override var region: ObservableField<String>
         get() = _region
         set(value) {}

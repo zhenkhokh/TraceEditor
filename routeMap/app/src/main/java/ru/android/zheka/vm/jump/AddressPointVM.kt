@@ -1,11 +1,23 @@
 package ru.android.zheka.vm.jump
 
+import android.Manifest
+import android.app.Application.ActivityLifecycleCallbacks
+import android.media.MediaRecorder
+import android.net.VpnService.prepare
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.coreUI.RxTransformer
@@ -16,6 +28,7 @@ import ru.android.zheka.fragment.EnterPoint
 import ru.android.zheka.fragment.IEnterPoint
 import ru.android.zheka.fragment.JumpPoint
 import ru.android.zheka.geo.GeoParserImpl
+import ru.android.zheka.gmapexample1.Application
 import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.AddressModel
@@ -92,8 +105,43 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         }, {}, options(), view))
         panelModel.nextButton2.set(ButtonHandler({ onClick() }, R.string.home_address_btn, view))
         model.clearButton.set(ButtonHandler({ clear() }, R.string.address_clear, view))
+        model.recordButton.set(ButtonHandler({ record() },R.string.address_record, view))
         updateUIModel()
     }
+
+    private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    private val REQUEST_WRITE_STORAGE_PERMISSION = 201
+    private lateinit var recorder:MediaRecorder
+
+    class MyViewModel: ViewModel {
+        public constructor()
+    }
+
+    private fun record() {
+        ActivityCompat.requestPermissions(view.activity, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+        val viewModel = ViewModelProvider(view as Fragment).get(MyViewModel::class.java)
+
+        viewModel.viewModelScope.launch {
+            delay(2000)
+            recorder.apply {
+                stop()
+                reset()
+                release()
+            }
+        }
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
+            prepare()
+            start()   // Recording is now started
+        }
+    }
+
+
 
     override fun clear() {
         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config

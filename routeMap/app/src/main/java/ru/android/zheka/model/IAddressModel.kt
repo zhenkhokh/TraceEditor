@@ -9,4 +9,5 @@ interface IAddressModel : IEnterPointModel {
     var street: ObservableField<String>
     var house: ObservableField<String>
     var clearButton: ObservableField<ButtonHandler>
+    var recordButton: ObservableField<ButtonHandler>
 }

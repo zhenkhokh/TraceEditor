@@ -25,7 +25,7 @@ task createTestResources {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion "28.0.3"
     sourceSets {
         main.root = 'src/main'
@@ -44,9 +44,9 @@ android {
     defaultConfig {
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 29
-        versionName "3.0.1"
+        targetSdkVersion 29
+        versionCode 30
+        versionName "3.0.2"
         multiDexEnabled = true
         //robolectric
         javaCompileOptions {
@@ -146,7 +146,6 @@ repositories {
 
 dependencies {
 //    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
     //robolectric
     api 'com.google.guava:guava:28.2-android'
     testImplementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'

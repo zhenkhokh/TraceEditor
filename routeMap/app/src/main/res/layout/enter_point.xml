@@ -63,12 +63,24 @@
                 android:hint="@string/hint_house"
                 android:inputType="text"
                 android:text="@={vm.model().house}" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="@{() -> vm.model().clearButton.onClick()}"
                 android:visibility="@{vm.model().clearButton.getVisible()}"
                 android:text="@{vm.model().clearButton.getLabel()}"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="@{() -> vm.model().recordButton.onClick()}"
+                android:visibility="@{vm.model().recordButton.getVisible()}"
+                android:text="@{vm.model().recordButton.getLabel()}"/>
+        </LinearLayout>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
