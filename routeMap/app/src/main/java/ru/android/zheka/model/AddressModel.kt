@@ -1,15 +1,23 @@
 package ru.android.zheka.model
 
 import android.content.Context
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.google.android.gms.maps.model.LatLng
 import ru.android.zheka.coreUI.ButtonHandler
+import ru.android.zheka.coreUI.OnFocusCallback
 import ru.android.zheka.coreUI.PanelModel
 import ru.android.zheka.geo.GeoCoder
 
 class AddressModel(context: Context) : PanelModel(context), IAddressModel {
 
+    private val _focusStreet: ObservableBoolean = ObservableBoolean(false)
+    private val _focusHouse: ObservableBoolean = ObservableBoolean(false)
+    private val _focusCity: ObservableBoolean = ObservableBoolean(false)
+    private val _focusReg: ObservableBoolean = ObservableBoolean(false)
+
+    private lateinit var _onFocusLost: OnFocusCallback
     private var _clearButton =  ObservableField(ButtonHandler())
     private var _recordButton =  ObservableField(ButtonHandler())
     private var _house: ObservableField<String> = ObservableField("")
@@ -17,22 +25,30 @@ class AddressModel(context: Context) : PanelModel(context), IAddressModel {
     private var _city: ObservableField<String> = ObservableField("")
     private var _region: ObservableField<String> = ObservableField("")
 
+    override var onFocusLost: OnFocusCallback
+        get() = _onFocusLost;
+        set(value) {_onFocusLost = value}
+    override var focusReg: ObservableBoolean
+        get() = _focusReg
+        set(value) {}
+    override val focusCity: ObservableBoolean
+        get() = _focusCity
+    override val focusStreet: ObservableBoolean
+        get() = _focusStreet
+    override val focusHouse: ObservableBoolean
+        get() = _focusHouse
 
     override var recordButton: ObservableField<ButtonHandler>
         get() = _recordButton
         set(value) {}
-    override var region: ObservableField<String>
+    override val region: ObservableField<String>
         get() = _region
-        set(value) {}
-    override var city: ObservableField<String>
+    override val city: ObservableField<String>
         get() = _city
-        set(value) {}
-    override var street: ObservableField<String>
+    override val street: ObservableField<String>
         get() = _street
-        set(value) {}
-    override var house: ObservableField<String>
+    override val house: ObservableField<String>
         get() = _house
-        set(value) {}
     override var clearButton: ObservableField<ButtonHandler>
         get() = _clearButton
         set(value) {}

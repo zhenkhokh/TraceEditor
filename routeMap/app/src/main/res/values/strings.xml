@@ -128,7 +128,7 @@
     <string name="enter_point_address">Задать по адресу</string>
     <string name="enter_point_coordinate">Задать по координатам</string>
     <string name="address_clear">Очистить</string>
-    <string name="address_record">Запись</string>
+    <string name="address_record">Запись поля</string>
 
     <!--    hide panel-->
     <string name="hide_panel_open">Скрыть</string>

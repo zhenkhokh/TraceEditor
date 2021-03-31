@@ -1,26 +1,24 @@
 package ru.android.zheka.vm.jump
 
 import android.Manifest
-import android.app.Application.ActivityLifecycleCallbacks
 import android.media.MediaRecorder
-import android.net.VpnService.prepare
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IPanelModel
-import ru.android.zheka.coreUI.RxTransformer
+import ru.android.zheka.coreUI.OnFocusCallback
 import ru.android.zheka.coreUI.SpinnerHandler
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
@@ -28,13 +26,12 @@ import ru.android.zheka.fragment.EnterPoint
 import ru.android.zheka.fragment.IEnterPoint
 import ru.android.zheka.fragment.JumpPoint
 import ru.android.zheka.geo.GeoParserImpl
-import ru.android.zheka.gmapexample1.Application
 import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.AddressModel
+import ru.android.zheka.model.FocusData
 import ru.android.zheka.model.IAddressModel
 import ru.android.zheka.model.IEnterPointModel
-import java.lang.Exception
 
 class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddressPointVM {
 
@@ -58,17 +55,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
 //        if (isAllFieldCorrect) {
             Observable.just(true).observeOn(Schedulers.io())
                     .subscribe({
-                        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
-                        config.address = StringBuilder().append(model.region.get()).append(aDelimiter)
-                                .append(model.city.get()).append(aDelimiter)
-                                .append(model.street.get()).append(aDelimiter)
-                                .append(model.house.get()).toString()
-                        try {
-                            DbFunctions.add(config)
-                        } catch (e: IllegalAccessException) {
-                        } catch (e: InstantiationException) {
-                            // not critical
-                        }
+                        updateDb()
                         val geoCoder = try {
                             GeoParserImpl(model.region.get()
                                     , model.city.get()
@@ -88,6 +75,20 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
 //        throw java.lang.RuntimeException("Имеются пустые поля, используйте \"-\" для них")
     }
 
+    private fun updateDb() {
+        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
+        config.address = StringBuilder().append(model.region.get()).append(aDelimiter)
+                .append(model.city.get()).append(aDelimiter)
+                .append(model.street.get()).append(aDelimiter)
+                .append(model.house.get()).toString()
+        try {
+            DbFunctions.add(config)
+        } catch (e: IllegalAccessException) {
+        } catch (e: InstantiationException) {
+            // not critical
+        }
+    }
+
     private val isAllFieldCorrect: Boolean
         private get() {
             if (model.region.get()!!.isEmpty()) return false
@@ -105,36 +106,82 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         }, {}, options(), view))
         panelModel.nextButton2.set(ButtonHandler({ onClick() }, R.string.home_address_btn, view))
         model.clearButton.set(ButtonHandler({ clear() }, R.string.address_clear, view))
-        model.recordButton.set(ButtonHandler({ record() },R.string.address_record, view))
+        model.recordButton.set(ButtonHandler({ record() }, R.string.address_record, view))
+        model.recordButton.get()?.visible?.set(View.INVISIBLE)
+        model.onFocusLost = this.recordSoundToField()
         updateUIModel()
+    }
+    val REG_ID = R.id.text_region_1
+    val CITY_ID = R.id.text_city_1
+    val STREET_ID = R.id.text_street_1
+    val HOUSE_ID = R.id.text_house_1
+
+    private fun recordSoundToField() =  FocusData(Consumer{ v ->
+        focusItem(v.id, false)
+        //TODO get text message
+        recordField(v.id, v.id.toString())
+        updateDb()
+        Toast.makeText(v.context,v.id.toString(),300).show()
+    }, Consumer { v ->
+        focusItem(v.id, true)
+        model.recordButton.get()?.visible?.set(View.VISIBLE)
+    })
+
+    private fun recordField(id: Int, msg: String) {
+        when(id) {
+            CITY_ID -> { model.city.set(msg) }
+            STREET_ID -> { model.street.set(msg) }
+            HOUSE_ID -> { model.house.set(msg) }
+            REG_ID -> { model.region.set(msg) }
+        }
+    }
+
+    private fun focusItem(id:Int, isFocus:Boolean) {
+        when(id) {
+            CITY_ID -> { model.focusCity.set(isFocus) }
+            STREET_ID -> { model.focusStreet.set(isFocus) }
+            HOUSE_ID -> { model.focusHouse.set(isFocus) }
+            REG_ID -> { model.focusReg.set(isFocus) }
+        }
     }
 
     private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    private val REQUEST_WRITE_STORAGE_PERMISSION = 201
     private lateinit var recorder:MediaRecorder
 
-    class MyViewModel: ViewModel {
+    class RecordViewModel: ViewModel {
         public constructor()
     }
 
     private fun record() {
         ActivityCompat.requestPermissions(view.activity, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-        val viewModel = ViewModelProvider(view as Fragment).get(MyViewModel::class.java)
+        val viewModel = ViewModelProvider(view as Fragment).get(RecordViewModel::class.java)
 
         viewModel.viewModelScope.launch {
-            delay(2000)
+            delay(2000)// TODO wait while timer or click
             recorder.apply {
                 stop()
                 reset()
                 release()
+            }
+            model.apply {
+                if (focusReg.get()) {
+                    focusCity.set(true)
+                }else if (focusCity.get()){
+                    focusStreet.set(true)
+                }else if (focusStreet.get()) {
+                    focusHouse.set(true)
+                }else if (focusHouse.get()) {
+                    focusReg.set(true)
+                }
             }
         }
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setMaxDuration(60000)
             setOutputFile("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
             prepare()
             start()   // Recording is now started
@@ -177,3 +224,20 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         panelModel.action().set("")
     }
 }
+    @BindingAdapter("app:requestFocus")
+    fun requestFocus(view: View, requestFocus: Boolean){
+        if(requestFocus){
+            view.apply { isFocusableInTouchMode = true
+                requestFocus()
+            }
+        }
+    }
+    @BindingAdapter("app:onFocusLost")
+    fun onFocusLost(view:View, callback: OnFocusCallback) {
+        view.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) { callback.onFocusLost(view as EditText)
+                return@setOnFocusChangeListener
+            }
+            callback.onFocus(view as EditText)
+        }
+    }

@@ -1,4 +1,4 @@
-<layout >
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,7 +35,9 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_region"
                 android:inputType="text"
-                android:text="@={vm.model().region}" />
+                android:text="@={vm.model().region}"
+                app:onFocusLost="@{vm.model().onFocusLost}"
+                app:requestFocus="@{vm.model().focusReg}" />
 
             <EditText
                 android:id="@+id/text_city_1"
@@ -44,7 +46,9 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_city"
                 android:inputType="text"
-                android:text="@={vm.model().city}" />
+                android:text="@={vm.model().city}"
+                app:onFocusLost="@{vm.model().onFocusLost}"
+                app:requestFocus="@{vm.model().focusCity}" />
 
             <EditText
                 android:id="@+id/text_street_1"
@@ -53,7 +57,9 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_street"
                 android:inputType="text"
-                android:text="@={vm.model().street}" />
+                android:text="@={vm.model().street}"
+                app:onFocusLost="@{vm.model().onFocusLost}"
+                app:requestFocus="@{vm.model().focusStreet}" />
 
             <EditText
                 android:id="@+id/text_house_1"
@@ -62,7 +68,10 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_house"
                 android:inputType="text"
-                android:text="@={vm.model().house}" />
+                android:text="@={vm.model().house}"
+                app:onFocusLost="@{vm.model().onFocusLost}"
+                app:requestFocus="@{vm.model().focusHouse}" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +88,9 @@
                 android:layout_height="match_parent"
                 android:onClick="@{() -> vm.model().recordButton.onClick()}"
                 android:visibility="@{vm.model().recordButton.getVisible()}"
-                android:text="@{vm.model().recordButton.getLabel()}"/>
+                android:text="@{vm.model().recordButton.getLabel()}"
+                android:focusable="true"/>
+
         </LinearLayout>
 
         </LinearLayout>
