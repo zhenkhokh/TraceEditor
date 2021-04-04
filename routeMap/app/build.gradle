@@ -267,6 +267,10 @@ dependencies {
     androidTestImplementation test.mockito
     implementation test.fragment
 
+    implementation http.retrofit
+    implementation http.moshiModule
+    implementation http.gsonModule
+
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
 //exclude module: 'support-v4'

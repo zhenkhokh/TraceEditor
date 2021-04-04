@@ -2,20 +2,25 @@ package ru.android.zheka.vm.jump
 
 import android.Manifest
 import android.media.MediaRecorder
+import android.os.Build
+import android.util.Base64
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.coreUI.OnFocusCallback
@@ -26,12 +31,16 @@ import ru.android.zheka.fragment.EnterPoint
 import ru.android.zheka.fragment.IEnterPoint
 import ru.android.zheka.fragment.JumpPoint
 import ru.android.zheka.geo.GeoParserImpl
-import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.AddressModel
+import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.model.FocusData
 import ru.android.zheka.model.IAddressModel
 import ru.android.zheka.model.IEnterPointModel
+import ru.android.zheka.sound.response.ResponseError
+import ru.android.zheka.sound.SoundParser
+import ru.android.zheka.sound.response.SoundResponse
+import java.io.File
 
 class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddressPointVM {
 
@@ -116,10 +125,39 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
     val STREET_ID = R.id.text_street_1
     val HOUSE_ID = R.id.text_house_1
 
+    class ResponseHolder (val vm:AddressPointVM):retrofit2.Callback<SoundResponse>{
+        override fun onFailure(call: retrofit2.Call<SoundResponse>, t: Throwable) {
+            Observable.just(true).subscribe({throw t},vm.view::showError)
+        }
+
+        override fun onResponse(call: retrofit2.Call<SoundResponse>, response: Response<SoundResponse>) {
+            if (response.body()!=null) {
+                val results = response.body()!!.results
+                val alternatives = results.get(0).alternatives
+                vm.response = alternatives.get(0).toString()
+                return
+            }
+            val bytes = response.errorBody()?.bytes()!!
+            val error = Gson().fromJson(String(bytes), ResponseError::class.java)
+            vm.response = error.error.toString()
+        }
+    }
+
+    var response:String? = null
+
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     private fun recordSoundToField() =  FocusData(Consumer{ v ->
         focusItem(v.id, false)
-        //TODO get text message
-        recordField(v.id, v.id.toString())
+        val bytes = File("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
+                .readBytes()
+        val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP) //no eol
+
+        //TODO get content sound
+        //TODO hide string key
+        // TODO view.activity.?.path!!
+        SoundParser(base64).parse_("AIzaSyCC4Wzcq00qH3LEXqCro9xPdLxcqTREPtQ")
+                .enqueue(ResponseHolder(this))
+        recordField(v.id, response?:"null")
         updateDb()
         Toast.makeText(v.context,v.id.toString(),300).show()
     }, Consumer { v ->
@@ -148,7 +186,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
     private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    private lateinit var recorder:MediaRecorder
+    private lateinit var recorder: MediaRecorder
 
     class RecordViewModel: ViewModel {
         public constructor()
@@ -181,7 +219,8 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setMaxDuration(60000)
+            setMaxDuration(30000)
+            //TODO DirExternal
             setOutputFile("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
             prepare()
             start()   // Recording is now started
