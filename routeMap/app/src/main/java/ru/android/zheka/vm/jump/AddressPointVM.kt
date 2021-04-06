@@ -1,13 +1,10 @@
 package ru.android.zheka.vm.jump
 
 import android.Manifest
-import android.media.MediaRecorder
-import android.os.Build
 import android.util.Base64
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
@@ -21,10 +18,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import ru.android.zheka.coreUI.ButtonHandler
-import ru.android.zheka.coreUI.IPanelModel
-import ru.android.zheka.coreUI.OnFocusCallback
-import ru.android.zheka.coreUI.SpinnerHandler
+import ru.android.zheka.coreUI.*
 import ru.android.zheka.db.Config
 import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.fragment.EnterPoint
@@ -37,9 +31,10 @@ import ru.android.zheka.model.AddressModel.Companion.aDelimiter
 import ru.android.zheka.model.FocusData
 import ru.android.zheka.model.IAddressModel
 import ru.android.zheka.model.IEnterPointModel
-import ru.android.zheka.sound.response.ResponseError
 import ru.android.zheka.sound.SoundParser
+import ru.android.zheka.sound.response.ResponseError
 import ru.android.zheka.sound.response.SoundResponse
+import ru.android.zheka.sound.util.AudioRecorder
 import java.io.File
 
 class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddressPointVM {
@@ -125,52 +120,73 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
     val STREET_ID = R.id.text_street_1
     val HOUSE_ID = R.id.text_house_1
 
-    class ResponseHolder (val vm:AddressPointVM):retrofit2.Callback<SoundResponse>{
+    class ResponseHolder (val vm:AddressPointVM, val v:View):retrofit2.Callback<SoundResponse>{
         override fun onFailure(call: retrofit2.Call<SoundResponse>, t: Throwable) {
             Observable.just(true).subscribe({throw t},vm.view::showError)
         }
 
         override fun onResponse(call: retrofit2.Call<SoundResponse>, response: Response<SoundResponse>) {
             if (response.body()!=null) {
+                if (!response.body()!!.isInitialized()) return //TODO show error
                 val results = response.body()!!.results
+                if (results.isEmpty() || !results.get(0).isInitialized()) return
                 val alternatives = results.get(0).alternatives
                 vm.response = alternatives.get(0).toString()
+                recordResponse()
                 return
             }
             val bytes = response.errorBody()?.bytes()!!
             val error = Gson().fromJson(String(bytes), ResponseError::class.java)
+            if (!error.isInitialized()) return
             vm.response = error.error.toString()
+            //TODO show error
+        }
+
+        private fun recordResponse() {
+            vm.apply {
+                recordField(v.id, response ?: "null")
+                response = null
+            }
         }
     }
 
     var response:String? = null
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     private fun recordSoundToField() =  FocusData(Consumer{ v ->
         focusItem(v.id, false)
-        val bytes = File("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
-                .readBytes()
-        val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP) //no eol
+        if (this::recorder.isInitialized && !recorder.isReleased) { // make light
+            val bytes = File("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio.wav")
+                    .readBytes()
+            val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP) //no eol
 
-        //TODO get content sound
-        //TODO hide string key
-        // TODO view.activity.?.path!!
-        SoundParser(base64).parse_("AIzaSyCC4Wzcq00qH3LEXqCro9xPdLxcqTREPtQ")
-                .enqueue(ResponseHolder(this))
-        recordField(v.id, response?:"null")
-        updateDb()
-        Toast.makeText(v.context,v.id.toString(),300).show()
+            // TODO view.activity.?.path!!
+            SoundParser(base64).parse(view.context.getString(R.string.SPEECH_KEY))
+                    .enqueue(ResponseHolder(this, v))
+        }
+        if (this::recorder.isInitialized) recorder.release()
+        Toast.makeText(v.context,v.id.toString(),300).show()//TODO remove
     }, Consumer { v ->
         focusItem(v.id, true)
         model.recordButton.get()?.visible?.set(View.VISIBLE)
     })
 
     private fun recordField(id: Int, msg: String) {
-        when(id) {
-            CITY_ID -> { model.city.set(msg) }
-            STREET_ID -> { model.street.set(msg) }
-            HOUSE_ID -> { model.house.set(msg) }
-            REG_ID -> { model.region.set(msg) }
+        if (msg != "null") {
+            when (id) {
+                CITY_ID -> {
+                    model.city.set(msg)
+                }
+                STREET_ID -> {
+                    model.street.set(msg)
+                }
+                HOUSE_ID -> {
+                    model.house.set(msg)
+                }
+                REG_ID -> {
+                    model.region.set(msg)
+                }
+            }
+            updateDb()
         }
     }
 
@@ -186,7 +202,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
     private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    private lateinit var recorder: MediaRecorder
+    private lateinit var recorder: AudioRecorder
 
     class RecordViewModel: ViewModel {
         public constructor()
@@ -196,12 +212,12 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         ActivityCompat.requestPermissions(view.activity, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
         val viewModel = ViewModelProvider(view as Fragment).get(RecordViewModel::class.java)
 
+        Observable.just(true).subscribe({})
         viewModel.viewModelScope.launch {
-            delay(2000)// TODO wait while timer or click
+            delay(3000)// TODO wait while timer or click
             recorder.apply {
                 stop()
-                reset()
-                release()
+//                reset()
             }
             model.apply {
                 if (focusReg.get()) {
@@ -215,15 +231,10 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
                 }
             }
         }
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setMaxDuration(30000)
+        recorder = AudioRecorder("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio").apply {
             //TODO DirExternal
-            setOutputFile("/sdcard/Android/data/ru.android.zheka.gmapexample1/testAudio")
-            prepare()
-            start()   // Recording is now started
+            Observable.just(true).compose(RxTransformer.observableIoToMain())
+                    .subscribe({ start() }, view::showError).dispose()   // Recording is now started
         }
     }
 

@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.android.zheka.sound.response.SoundResponse
 
-class SoundParser(val soundContent:String) {
+class SoundParser(soundContent:String) {
     val retrofit: Retrofit
     val params:Sound
 
@@ -30,12 +30,7 @@ class SoundParser(val soundContent:String) {
 
     fun parse(auth:String): Call<SoundResponse> {
         val service = retrofit.create(SpeechService::class.java)
-        return service.soundText(params, auth)
-    }
-
-    fun parse_(auth:String): Call<SoundResponse> {
-        val service = retrofit.create(SpeechService::class.java)
-        return service.soundText_(params.languageCode, params.audioContent,
+        return service.soundText(params.languageCode, params.audioContent,
             params.enableWordTimeOffsets,auth)
     }
 }
