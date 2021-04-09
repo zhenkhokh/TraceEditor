@@ -1,6 +1,7 @@
 package ru.android.zheka.model
 
 import android.content.Context
+import android.widget.EditText
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
@@ -20,13 +21,22 @@ class AddressModel(context: Context) : PanelModel(context), IAddressModel {
     private lateinit var _onFocusLost: OnFocusCallback
     private var _clearButton =  ObservableField(ButtonHandler())
     private var _recordButton =  ObservableField(ButtonHandler())
+    private val _backButton =  ObservableField(ButtonHandler())
     private var _house: ObservableField<String> = ObservableField("")
     private var _street: ObservableField<String> = ObservableField("")
     private var _city: ObservableField<String> = ObservableField("")
     private var _region: ObservableField<String> = ObservableField("")
 
     override var onFocusLost: OnFocusCallback
-        get() = _onFocusLost;
+        get() = if (this::_onFocusLost.isInitialized) _onFocusLost else object :OnFocusCallback {
+            override fun onFocusLost(view: EditText) {
+                TODO("Never used")
+            }
+
+            override fun onFocus(view: EditText) {
+                TODO("Never used")
+            }
+        }
         set(value) {_onFocusLost = value}
     override var focusReg: ObservableBoolean
         get() = _focusReg
@@ -40,6 +50,9 @@ class AddressModel(context: Context) : PanelModel(context), IAddressModel {
 
     override var recordButton: ObservableField<ButtonHandler>
         get() = _recordButton
+        set(value) {}
+    override var backButton: ObservableField<ButtonHandler>
+        get() = _backButton
         set(value) {}
     override val region: ObservableField<String>
         get() = _region

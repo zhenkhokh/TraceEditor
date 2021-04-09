@@ -25,7 +25,7 @@ task createTestResources {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "28.0.3"
     sourceSets {
         main.root = 'src/main'
@@ -44,9 +44,9 @@ android {
     defaultConfig {
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 30
-        versionName "3.0.2"
+        targetSdkVersion 30
+        versionCode 33
+        versionName "3.1.1"
         multiDexEnabled = true
         //robolectric
         javaCompileOptions {
@@ -267,9 +267,15 @@ dependencies {
     androidTestImplementation test.mockito
     implementation test.fragment
 
-    implementation http.retrofit
-    implementation http.moshiModule
+    implementation (http.retrofit)
+//            {
+//        exclude(group: 'com.squareup.okhttp3')
+//    }
+//    implementation http.moshiModule
     implementation http.gsonModule
+    implementation ("com.squareup.okhttp3:okhttp:3.12.0"){
+        force = true
+    }
 
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')

@@ -14,6 +14,7 @@ interface IAddressModel : IEnterPointModel {
     val house: ObservableField<String>
     var clearButton: ObservableField<ButtonHandler>
     var recordButton: ObservableField<ButtonHandler>
+    var backButton: ObservableField<ButtonHandler>
     var onFocusLost: OnFocusCallback
     var focusReg: ObservableBoolean
     val focusCity: ObservableBoolean

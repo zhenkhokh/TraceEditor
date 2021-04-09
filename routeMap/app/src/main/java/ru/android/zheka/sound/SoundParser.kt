@@ -5,32 +5,32 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.android.zheka.sound.response.SoundResponse
 
-class SoundParser(soundContent:String) {
+class SoundParser {
     val retrofit: Retrofit
     val params:Sound
 
-    init {
-//        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-//        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+    companion object {
+        val RU_CODE = "ru-RU"
+        val EN_CODE = "en-US"
+    }
 
-//        val client:OkHttpClient = OkHttpClient.Builder()
-//                //.addInterceptor(interceptor)
-//                .build()
+    init {
         retrofit = Retrofit.Builder()
                 .baseUrl("https://speech.googleapis.com")
-//                .client(client)
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         params = Sound()
-        params.audioContent = soundContent
-        params.languageCode = "ru-RU"
         params.enableWordTimeOffsets = "true"
     }
 
-    fun parse(auth:String): Call<SoundResponse> {
+    fun buildContent(soundContent:String):SoundParser {
+        params.audioContent = soundContent
+        return this
+    }
+
+    fun parse(auth:String, lan:String = RU_CODE): Call<SoundResponse> {
         val service = retrofit.create(SpeechService::class.java)
-        return service.soundText(params.languageCode, params.audioContent,
+        return service.soundText(lan, params.audioContent,
             params.enableWordTimeOffsets,auth)
     }
 }
