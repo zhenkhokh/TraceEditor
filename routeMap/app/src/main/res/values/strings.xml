@@ -127,12 +127,20 @@
 <!-- enter_point-->
     <string name="enter_point_address">Задать по адресу</string>
     <string name="enter_point_coordinate">Задать по координатам</string>
+    <string name="enter_point_address_en">Задать адрес по-английски</string>
     <string name="address_clear">Очистить</string>
-<!--    hide panel-->
+    <string name="address_record">Голосовая запись</string>
+    <string name="address_repeat_btn">Повторить</string>
+
+    <!--    hide panel-->
     <string name="hide_panel_open">Скрыть</string>
     <string name="hide_panel_expand">Раскрыть</string>
 <!--    Actions -->
     <string name="action_traces">Выберете маршрут и нажмите на него</string>
     <string name="action_geo_offline">Просмотр возможен при загруке офлайн-маршрута</string>
+<!-- Errors -->
+    <string name="err_emptyVoiceBody">Ответ пришел пустым, проверьте подключение микрофона</string>
+    <string name="err_emptyVoiceResult">Нет слов</string>
+    <string name="err_emptyVoiceUndef">Не определенная ошибка</string>
 
 </resources>

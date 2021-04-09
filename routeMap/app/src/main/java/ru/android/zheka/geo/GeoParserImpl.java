@@ -34,14 +34,13 @@ public class GeoParserImpl extends GeoParser {
             e.printStackTrace ();
         }
         sb.append ("&format=json");
-        GeoCoder out = null;
         try {
-            out = new GeoCoderImpl (/*URLEncoder.encode(sb.toString (),encode)*/sb.toString ());
+            return new GeoCoderImpl (/*URLEncoder.encode(sb.toString (),encode)*/sb.toString ());
         } catch (JSONException e) {
-            e.printStackTrace ();
             throw new YandexGeoCoderException ();
+        } catch (Exception e){
+            throw e;
         }
-        return out;
     }
     public class YandexGeoCoderException extends RuntimeException{}
 }

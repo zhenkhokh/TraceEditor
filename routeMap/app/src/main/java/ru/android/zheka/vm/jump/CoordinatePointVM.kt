@@ -59,7 +59,8 @@ class CoordinatePointVM(val view: IEnterPoint, val model: IEnterPointModel) : IC
     override fun options(): List<String> {
         val res = view.activity.resources
         return listOf<String>(res.getString(R.string.enter_point_coordinate),
-                res.getString(R.string.enter_point_address))
+                res.getString(R.string.enter_point_address),
+                res.getString(R.string.enter_point_address_en))
     }
 
     override fun model(): IAddressModel {

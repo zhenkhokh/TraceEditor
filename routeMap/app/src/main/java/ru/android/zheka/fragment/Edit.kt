@@ -69,3 +69,5 @@ class EditAdapter(val viewModel: IEditVM, val context: Context, val checkedVisib
         holder.bind(viewModel.shownItems.get(position))
     }
 }
+
+

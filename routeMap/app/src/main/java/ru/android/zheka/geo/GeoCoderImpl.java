@@ -1,29 +1,17 @@
 package ru.android.zheka.geo;
 
-import android.util.Xml;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.IllegalFormatException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import ru.android.zheka.route.XMLParser;
-
-import static java.util.Locale.getDefault;
 
 public class GeoCoderImpl extends XMLParser implements GeoCoder {
     String[] addresses;
@@ -33,7 +21,7 @@ public class GeoCoderImpl extends XMLParser implements GeoCoder {
         super (feedUrl);
         InputStream is = getInputStream ();
         if (is==null)
-            throw new JSONException("io exception");
+            throw new RuntimeException ("geo coder io exception");
         Scanner scanner = new Scanner (is);
         StringBuilder sb = new StringBuilder ();
         while (scanner.hasNext ())

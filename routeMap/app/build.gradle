@@ -25,7 +25,7 @@ task createTestResources {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion "28.0.3"
     sourceSets {
         main.root = 'src/main'
@@ -44,9 +44,9 @@ android {
     defaultConfig {
         applicationId "ru.android.zheka.gmapexample1"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 29
-        versionName "3.0.1"
+        targetSdkVersion 30
+        versionCode 33
+        versionName "3.1.1"
         multiDexEnabled = true
         //robolectric
         javaCompileOptions {
@@ -146,7 +146,6 @@ repositories {
 
 dependencies {
 //    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
     //robolectric
     api 'com.google.guava:guava:28.2-android'
     testImplementation group: 'com.squareup', name: 'fest-android', version: '1.0.0'
@@ -267,6 +266,16 @@ dependencies {
     testImplementation test.mockito
     androidTestImplementation test.mockito
     implementation test.fragment
+
+    implementation (http.retrofit)
+//            {
+//        exclude(group: 'com.squareup.okhttp3')
+//    }
+//    implementation http.moshiModule
+    implementation http.gsonModule
+    implementation ("com.squareup.okhttp3:okhttp:3.12.0"){
+        force = true
+    }
 
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
