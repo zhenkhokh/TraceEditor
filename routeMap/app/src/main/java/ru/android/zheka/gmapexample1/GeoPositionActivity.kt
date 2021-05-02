@@ -1,6 +1,5 @@
 package ru.android.zheka.gmapexample1
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -184,10 +183,6 @@ class GeoPositionActivity //AppCompatActivity
             if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReceiver)) TimerService.mListners!!.add(positionReceiver)
         }
         super.onStart()
-    }
-
-    override fun getActivity(): Activity {
-        return this
     }
 
     override fun onPause() {

@@ -25,7 +25,7 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe({
                     if (model.checked.filter { it }.count() > 0)
-                        panelModel.nextButton2.set(ButtonHandler({ add() }, R.string.ok_choice, view))
+                        panelModel.nextButton2.set(ButtonHandler(Consumer{ add() }, R.string.ok_choice, view))
                     else
                         panelModel.nextButton2.set(ButtonHandler())
                 }, view::showError)
@@ -52,7 +52,7 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
         super.onResume()
         model.checked = ArrayList(shownItems.map { false }.toList())
         if (model.checked.filter { it }.count() > 0)
-            panelModel.nextButton2.set(ButtonHandler({ add() }, R.string.ok_choice, view))
+            panelModel.nextButton2.set(ButtonHandler(Consumer{ add() }, R.string.ok_choice, view))
     }
 
     override fun onDestroy() {

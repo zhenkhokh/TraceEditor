@@ -2,12 +2,13 @@ package ru.android.zheka.fragment
 
 import kotlinx.android.synthetic.main.home_fragment.view.*
 import ru.android.zheka.coreUI.AbstractFragment
+import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.gmapexample1.databinding.MapFragmentBinding
 import ru.android.zheka.vm.IMapVM
 import javax.inject.Inject
 
-class Map : AbstractFragment<MapFragmentBinding>() {
+class Map : AbstractFragment<MapFragmentBinding>(), IActivity {
     @JvmField
     @Inject
     var viewModel: IMapVM? = null

@@ -13,7 +13,6 @@ import ru.android.zheka.db.DbFunctions
 import ru.android.zheka.db.Point
 import ru.android.zheka.fragment.Edit
 import ru.android.zheka.gmapexample1.R
-import ru.android.zheka.coreUI.SaveDialog
 import ru.android.zheka.model.ILatLngModel
 import ru.android.zheka.model.LatLngModel
 
@@ -48,14 +47,14 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
         get() = model.points.map { point -> point.name }.toMutableList()
 
     override val context: Context
-        get() = view.context
+        get() = view.activity
 
     override fun onResume() {
         editOptions = getOptions()
         editOptions = reOrder(editOptions, model.spinnerOption)
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
         panelModel.action().set("Выберете действие над точкой и нажмите на нее")
-        panelModel.spinner.set(SpinnerHandler(spinnerConsumer , Consumer { a -> },
+        panelModel.spinner.set(SpinnerHandler(spinnerConsumer , Consumer {  },
                 editOptions, view))
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))
         model.custom = false
@@ -108,7 +107,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
                        val view: IActivity, val value: String,
                        val idNegBtn: Int) : ErrorDialog(DialogConfig.builder()
             .contentValue(value)
-            .context(view.getContext())
+            .context(view.activity)
             .labelValue(view.activity.resources.getString(R.string.points_column_name1))
             .positiveConsumer(consumer)
             .layoutId(R.layout.dialog_error)
@@ -119,7 +118,7 @@ open class EditVM(override val view: IActivity, val model: LatLngModel) : IEditV
 
         override fun configureDialog(view_: View): AlertDialog {
             getContent(view_)
-            return AlertDialog.Builder(config.context)
+            return AlertDialog.Builder(config.context!!)
                     .setView(view_)
                     .setPositiveButton(config.poistiveBtnId) { d, _ ->
                         d.cancel()

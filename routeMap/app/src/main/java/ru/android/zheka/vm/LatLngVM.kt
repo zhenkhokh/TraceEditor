@@ -41,7 +41,7 @@ open class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILat
                     positionInterceptor.centerPosition = points[adapterPosition].data
                     positionInterceptor.end = positionInterceptor.end?:positionInterceptor.centerPosition
                     val geoIntent = positionInterceptor.newIntent
-                    geoIntent.setClass(view.context, GeoPositionActivity::class.java)
+                    geoIntent.setClass(view.context(), GeoPositionActivity::class.java)
 
                     view.activity.startActivity(geoIntent)
                     view.activity.finish()
@@ -53,7 +53,7 @@ open class LatLngVM(override val view: IActivity, val model: LatLngModel) : ILat
         get() = points.map { point -> point.name }.toMutableList()
 
     override val context: Context
-        get() = view.context
+        get() = view.context()
 
     override fun onResume() {
         model.titleText().set(view.activity.resources.getString(R.string.title_activity_points))

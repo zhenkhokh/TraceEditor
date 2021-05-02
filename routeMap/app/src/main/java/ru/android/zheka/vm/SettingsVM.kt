@@ -1,6 +1,7 @@
 package ru.android.zheka.vm
 
 import android.view.View
+import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.IPanelModel
@@ -16,21 +17,21 @@ import ru.android.zheka.model.ISettingsModel
 class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel: IPanelModel) : ISettingsVM {
 
     init {
-        var data = view.context.getResources().getStringArray(R.array.speedList).asList()
+        var data = view.context().getResources().getStringArray(R.array.speedList).asList()
                 as MutableList<String>
-        model.spinner.set(SpinnerHandler({ a -> speedTraceControl(a) }, { a -> }, data, view))
-        data = view.context.getResources().getStringArray(R.array.travelmodelist).asList()
+        model.spinner.set(SpinnerHandler(Consumer{ speedTraceControl(it) }, Consumer{ }, data, view))
+        data = view.context().getResources().getStringArray(R.array.travelmodelist).asList()
                 as MutableList<String>
-        var names = view.context.getResources().getStringArray(R.array.traveluserlist).asList()
+        var names = view.context().getResources().getStringArray(R.array.traveluserlist).asList()
                 as MutableList<String>
         var map = (names zip data).associate { Pair(it.first, it.second) }
-        model.spinnerTravel.set(SpinnerHandler({ a -> travelMode(a) }, { a -> }, map, view))
-        data = view.context.getResources().getStringArray(R.array.timerdatalist).asList()
+        model.spinnerTravel.set(SpinnerHandler(Consumer{ travelMode(it) }, Consumer{ }, map, view))
+        data = view.context().getResources().getStringArray(R.array.timerdatalist).asList()
                 as MutableList<String>
-        names = view.context.getResources().getStringArray(R.array.timeruserlist).asList()
+        names = view.context().getResources().getStringArray(R.array.timeruserlist).asList()
                 as MutableList<String>
         map = (names zip data).associate { Pair(it.first, it.second) }
-        model.spinnerTimer.set(SpinnerHandler({ a -> updateRatePositionMode(a) }, { a -> }, map, view))
+        model.spinnerTimer.set(SpinnerHandler(Consumer{ updateRatePositionMode(it) }, Consumer{ }, map, view))
     }
 
     override fun switchUpdateLen(checked: Boolean) {
@@ -57,7 +58,7 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel:
     override fun optimizationBellmanFord() {
         var config = udateDb { config ->
             config.optimization = false
-            config.bellmanFord = view.context.getResources().getString(R.string.optimizationdata3);
+            config.bellmanFord = view.context().getResources().getString(R.string.optimizationdata3);
         }
         println("update optimizationBellmanFord as " + config.bellmanFord)
     }

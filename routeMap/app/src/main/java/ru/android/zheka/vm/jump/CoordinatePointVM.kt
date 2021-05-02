@@ -3,6 +3,7 @@ package ru.android.zheka.vm.jump
 import android.view.View
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
+import io.reactivex.functions.Consumer
 import ru.android.zheka.coreUI.ButtonHandler
 import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.coreUI.RxTransformer
@@ -23,10 +24,10 @@ class CoordinatePointVM(val view: IEnterPoint, val model: IEnterPointModel) : IC
     override fun onResume() {
         panelModel.action().set("Используйте десятичный формат чисел")
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
-        panelModel.spinner.set(SpinnerHandler({
+        panelModel.spinner.set(SpinnerHandler(Consumer{
             switchFragment(view as EnterPoint, it)
-        }, {}, options(), view))
-        panelModel.nextButton2.set(ButtonHandler({ onClick() }, R.string.home_address_btn, view))
+        }, Consumer{}, options(), view))
+        panelModel.nextButton2.set(ButtonHandler(Consumer{ onClick() }, R.string.home_address_btn, view))
     }
 
     override fun onClick() {
@@ -48,7 +49,7 @@ class CoordinatePointVM(val view: IEnterPoint, val model: IEnterPointModel) : IC
                     val positionInterceptor = PositionInterceptor(view.activity)
                     positionInterceptor.centerPosition = model.point
                     val geoIntent = positionInterceptor.newIntent
-                    geoIntent.setClass(view.context, GeoPositionActivity::class.java)
+                    geoIntent.setClass(view.context(), GeoPositionActivity::class.java)
 
                     view.activity.startActivity(geoIntent)
                     view.activity.finish()

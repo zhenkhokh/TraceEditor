@@ -1,6 +1,5 @@
 package ru.android.zheka.gmapexample1
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -569,10 +568,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReciever)) TimerService.mListners!!.add(positionReciever)
         }
         super.onStart()
-    }
-
-    override fun getActivity(): Activity {
-        return this
     }
 
     /*

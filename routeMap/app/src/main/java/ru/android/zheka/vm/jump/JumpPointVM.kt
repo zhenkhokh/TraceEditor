@@ -10,7 +10,9 @@ import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
 class JumpPointVM(view :IJumpPoint, model: LatLngModel) : EditVM(view, model), IJumpPointVM {
-    private val points = AddressModel.geoCoder.points.toMutableList()
+    private val points = AddressModel.geoCoder
+            .points
+            .toMutableList()
     private val names = AddressModel.geoCoder.adresses.toMutableList()
 
     override val shownItems: MutableList<String>
@@ -20,7 +22,7 @@ class JumpPointVM(view :IJumpPoint, model: LatLngModel) : EditVM(view, model), I
         val positionInterceptor = PositionInterceptor(view.activity)
         positionInterceptor.centerPosition = points[pos]
         val intent = positionInterceptor.newIntent
-        intent.setClass(view.context, GeoPositionActivity::class.java)
+        intent.setClass(view.context(), GeoPositionActivity::class.java)
         intent.setAction(Intent.ACTION_VIEW)
         view.activity.startActivity(intent)
         view.activity.finish()

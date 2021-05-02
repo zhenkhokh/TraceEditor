@@ -75,7 +75,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
 
     private fun setGoButton(positionInterceptor: PositionInterceptor) {
         if (canItPlot(positionInterceptor)) {
-            panelModel.nextButton2.set(ButtonHandler({ goAction() }, R.string.title_activity_maps, view))
+            panelModel.nextButton2.set(ButtonHandler(Consumer{ goAction() }, R.string.title_activity_maps, view))
             return
         }
         panelModel.nextButton2.get()?.visible?.set(View.INVISIBLE)
@@ -91,7 +91,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
 
     override fun goAction() {
         val intent = view.activity?.intent
-        intent?.setClass(view.context, MapsActivity::class.java)
+        intent?.setClass(view.context(), MapsActivity::class.java)
         intent?.setAction(Intent.ACTION_VIEW)
         view.activity?.startActivity(intent)
     }

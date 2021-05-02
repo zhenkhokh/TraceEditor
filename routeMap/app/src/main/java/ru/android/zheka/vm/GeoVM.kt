@@ -28,7 +28,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     override fun home() {
         val intent = model.position.newIntent
-        intent.setClass(view.context, MainActivity::class.java)
+        intent.setClass(view.activity, MainActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         view.activity.startActivity(intent)
         view.activity.finish()
@@ -70,7 +70,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     private fun endCp() {
-        val vm = TraceEndVM(view, LatLngModel(view.context))
+        val vm = TraceEndVM(view, LatLngModel(view.activity))
         vm.panelModel = model
         vm.finish(model.point)
 //        vm.finish(model.point)
@@ -87,7 +87,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     var llModel_: LatLngModel? = null
 
     private fun llModel(): LatLngModel {
-        llModel_ = llModel_ ?: LatLngModel(view.context)
+        llModel_ = llModel_ ?: LatLngModel(view.activity)
         val point = Point()
         point.name = UtilePointSerializer().serialize(model.point) as String
         point.data = model.point
@@ -98,7 +98,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     private fun startCp() {
-        val vm = TraceStartVM(view, LatLngModel(view.context))
+        val vm = TraceStartVM(view, LatLngModel(view.activity))
         vm.panelModel = model
 //        vm.resetTrace()
         vm.resetAndStartTrace(model.position, model.point)
@@ -118,7 +118,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     fun goToMap() {
         val intent = model.position!!.newIntent
-        intent.setClass(view.context, MapsActivity::class.java)
+        intent.setClass(view.activity, MapsActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
         view.activity.startActivity(intent)
@@ -202,7 +202,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
             model.stopButton1.set(getButton(Consumer { addCPoint() }, string.geo_point_to_trace))
             model.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
             model.action().set(view.activity.resources.getString(string.action_geo))
-            model.spinner.set(SpinnerHandler({ spinnerOption = it }, {}, getOptions(), view))
+            model.spinner.set(SpinnerHandler(Consumer{ spinnerOption = it }, Consumer{}, getOptions(), view))
         } else {
             model.action().set(view.activity.resources.getString(string.action_geo_offline))
             model.inputVisible().set(View.GONE) // fit size
@@ -230,7 +230,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
 
     override fun goPosition() {
         val intent = model.position.updatePosition()
-        TimerService.mListners?.first?.onReceive(view.context, intent)
+        TimerService.mListners?.first?.onReceive(view.context(), intent)
     }
 
     private fun getOptions(): List<String> {

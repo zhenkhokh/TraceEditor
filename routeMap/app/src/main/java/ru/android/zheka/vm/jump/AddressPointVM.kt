@@ -92,7 +92,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
                         , model.city.get()
                         , model.street.get()
                         , model.house.get())
-                        .parse((view as Fragment).activity?.resources?.getString(R.string.yandex_geo_codec))
+                        .parse((view as Fragment).activity?.resources?.getString(R.string.yandex_geo_codec)!!)
             } catch (e: GeoParserImpl.YandexGeoCoderException) {
                 sendErroToMain("Данные не получены, проверьте интернет соединение")
                 return@launch
@@ -135,13 +135,13 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         model.visiability.set(IEnterPointModel.ADDRESS_ON)
         panelModel.action().set("Допускается пропускать поля")
         panelModel.inputVisible().set(IPanelModel.COMBO_BOX_VISIBLE)
-        panelModel.spinner.set(SpinnerHandler({
+        panelModel.spinner.set(SpinnerHandler(Consumer{
             switchFragment(view as EnterPoint, it)
-        }, {}, options(), view))
-        panelModel.nextButton2.set(ButtonHandler({ onClick() }, R.string.home_address_btn, view))
-        model.clearButton.set(ButtonHandler({ clear() }, R.string.address_clear, view))
-        model.recordButton.set(ButtonHandler({ record() }, R.string.address_record, view))
-        model.backButton.set(ButtonHandler({ back()}, R.string.address_repeat_btn, view))
+        }, Consumer{}, options(), view))
+        panelModel.nextButton2.set(ButtonHandler(Consumer{ onClick() }, R.string.home_address_btn, view))
+        model.clearButton.set(ButtonHandler(Consumer{ clear() }, R.string.address_clear, view))
+        model.recordButton.set(ButtonHandler(Consumer{ record() }, R.string.address_record, view))
+        model.backButton.set(ButtonHandler(Consumer{ back()}, R.string.address_repeat_btn, view))
         model.onFocusLost = this.recordSoundToField()
         controlVoice(View.GONE)
         errHandler = ErrorHandler(this)
@@ -176,10 +176,10 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
             Observable.just(true).subscribe({
                 if (response.body() != null) {
                     if (!response.body()!!.isInitialized())
-                        throw RuntimeException(vm.view.context.getString(R.string.err_emptyVoiceBody))
+                        throw RuntimeException(vm.view.context().getString(R.string.err_emptyVoiceBody))
                     val results = response.body()!!.results
                     if (results.isEmpty() || !results.get(0).isInitialized())
-                        throw RuntimeException(vm.view.context.getString(R.string.err_emptyVoiceResult))
+                        throw RuntimeException(vm.view.context().getString(R.string.err_emptyVoiceResult))
                     val alternatives = results.get(0).alternatives
                     vm.response = alternatives.get(0).toString()
                     recordResponse()
@@ -188,7 +188,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
                 val bytes = response.errorBody()?.bytes()!!
                 val error = Gson().fromJson(String(bytes), ResponseError::class.java)
                 if (!error.isInitialized())
-                    throw RuntimeException(vm.view.context.getString(R.string.err_emptyVoiceUndef))
+                    throw RuntimeException(vm.view.context().getString(R.string.err_emptyVoiceUndef))
                 throw java.lang.RuntimeException(error.error.toString())
             }, vm.view::showError)
         }
@@ -209,7 +209,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
                 val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP) //no eol
                 val lan = if (isUk()) SoundParser.EN_CODE else SoundParser.RU_CODE
                 speechSrv.buildContent(base64)
-                        .parse(view.context.getString(R.string.SPEECH_KEY), lan)
+                        .parse(view.context().getString(R.string.SPEECH_KEY), lan)
                         .enqueue(ResponseHolder(this, v))
             }, view::showError)
         }
@@ -220,7 +220,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
     })
 
     private fun isUk(): Boolean {
-        return AddressModel.spinnerOptions == view.context.getString(R.string.enter_point_address_en)
+        return AddressModel.spinnerOptions == view.context().getString(R.string.enter_point_address_en)
     }
 
     private fun recordField(id: Int, msg: String) {
@@ -308,7 +308,7 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
 
     private fun updateUIModel() {
         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
-        if (config.tenMSTime != "0") Toast.makeText(view.context, "Определение местоположения станет помехой, лучше его отключить", 30).show()
+        if (config.tenMSTime != "0") Toast.makeText(view.context(), "Определение местоположения станет помехой, лучше его отключить", 30).show()
         var address = config.address
         if (address.isNotEmpty()) {
             var endpos = address.indexOf(aDelimiter)

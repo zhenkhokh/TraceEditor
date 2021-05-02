@@ -2,7 +2,6 @@ package ru.android.zheka.gmapexample1.trace
 
 import dagger.Module
 import dagger.Provides
-import ru.android.zheka.coreUI.IPanelModel
 import ru.android.zheka.di.FragmentChildScope
 import ru.android.zheka.fragment.Edit
 import ru.android.zheka.fragment.ITrace

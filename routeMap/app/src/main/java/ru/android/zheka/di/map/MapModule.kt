@@ -5,8 +5,8 @@ import dagger.Module
 import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.di.ActivityScope
 import ru.android.zheka.fragment.Map
-import ru.android.zheka.model.MapModel
 import ru.android.zheka.model.IMapModel
+import ru.android.zheka.model.MapModel
 
 @Module
 abstract class MapModule {

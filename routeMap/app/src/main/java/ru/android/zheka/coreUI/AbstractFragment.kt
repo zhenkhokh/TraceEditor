@@ -1,5 +1,6 @@
 package ru.android.zheka.coreUI
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +9,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import dagger.android.support.DaggerFragment
+import io.reactivex.functions.Consumer
 
-abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFragment {
+abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IActivity {
     private var error: ErrorControl? = null
     lateinit var binding: B
     protected abstract val layoutId: Int
@@ -24,6 +25,8 @@ abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFr
         initComponent()
         onInitBinding(binding)
     }
+
+    override fun context() = super.getActivity()!! as Context
 
     override fun onResume() {
         super.onResume()
@@ -50,26 +53,24 @@ abstract class AbstractFragment<B : ViewDataBinding> : DaggerFragment(), IBaseFr
     open fun initAdapter(binding: B):B {return binding}
 
     override fun showError(throwable: Throwable) {
-        error!!.showError(throwable) { a: Boolean? -> }
-    }
-
-    override fun getContext(): Context? {
-        return activity
+        error!!.showError(throwable, Consumer{ a: Boolean? -> })
     }
 
     override fun switchToFragment(fragmentId: Int, fragment: Fragment) {
-        val transaction = manager.beginTransaction()
+        val transaction = manager!!.beginTransaction()
         transaction.replace(fragmentId, fragment)
         transaction.commit()
     }
 
     override fun removeFragment(fragment: Fragment) {
-        val transaction = manager.beginTransaction()
+        val transaction = manager!!.beginTransaction()
         transaction.remove(fragment)
         transaction.commit()
     }
 
-    override fun getManager(): FragmentManager {
-        return activity!!.supportFragmentManager
-    }
+    override val manager
+        get() = fragmentManager
+
+    override val activity
+        get() = super.getActivity()?:Activity()
 }

@@ -1,6 +1,5 @@
 package ru.android.zheka.gmapexample1
 
-import android.app.Activity
 import android.os.Bundle
 import com.activeandroid.Model
 import com.activeandroid.query.Delete
@@ -65,9 +64,5 @@ class MainActivity : AbstractActivity<ActivityHomeBinding>(), HasAndroidInjector
         if (googleKey == "") googleKey = resources.getString(R.string.google_api_key)
         println("---------- " + System.getProperty("java.class.path"))
         setContentView(resViewId)
-    }
-
-    override fun getActivity(): Activity {
-        return this
     }
 }

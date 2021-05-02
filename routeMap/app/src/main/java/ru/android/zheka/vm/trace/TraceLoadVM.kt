@@ -48,7 +48,7 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
         position.setExtraPointsFromCopy(extraPoints)
         position.state = TRACE_PLOT_STATE.END_COMMAND
         view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, extraPoints)
-        updateOfflineState(view.context)
+        updateOfflineState(view.context())
         if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace.data) as String
         PositionUtil.isCenterAddedToTrace = false
         val intent = position.newIntent

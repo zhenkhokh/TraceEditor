@@ -72,7 +72,7 @@ class PanelHomeVM(val view: IActivity, val model: IPanelModel,
     override fun geo() {
         val position = PositionInterceptor(view.activity)
         val intent = position.updatePosition()
-        intent.setClass(view.context, GeoPositionActivity::class.java)
+        intent.setClass(view.activity, GeoPositionActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         //explicit activity
         view.activity.startActivity(intent)
