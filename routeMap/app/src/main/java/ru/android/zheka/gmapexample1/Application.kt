@@ -55,7 +55,7 @@ class Application : DaggerApplication() //extends MultiDexApplication
             println("initConfig")
             var config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config?
             println("config is $config")
-            if (isFieldNull(config) || config!!.rateLimit_ms.isEmpty()) {
+            if (isFieldNull(config) || config!!.rateLimit_ms!!.isEmpty()) {
                 config = Config()
                 config.name = DbFunctions.DEFAULT_CONFIG_NAME
                 config.optimization = false
@@ -68,7 +68,7 @@ class Application : DaggerApplication() //extends MultiDexApplication
                 config.address = aDelimiter + aDelimiter + aDelimiter
                 config.rateLimit_ms = "800"
                 config.offline = DbFunctions.DEFAULT_CONFIG_OFFLINE
-                val w: TravelMode = TravelMode.valueOf(config.travelMode)
+                val w: TravelMode = TravelMode.valueOf(config.travelMode!!)
                 println("init $config")
                 println("Routing.TravelModel.WALKING is clear $w")
                 try {

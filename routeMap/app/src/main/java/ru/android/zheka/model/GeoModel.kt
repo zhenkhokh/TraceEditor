@@ -37,7 +37,7 @@ class GeoModel(view: Context?) : PanelModel(view), IGeoModel {
             this.position.markerCenter.position = it.target
             this.position.zoom = it.zoom
             this.position.centerPosition = it.target
-            if (config.uLocation) this.position.updateUILocation()
+            if (config.uLocation!!) this.position.updateUILocation()
         }
     }
 }

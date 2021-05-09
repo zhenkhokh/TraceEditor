@@ -104,7 +104,7 @@ class TraceWayPointsVM(view: IActivity, model: LatLngModel, override var panelMo
         return out.map {
             val point = DbFunctions.getModelByName(it, Point::class.java) as Point?
             if (point != null)
-                util.serialize(point.data) as String
+                util.serialize(point.data!!) as String
             else
                 it}.toList()
     }

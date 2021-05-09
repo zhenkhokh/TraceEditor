@@ -73,27 +73,27 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel:
     override fun switchIgnorePaidRoads(checked: Boolean) {
         udateDb { config ->
             config.avoid = if (checked)
-                push(config.avoid, DbFunctions.AVOID_TOLLS)
+                push(config.avoid!!, DbFunctions.AVOID_TOLLS)
             else
-                pull(config.avoid, DbFunctions.AVOID_TOLLS)
+                pull(config.avoid!!, DbFunctions.AVOID_TOLLS)
         }
     }
 
     override fun switchIgnoreHighWays(checked: Boolean) {
         udateDb { config ->
             config.avoid = if (checked)
-                push(config.avoid, DbFunctions.AVOID_HIGHWAYS)
+                push(config.avoid!!, DbFunctions.AVOID_HIGHWAYS)
             else
-                pull(config.avoid, DbFunctions.AVOID_HIGHWAYS)
+                pull(config.avoid!!, DbFunctions.AVOID_HIGHWAYS)
         }
     }
 
     override fun switchIgnoreInDoors(checked: Boolean) {
         udateDb { config ->
             config.avoid = if (checked)
-                push(config.avoid, DbFunctions.AVOID_INDOR)
+                push(config.avoid!!, DbFunctions.AVOID_INDOR)
             else
-                pull(config.avoid, DbFunctions.AVOID_INDOR)
+                pull(config.avoid!!, DbFunctions.AVOID_INDOR)
         }
     }
 
@@ -123,7 +123,7 @@ class SettingsVM(var view: IActivity, var model: ISettingsModel, var panelModel:
     }
 
     private inline fun udateDb(chekManip: (config: Config) -> Unit): Config {
-        var config1 = getModelByName(DEFAULT_CONFIG_NAME, Config::class.java) as Config
+        val config1 = getModelByName(DEFAULT_CONFIG_NAME, Config::class.java) as Config
         chekManip(config1)
         try {
             add(config1)

@@ -49,13 +49,13 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
     }
 
     init {
-        val config = getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config?
-        updateLen = ObservableBoolean(config!!.uLocation)
+        val config = getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
+        updateLen = ObservableBoolean(config.uLocation!!)
         val optimizationBellman = view.resources.getString(R.string.optimizationdata3)
         val isBellman = optimizationBellman == config.bellmanFord
-        optimizationNo = ObservableBoolean(!config.optimization && !isBellman)
+        optimizationNo = ObservableBoolean(!config.optimization!! && !isBellman)
         optimizationBellmanFord = ObservableBoolean(isBellman)
-        optimizationGoogle = ObservableBoolean(config.optimization && !isBellman)
+        optimizationGoogle = ObservableBoolean(config.optimization!! && !isBellman)
         spinner = ObservableField(SpinnerHandler() )// TODO put some object or null
         val spinnerData = Arrays.asList(*view.resources.getStringArray(R.array.speedList))
         var pos = -1
@@ -71,9 +71,9 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
         selectedData = config.travelMode
         posTravel = ObservableInt(Arrays.binarySearch(travelData, selectedData, c))//?
         spinnerTravel = ObservableField(null as SpinnerHandler?)
-        avoid = ObservableBoolean(config.avoid.contains(DbFunctions.AVOID_TOLLS))
-        avoidHighWays = ObservableBoolean(config.avoid.contains(DbFunctions.AVOID_HIGHWAYS))
-        avoidInDoor = ObservableBoolean(config.avoid.contains(DbFunctions.AVOID_INDOR))
+        avoid = ObservableBoolean(config.avoid!!.contains(DbFunctions.AVOID_TOLLS))
+        avoidHighWays = ObservableBoolean(config.avoid!!.contains(DbFunctions.AVOID_HIGHWAYS))
+        avoidInDoor = ObservableBoolean(config.avoid!!.contains(DbFunctions.AVOID_INDOR))
         offline = ObservableBoolean(config.offline == view.resources.getString(R.string.offlineOn))
     }
 }

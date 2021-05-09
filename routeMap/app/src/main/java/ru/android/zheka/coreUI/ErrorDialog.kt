@@ -10,7 +10,7 @@ import ru.android.zheka.gmapexample1.R
 
 open class ErrorDialog(protected var config: DialogConfig, private val view: IActivity) {
     fun showError(throwable: Throwable, consumer: Consumer<Boolean>) {
-        val isValidRes = view.activity != null && view.activity!!.resources != null
+        val isValidRes = view.activity?.resources != null
         // translation can be here
         config = DialogConfig.Companion.builder()
                 .labelValue(if (isValidRes) view.activity.resources.getString(R.string.errorDialog_windowTitle) else "")

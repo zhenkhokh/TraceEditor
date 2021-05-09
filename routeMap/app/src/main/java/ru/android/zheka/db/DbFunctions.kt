@@ -48,18 +48,18 @@ object DbFunctions {
         }
     }
 
-    fun getNamePointByData(point: LatLng?): String? {
+    fun getNamePointByData(point: LatLng?): String {
         var out: Point? = null
         try {
             out = Select()
                     .from(Point::class.java)
                     .orderBy("RANDOM()")
-                    .where("data=?", UtilePointSerializer().serialize(point) as String)
+                    .where("data=?", UtilePointSerializer().serialize(point!!) as String)
                     .executeSingle()
         } catch (e: NullPointerException) {
             e.printStackTrace()
         } finally {
-            return out?.name
+            return out?.name?:""
         }
     }
 
@@ -132,16 +132,10 @@ object DbFunctions {
         val fields = table.javaClass.declaredFields
         for (i in fields.indices) {
             val field = fields[i]
+            field.isAccessible = true
             field[sTable] = field[table]
         }
-        var name: String? = null
-        try {
-            name = table.javaClass.getField("name")[table] as String
-        } catch (e: NoSuchFieldException) {
-            e.printStackTrace()
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-        }
+        val name: String? = fields.find { it.name.equals("name") }?.get(table) as String
         val cls: Class<out Model> = table.javaClass
         val tables = getModelsByName(name, cls)
         /*while(name!=null && tables.size()>1 ){

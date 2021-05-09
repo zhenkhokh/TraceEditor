@@ -212,7 +212,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     private fun isOnline(): Boolean {
-        return !model.config.offline.toBoolean()
+        return !model.config.offline!!.toBoolean()
     }
 
     override fun hide() {

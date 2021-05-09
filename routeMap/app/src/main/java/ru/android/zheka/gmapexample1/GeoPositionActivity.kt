@@ -39,7 +39,6 @@ class GeoPositionActivity //AppCompatActivity
     : AbstractActivity<ActivityGeoBinding>(), OnMapReadyCallback, HasAndroidInjector, OnMapLongClickListener, OnMarkerClickListener, OnMarkerDragListener {
     // choose for true statement
     var mMap: GoogleMap? = null
-    var config: Config? = null
     private var resViewId = R.layout.activity_geo
 
     //TimerService timerService = TimerService.getInstance();
@@ -83,12 +82,12 @@ class GeoPositionActivity //AppCompatActivity
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
         println(geoIntent.data as Uri)
-        config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         val coordinate = findViewById(R.id.coordinateTextGeo) as TextView
         println("get config")
         coordinate.visibility = View.GONE
-        if (config != null) if (config!!.uLocation) {
+        if (config != null) if (config.uLocation!!) {
             coordinate.visibility = View.VISIBLE
         }
         if (TimerService.interrupted) {
@@ -177,7 +176,7 @@ class GeoPositionActivity //AppCompatActivity
      * @see roboguice.activity.RoboFragmentActivity#onStart()
      */
     override fun onStart() {
-        config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         if (positionReceiver != null) {
             if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReceiver)) TimerService.mListners!!.add(positionReceiver)
@@ -219,7 +218,8 @@ class GeoPositionActivity //AppCompatActivity
         switchToFragment(R.id.geoFragment, Geo())
 //        switchToFragment(R.id.geoFragment, HideGeo())
         model.activity = this
-        model.config = this.config!!
+        model.config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+                , Config::class.java) as Config
     }
 
     override fun onDestroyBinding(binding: ActivityGeoBinding?) {

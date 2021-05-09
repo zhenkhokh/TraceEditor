@@ -24,7 +24,7 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
     init {
         val config = getModelByName(DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        val isOffline = config.offline.toBoolean()
+        val isOffline = config.offline!!.toBoolean()
         traces = DbFunctions.getTablesByModel(Trace::class.java)
                 ?.filter { (isOffline && (it as Trace).data != null) || !isOffline }?.toMutableList()
                 as MutableList<Trace>
@@ -34,7 +34,7 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
         get() = if (model.custom)
             mutableListOf()
         else
-            traces.map { point -> point.name }.toMutableList()
+            traces.map { point -> point.name!! }.toMutableList()
 
     override fun onClick(pos: Int) {
         val trace = traces[pos]
@@ -49,7 +49,7 @@ class TraceLoadVM(view: ITrace, model: LatLngModel) : EditVM(view, model), ITrac
         position.state = TRACE_PLOT_STATE.END_COMMAND
         view.activity.intent.putStringArrayListExtra(PositionUtil.EXTRA_POINTS, extraPoints)
         updateOfflineState(view.context())
-        if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace.data) as String
+        if (MapsActivity.isOffline) position.title = utilTrace.serialize(trace.data?:"") as String
         PositionUtil.isCenterAddedToTrace = false
         val intent = position.newIntent
         intent.setClass(context, MapsActivity::class.java)

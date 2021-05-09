@@ -54,7 +54,6 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     private var rateLimit_ms = 800
     private var prevPoint: LatLng? = null
     private var point: LatLng? = null
-    private var config: Config? = null
 
     var positionReciever: PositionReciever? = null
     var options: MarkerOptions? = null
@@ -103,15 +102,15 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
         mapFragment.getMapAsync(this)
         println("async map")
         position = PositionInterceptor(this, resTextId)
-        config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
-        rateLimit_ms = config!!.rateLimit_ms.toBigDecimal().intValueExact()
+        rateLimit_ms = config.rateLimit_ms?.toBigDecimal()?.intValueExact()!!
         val coordinate = findViewById(resTextId) as TextView
         println("get config: $config")
         coordinate.visibility = View.GONE
         //coordinate.setText("");
         //coordinate.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        if (config != null) if (config!!.uLocation) {
+        if (config.uLocation!!) {
             coordinate.visibility = View.VISIBLE
             //coordinate.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
@@ -185,9 +184,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                 mMap!!.uiSettings.isMyLocationButtonEnabled = true
             } else Toast.makeText(this, "Панель не работает", 15).show()
         } else {
-            //Toast.makeText(this, "Map is null", 15).show();
-            val dialog = AlertDialog("map is null")
-            dialog.show(getFragmentManager(), "Ошибка")
+            showAllert("map is null")
             return
         }
         routing = Routing()
@@ -211,7 +208,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                     offlineIncorrectData()
                     return
                 } else if (isOffline) {
-                    traceDebugging = UtileTracePointsSerializer().deserialize(traceDebuggingSer) as DataTrace
+                    traceDebugging = UtileTracePointsSerializer().deserialize(traceDebuggingSer!!) as DataTrace
                     traceDebugging!!.initSegments()
                     if (traceDebugging!!.hasNext()) {
                         routing = OfflineRouting(*traceDebugging!!.nextSegmentArray())
@@ -229,6 +226,8 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                         cnt = 0
                         cntCtrl = 0
                         var bellManPoits = ArrayList<LatLng>()
+                        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+                                , Config::class.java) as Config
                         val isBellman = config!!.bellmanFord == Application.optimizationBellmanFlag
                         if (!isOffline) {
                             //ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
@@ -253,9 +252,8 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                     e.printStackTrace()
                                 }
                                 if (route == null) {
-                                    val dialog = AlertDialog("Слишком длинная задача, уменьшите число промежуточных точек")
-                                    dialog.show(getFragmentManager(), "Ошибка")
-                                    return
+                                    showAllert("Слишком длинная задача, уменьшите число промежуточных точек")
+                                  return
                                 }
                                 val order = route.order
                                 println("order is $order")
@@ -278,7 +276,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                     temp[index] = position!!.extraPoints[index_++]
                                 }
                                 position!!.setExtraPointsFromCopy(temp)
-                                position!!.getExtraPoints().add(UtilePointSerializer().serialize(position?.end).toString())
+                                position!!.getExtraPoints().add(UtilePointSerializer().serialize(position?.end!!).toString())
                                 //}
                                 //add end point
                                 //position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
@@ -299,9 +297,11 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                             if (iterator1.hasNext()) // miss start
                                 iterator1.next()
                             while (iterator1.hasNext()) {
-                                tmp.add(UtilePointSerializer().serialize(
-                                        iterator1.next()
-                                ) as String)
+                                tmp.add(iterator1.next()?.let {
+                                    UtilePointSerializer().serialize(
+                                            it
+                                    )
+                                } as String)
                             }
                             position!!.setExtraPointsFromCopy(tmp)
                         }
@@ -318,7 +318,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                 return
                             }
                             traceDebugging = UtileTracePointsSerializer()
-                                    .deserialize(traceDebuggingSer) as DataTrace
+                                    .deserialize(traceDebuggingSer!!) as DataTrace
                             if (traceDebugging == null) {
                                 offlineIncorrectData()
                                 return
@@ -381,16 +381,19 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             }
         } else {
             //Toast.makeText(this.context, "start or end trace points are not defined", 15);
-            val dialog = AlertDialog(
-                    "start or end trace points are not defined")
-            dialog.show(getFragmentManager(), "Ошибка")
+            showAllert("start or end trace points are not defined")
         }
         println("end of onMapReady")
     }
 
+    private fun showAllert(msg: String) {
+        try { val dialog = AlertDialog(msg)
+            dialog.show(getFragmentManager(), "Ошибка")
+        }catch (e: IllegalStateException) {e.printStackTrace()} //TODO show in new activity if need
+    }
+
     private fun offlineIncorrectData() {
-        val dialog = AlertDialog("Неверные данные для офлайн, маршрут не построен")
-        dialog.show(getFragmentManager(), "Ошибка")
+        showAllert("Неверные данные для офлайн, маршрут не построен")
     }
 
     override fun onRoutingFailure() {
@@ -422,20 +425,10 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             routing!!.registerListener(this@MapsActivity)
             cntRun--
             if (failuresCnt == 1) {
-                try {
-                    val dialog = AlertDialog("Возможно высокая скорость построения. Получен неожиданный ответ от maps.googleapis.com:" + GoogleParser.result)
-                    dialog.show(getFragmentManager(), "Ошибка")
-                } catch (e: IllegalStateException) {
-                    e.printStackTrace()
-                }
+                showAllert("Возможно высокая скорость построения. Получен неожиданный ответ от maps.googleapis.com:" + GoogleParser.result)
             }
         } else {
-            try {
-                val dialog = AlertDialog("Маршрут не построен, проверьте интернет соединение")
-                dialog.show(getFragmentManager(), "Ошибка")
-            } catch (e: IllegalStateException) {
-                e.printStackTrace()
-            }
+            showAllert("Маршрут не построен, проверьте интернет соединение")
         }
     }
 
@@ -562,10 +555,10 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 	 * @see roboguice.activity.RoboFragmentActivity#onStart()
 	 */
     override fun onStart() {
-        config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
+        val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         if (positionReciever != null) {
-            if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReciever)) TimerService.mListners!!.add(positionReciever)
+            if (config.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReciever)) TimerService.mListners!!.add(positionReciever)
         }
         super.onStart()
     }
@@ -590,10 +583,10 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     //private static Long idTrace = new Long (-1);
     private fun saveOrReplaceTrace(name: String?): Boolean { // or use id, load and save
         if (dataTrace != null && TraceEndVM.isStart(position?.start) && position?.end != null) {
-            if (dataTrace!!.extraPoints.size == 0) { // null entity case
+            if (dataTrace!!.extraPoints?.size == 0) { // null entity case
                 val utilPoint = UtilePointSerializer()
 //                dataTrace!!.extraPoints.add(utilPoint.serialize(position!!.start?:TraceEndVM.start) as String?)
-                dataTrace!!.extraPoints.add(utilPoint.serialize(position!!.end) as String?)
+                dataTrace!!.extraPoints?.add(utilPoint.serialize(position?.end!!) as String)
             }
             val traceOld = DbFunctions.getTraceByName(name)  //back null if add lock
             //traces = new Select ().from (Trace.class).where ("name = ?",currentName).limit (1).execute ();
@@ -611,15 +604,13 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             if (traceNew == null && traceOld != null) {
                 Delete().from(Trace::class.java).where("name=?", name).execute<Model>()
                 traceOld.save()
-                val dialog = AlertDialog("Не удалось сохранить маршрут с именем: \""
-                        + name + "\"" + ". Откатано до прежнего")
-                dialog.show(getFragmentManager(), "Ошибка")
+                showAllert(("Не удалось сохранить маршрут с именем: \""
+                        + name) + "\"" + ". Откатано до прежнего")
                 return false
             } else if (traceNew == null) {
                 Delete().from(Trace::class.java).where("name=?", name).execute<Model>()
-                val dialog = AlertDialog("Внимание база данных повреждена!!! " +
+                showAllert("Внимание база данных повреждена!!! " +
                         "Для починки маршрут с именем: \"" + name + "\"" + " был удален")
-                dialog.show(getFragmentManager(), "Ошибка")
             }
         return true
         }

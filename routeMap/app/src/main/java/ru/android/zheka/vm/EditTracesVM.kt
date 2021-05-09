@@ -20,7 +20,7 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
     }
 
     override val shownItems: MutableList<String>
-        get() = traces.map { trace -> trace.name }.toMutableList()
+        get() = traces.map { trace -> trace.name!! }.toMutableList()
 
     override fun onClick(pos: Int) {
         if (editOptions[0].equals(model.spinnerOption)) {
@@ -31,7 +31,7 @@ class EditTracesVM(view: IEditTraces, model: LatLngModel) : EditVM(view, model),
             saveDialog.show(view.activity.fragmentManager, model.spinnerOption)
             return
         }
-        RemoveDialog(Consumer { a -> removeTrace(pos) }, view, traces[pos].name,
+        RemoveDialog(Consumer { a -> removeTrace(pos) }, view, traces[pos].name!!,
                 R.string.cancel_save_point).show()
     }
 

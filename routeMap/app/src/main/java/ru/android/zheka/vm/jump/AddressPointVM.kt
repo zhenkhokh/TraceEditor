@@ -310,8 +310,8 @@ class AddressPointVM(val view: IEnterPoint, val model: IAddressModel) : IAddress
         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME, Config::class.java) as Config
         if (config.tenMSTime != "0") Toast.makeText(view.context(), "Определение местоположения станет помехой, лучше его отключить", 30).show()
         var address = config.address
-        if (address.isNotEmpty()) {
-            var endpos = address.indexOf(aDelimiter)
+        if ((address?:"").isNotEmpty()) {
+            var endpos = address!!.indexOf(aDelimiter)
             model.region.set(address.substring(0, endpos))
             address = address.substring(endpos + 1)
             endpos = address.indexOf(aDelimiter)

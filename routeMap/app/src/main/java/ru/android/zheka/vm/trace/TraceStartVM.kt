@@ -8,7 +8,10 @@ import ru.android.zheka.coreUI.IActivity
 import ru.android.zheka.coreUI.RxTransformer
 import ru.android.zheka.coreUI.SingleChoiceDialog
 import ru.android.zheka.fragment.Trace
-import ru.android.zheka.gmapexample1.*
+import ru.android.zheka.gmapexample1.MapsActivity
+import ru.android.zheka.gmapexample1.PositionInterceptor
+import ru.android.zheka.gmapexample1.PositionUtil
+import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
 
@@ -17,7 +20,7 @@ class TraceStartVM(override val view: IActivity, model: LatLngModel) : EditVM(vi
     override fun onClick(pos: Int) {
         Observable.just(true).compose(RxTransformer.observableIoToMain())
                 .subscribe(marker@{
-                    resetAndStartTrace(PositionInterceptor(view.activity), model.points[pos].data)
+                    resetAndStartTrace(PositionInterceptor(view.activity), model.points[pos].data!!)
 
 //                    val intent: Intent = view.activity.intent
 //                    val positionUtil = PositionUtil()

@@ -75,11 +75,11 @@ open class Routing : AsyncTask<LatLng, Void, Route>() {
         mBuf.append("&sensor=true&mode=")
         mBuf.append(_mTravelMode.value)
         val config = getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
-                , Config::class.java) as Config?
+                , Config::class.java) as Config
         if (points.size > 2) {
             println("optimizationBellmanFlag= " + Application.optimizationBellmanFlag
                     + " points.length=" + points.size
-                    + " config.bellmanFord=" + config!!.bellmanFord)
+                    + " config.bellmanFord=" + config.bellmanFord)
             mBuf.append("&waypoints=optimize:")
                     .append(config.optimization)
             val isBellman = config.bellmanFord == Application.optimizationBellmanFlag
@@ -92,7 +92,7 @@ open class Routing : AsyncTask<LatLng, Void, Route>() {
                 if (isBellman && i <= 4 || !isBellman) mBuf.append("|" + points[i].latitude + "," + points[i].longitude)
             }
         }
-        val avoid = config!!.avoid
+        val avoid = config.avoid?:""
         if (!avoid.isEmpty()) mBuf.append("&avoid=$avoid")
         mBuf.append("&key=").append(MainActivity.googleKey) //
         return mBuf.toString()
@@ -120,8 +120,8 @@ open class Routing : AsyncTask<LatLng, Void, Route>() {
     init {
         _aListeners = ArrayList() //(Class<Routing.TravelMode>)clTravel
         val config = getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
-                , Config::class.java) as Config?
-        val mTravelMode: TravelMode = TravelMode.valueOf(config!!.travelMode)
+                , Config::class.java) as Config
+        val mTravelMode: TravelMode = TravelMode.valueOf(config.travelMode!!)
         _mTravelMode = mTravelMode
     }
 }
