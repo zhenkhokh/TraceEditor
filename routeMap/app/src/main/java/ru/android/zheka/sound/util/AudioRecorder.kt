@@ -60,8 +60,8 @@ class AudioRecorder(private val path: String) {
         var i = 0
         for (`in` in s) {
             val si = `in`.toInt()
-            b[i++] = (si and 0xff) as Byte
-            b[i++] = (si shr 8 and 0xff) as Byte
+            b[i++] = (si and 0xff).toByte()
+            b[i++] = (si shr 8 and 0xff).toByte()
         }
         return b
     }
@@ -134,8 +134,8 @@ class AudioRecorder(private val path: String) {
 
     @Throws(IOException::class)
     private fun writeShort(output: DataOutputStream, value: Int) {
-        output.writeShort(value shr 0)
-        output.writeShort(value shr 8)
+        output.write(value shr 0)
+        output.write(value shr 8)
     }
 
     @Throws(IOException::class)
