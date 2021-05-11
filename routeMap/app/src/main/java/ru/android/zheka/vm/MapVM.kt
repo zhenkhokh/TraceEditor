@@ -30,9 +30,9 @@ class MapVM(var view: IActivity, var model: IMapModel) : IMapVM {
     }
 
     override fun home() {
-        val intent = model.actvity.position?.newIntent
-        intent?.setClass(view.context(), MainActivity::class.java)
-        intent?.action = Intent.ACTION_VIEW
+        val intent = model.actvity.position.newIntent
+        intent.setClass(view.context(), MainActivity::class.java)
+        intent.action = Intent.ACTION_VIEW
         view.activity.startActivity(intent)
         view.activity.finish()
     }
@@ -59,7 +59,7 @@ class MapVM(var view: IActivity, var model: IMapModel) : IMapVM {
         }
         model.actvity.mapType = MapTypeHandler(MapTypeHandler.userCode)
         //mMap.setMapType (mapType.getCode ());// setting has no effect
-        geo();//?
+        geo()//?
     }
 
 
@@ -78,7 +78,7 @@ class MapVM(var view: IActivity, var model: IMapModel) : IMapVM {
     }
 
     override fun toMap() {
-        val mapIntent = model.actvity.position!!.newIntent //new Intent(Intent.ACTION_VIEW, geoUri);
+        val mapIntent = model.actvity.position.newIntent //new Intent(Intent.ACTION_VIEW, geoUri);
         mapIntent.action = Intent.ACTION_VIEW
         mapIntent.setClass(view.context(), GeoPositionActivity::class.java)
         view.activity.startActivity(mapIntent)

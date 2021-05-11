@@ -42,7 +42,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     override fun map() {
-        if (model.position!!.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
+        if (model.position.state != PositionUtil.TRACE_PLOT_STATE.END_COMMAND) {
             Single.just(true)
                     .doOnSubscribe({
                         val dialog = ToMapDialog()
@@ -65,7 +65,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
             return
         }
         if (spinnerOption.equals(options[2])) {
-            endCp();
+            endCp()
         }
     }
 
@@ -117,7 +117,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
     }
 
     fun goToMap() {
-        val intent = model.position!!.newIntent
+        val intent = model.position.newIntent
         intent.setClass(view.activity, MapsActivity::class.java)
         intent.action = Intent.ACTION_VIEW
         if (MapsActivity.isOffline) intent.putExtra(PositionUtil.TITLE, OFFLINE)
@@ -144,7 +144,7 @@ class GeoVM(var view: IActivity, var model: IGeoModel) : IGeoVM {
         override fun positiveProcess() {
             println("start positiveProcess")
             val point = Point()
-            point.data = model.position!!.centerPosition
+            point.data = model.position.centerPosition
             point.name = nameField!!.text.toString()
             val dialog = AlertDialog("")
             if (point.name.isEmpty()) {

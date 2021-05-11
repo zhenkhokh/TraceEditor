@@ -12,7 +12,6 @@ import ru.android.zheka.fragment.Trace
 import ru.android.zheka.gmapexample1.MapsActivity
 import ru.android.zheka.gmapexample1.PositionInterceptor
 import ru.android.zheka.gmapexample1.PositionUtil
-import ru.android.zheka.gmapexample1.PositionUtil.LAT_LNG
 import ru.android.zheka.gmapexample1.R
 import ru.android.zheka.model.LatLngModel
 import ru.android.zheka.vm.EditVM
@@ -27,8 +26,8 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     }
 
     companion object {
-        var start: LatLng = LAT_LNG
-        fun isStart(start_ : LatLng? ):Boolean = start_ != null || !start.equals(LAT_LNG)
+        var start: LatLng = PositionUtil.LAT_LNG
+        fun isStart(start_ : LatLng? ):Boolean = start_ != null || !start.equals(PositionUtil.LAT_LNG)
     }
 
     fun finish(pointData: LatLng?) {
@@ -65,7 +64,7 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     }
 
     private fun setCenterEndState(positionInterceptor: PositionInterceptor) {
-        start = positionInterceptor.start
+        start = positionInterceptor.start!!
         positionInterceptor.start = null
     }
 
@@ -84,16 +83,16 @@ class TraceEndVM(view: IActivity, model: LatLngModel) : EditVM(view, model), ITr
     }
 
     private fun canItPlot(positionInterceptor: PositionInterceptor): Boolean {
-        return !((positionInterceptor.start ?: start).equals(LAT_LNG) ||
-                positionInterceptor.end == null || positionInterceptor.end.equals(LAT_LNG)
+        return !((positionInterceptor.start ?: start).equals(PositionUtil.LAT_LNG) ||
+                positionInterceptor.end == null || PositionUtil.LAT_LNG.equals(positionInterceptor.end)
                 )
     }
 
     override fun goAction() {
-        val intent = view.activity?.intent
+        val intent = view.activity.intent
         intent?.setClass(view.context(), MapsActivity::class.java)
         intent?.setAction(Intent.ACTION_VIEW)
-        view.activity?.startActivity(intent)
+        view.activity.startActivity(intent)
     }
 
     override fun onDestroy() {

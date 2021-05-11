@@ -14,7 +14,7 @@ import ru.android.zheka.gmapexample1.R
 class GeoModel(view: Context?) : PanelModel(view), IGeoModel {
     private val _hidePanel =  ObservableInt(View.GONE)
     override val point: LatLng
-        get() = position.centerPosition
+        get() = position.centerPosition!!
 
     private var position_: PositionInterceptor? = null
     override val position: PositionInterceptor
@@ -28,13 +28,12 @@ class GeoModel(view: Context?) : PanelModel(view), IGeoModel {
         }
 
     override lateinit var config: Config
-    override var hidePanel: ObservableInt
+    override val hidePanel: ObservableInt
         get() = _hidePanel
-        set(value) {}
 
     override val onCameraChanged = GoogleMap.OnCameraChangeListener {
         if (position_ != null && position.markerCenter != null ) {
-            this.position.markerCenter.position = it.target
+            this.position.markerCenter!!.position = it.target
             this.position.zoom = it.zoom
             this.position.centerPosition = it.target
             if (config.uLocation!!) this.position.updateUILocation()

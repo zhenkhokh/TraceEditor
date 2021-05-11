@@ -87,7 +87,7 @@ class GeoPositionActivity //AppCompatActivity
         val coordinate = findViewById(R.id.coordinateTextGeo) as TextView
         println("get config")
         coordinate.visibility = View.GONE
-        if (config != null) if (config.uLocation!!) {
+        if (config.uLocation!!) {
             coordinate.visibility = View.VISIBLE
         }
         if (TimerService.interrupted) {
@@ -105,7 +105,7 @@ class GeoPositionActivity //AppCompatActivity
         try {
             model.position.positioning() //getIntent();
         } catch (e: Exception) {
-            Toast.makeText(this, "Нет переданного местоположения", 15).show()
+            Toast.makeText(this, "Нет переданного местоположения", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
         }
 //        model.position!!.updatePosition()
@@ -118,40 +118,38 @@ class GeoPositionActivity //AppCompatActivity
         val geoIntent: Intent = getIntent()
         println("GeoPosition geoIntent deliver")
         println(geoIntent.data as Uri)
-        if (map != null) {
-            mMap = map
-            model.position!!.markerCenter = map.addMarker(MarkerOptions().position(model.position!!.centerPosition)
-                    .title(model.position!!.title)
-                    .snippet(model.position!!.tracePointName)
-                    .draggable(true))
-            //center = CameraUpdateFactory.newLatLng(centerPosition);
-            //zoom = CameraUpdateFactory.zoomBy(positionUtil.getZoom());
-            println("geoPosition.onMapReadymove camera to " + model.position!!.centerPosition.latitude
-                    + " " + model.position!!.centerPosition.longitude)
-            //map.moveCamera(center);
-            //map.animateCamera(zoom);
-            mapType = MapTypeHandler(MapTypeHandler.userCode)
-            mMap!!.mapType = mapType!!.code
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder()
-                    .target(model.position!!.centerPosition)
-                    .zoom(model.position!!.zoom).build()))
-            if (mMap!!.uiSettings != null) {
-                mMap!!.uiSettings.isZoomControlsEnabled = true
-                mMap!!.uiSettings.isMapToolbarEnabled = true
-            } else Toast.makeText(this, "Панель не работает", 15).show()
-            map.setOnCameraChangeListener(model.onCameraChanged)
-            map.setOnMapLongClickListener(this)
-            map.setOnMarkerClickListener(this)
-            map.setOnMarkerDragListener(this)
-        } else Toast.makeText(this, "map is not ready: null pointer exception", 15)
+        mMap=map
+        model.position.markerCenter=map.addMarker(MarkerOptions().position(model.position.centerPosition)
+                .title(model.position.title)
+                .snippet(model.position.tracePointName)
+                .draggable(true))
+        //center = CameraUpdateFactory.newLatLng(centerPosition);
+        //zoom = CameraUpdateFactory.zoomBy(positionUtil.getZoom());
+        println("geoPosition.onMapReadymove camera to " + model.position.centerPosition!!.latitude
+                + " " + model.position.centerPosition!!.longitude)
+        //map.moveCamera(center);
+        //map.animateCamera(zoom);
+        mapType=MapTypeHandler(MapTypeHandler.userCode)
+        mMap!!.mapType=mapType!!.code
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder()
+                .target(model.position.centerPosition)
+                .zoom(model.position.zoom).build()))
+        if (mMap!!.uiSettings != null) {
+            mMap!!.uiSettings.isZoomControlsEnabled=true
+            mMap!!.uiSettings.isMapToolbarEnabled=true
+        } else Toast.makeText(this, "Панель не работает", Toast.LENGTH_SHORT).show()
+        map.setOnCameraChangeListener(model.onCameraChanged)
+        map.setOnMapLongClickListener(this)
+        map.setOnMarkerClickListener(this)
+        map.setOnMarkerDragListener(this)
     }
 
     override fun onMapLongClick(point: LatLng) {
-        if (point != null) model.position!!.markerCenter = mMap!!.addMarker(MarkerOptions().position(point)
+        model.position.markerCenter = mMap!!.addMarker(MarkerOptions().position(point)
                 .draggable(true))
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
+    override fun onMarkerClick(marker: Marker?): Boolean {
         if (marker != null) {
             marker.remove()
             return true
@@ -179,7 +177,7 @@ class GeoPositionActivity //AppCompatActivity
         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
         if (positionReceiver != null) {
-            if (config!!.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReceiver)) TimerService.mListners!!.add(positionReceiver)
+            if (config.tenMSTime != getString(R.string.timerdata1)) if (!TimerService.mListners!!.contains(positionReceiver)) TimerService.mListners!!.add(positionReceiver)
         }
         super.onStart()
     }
@@ -194,7 +192,7 @@ class GeoPositionActivity //AppCompatActivity
      * @see roboguice.activity.RoboFragmentActivity#onStart()
      */
     override fun onStop() {
-        model.position!!.mGoogleApiClient.disconnect()
+        model.position.mGoogleApiClient!!.disconnect()
         if (positionReceiver != null) TimerService.mListners!!.remove(positionReceiver)
         super.onStop()
     }

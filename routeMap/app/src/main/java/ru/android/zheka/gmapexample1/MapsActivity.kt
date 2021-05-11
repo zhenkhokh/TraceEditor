@@ -43,8 +43,8 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     private var mMap: GoogleMap? = null
     protected var routing: Routing? = null
 
-    @JvmField
-    var position: PositionInterceptor? = null
+    lateinit var position: PositionInterceptor
+    fun isPositionInitialized() = ::position.isInitialized
 
     protected var resViewId = R.layout.activity_maps //R.layout.activity_maps;
     var dataTrace: DataTrace? = DataTrace()
@@ -74,17 +74,17 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 
     fun fetchWayPoints(): ArrayList<LatLng> {
         wayPoints = ArrayList()
-        if (model.isFakeStart) wayPoints.add(position!!.start?:TraceEndVM.start) else wayPoints.add(position!!.centerPosition)
-        val iterator: Iterator<*> = position!!.extraPoints.iterator()
+        if (model.isFakeStart) wayPoints.add(position.start?:TraceEndVM.start) else wayPoints.add(position.centerPosition!!)
+        val iterator: Iterator<*> = position.extraPoints.iterator()
         while (iterator
                         .hasNext()) {
             val sPoint = iterator.next() as String
             val point = UtilePointSerializer().deserialize(sPoint) as LatLng
             val rPoint = BellmannFord.round(point)
-            if (rPoint != BellmannFord.round(position!!.start?:TraceEndVM.start)//TODO button in geoPosition
-                    && rPoint != BellmannFord.round(position!!.end)) wayPoints.add(point)
+            if (rPoint != BellmannFord.round(position.start?:TraceEndVM.start)
+                    && rPoint != BellmannFord.round(position.end!!)) wayPoints.add(point)
         }
-        wayPoints.add(position!!.end)
+        wayPoints.add(position.end!!)
         return wayPoints
     }
 
@@ -138,7 +138,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        if (options == null && googleMap != null) options = MarkerOptions().icon(
+        if (options == null ) options = MarkerOptions().icon(
                         BitmapDescriptorFactory.fromResource(R.drawable.cursor72_77))
                 .draggable(true)
         /*
@@ -151,9 +151,9 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
         */
         // MapInitilizer is not require here
         try {
-            position!!.positioning()
+            position.positioning()
         } catch (e: Exception) {
-            Toast.makeText(this, "Нет переданного местоположения", 15).show()
+            Toast.makeText(this, "Нет переданного местоположения", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
         }
         if (positionReciever == null) {
@@ -167,22 +167,20 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
         //CameraUpdate center = CameraUpdateFactory.newLatLng(this.center);
         //CameraUpdate zoom =  CameraUpdateFactory.zoomTo(this.zoom);
         println("zoom and center are initiated")
-        if (googleMap != null) {
-            mMap = googleMap
-            println("position.centerPosition:" + position!!.centerPosition
-                    + " position.zoom:" + position!!.zoom)
-            mMap!!.mapType = mapType.code
-            mMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder()
-                    .target(position!!.centerPosition)
-                    .zoom(position!!.zoom)
-                    .build()))
-            if (mMap!!.uiSettings != null) {
-                mMap!!.uiSettings.isZoomControlsEnabled = true
-                mMap!!.uiSettings.isZoomGesturesEnabled = true
-                mMap!!.uiSettings.setAllGesturesEnabled(true)
-                mMap!!.uiSettings.isMapToolbarEnabled = true
-                mMap!!.uiSettings.isMyLocationButtonEnabled = true
-            } else Toast.makeText(this, "Панель не работает", 15).show()
+        mMap=googleMap
+        println("position.centerPosition:" + position.centerPosition
+                + " position.zoom:" + position.zoom)
+        googleMap.mapType=mapType.code
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.Builder()
+                .target(position.centerPosition)
+                .zoom(position.zoom)
+                .build()))
+        if (googleMap.uiSettings != null) {
+            googleMap.uiSettings.isZoomControlsEnabled=true
+            googleMap.uiSettings.isZoomGesturesEnabled=true
+            googleMap.uiSettings.setAllGesturesEnabled(true)
+            googleMap.uiSettings.isMapToolbarEnabled=true
+            googleMap.uiSettings.isMyLocationButtonEnabled=true
         } else {
             showAllert("map is null")
             return
@@ -191,17 +189,17 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
         //(Routing.TravelMode.WALKING);
         routing!!.registerListener(this)
         // to know start==end
-        position!!.centerPosition = PositionUtil.getGeoPosition(this) // <---?
+        position.centerPosition = PositionUtil.getGeoPosition(this) // <---?
         //position.centerPosition = position.getLocation ();
         prevPoint = if (!model.isFakeStart) {
-            position!!.centerPosition //position.start;
+            position.centerPosition //position.start;
             //position.start = position.centerPosition;// <---?
         } else {
-            position!!.start?:TraceEndVM.start
+            position.start?:TraceEndVM.start
         }
-        point = position!!.end
+        point = position.end
         if (prevPoint != null && point != null) {
-            if (position!!.extraPoints.size <= 0) {
+            if (position.extraPoints.size <= 0) {
                 results = ResultRouteHandler(1)
                 traceDebuggingSer = getIntent().getStringExtra(PositionUtil.TITLE)
                 if (isOffline && (traceDebuggingSer == null || traceDebuggingSer == GeoPositionActivity.OFFLINE)) {
@@ -228,14 +226,14 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                         var bellManPoits = ArrayList<LatLng>()
                         val config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                                 , Config::class.java) as Config
-                        val isBellman = config!!.bellmanFord == Application.optimizationBellmanFlag
+                        val isBellman = config.bellmanFord == Application.optimizationBellmanFlag
                         if (!isOffline) {
                             //ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
                             fetchWayPoints()
                             if (isBellman) {
                                 bellManPoits = wayPoints
                                 //                                for (i in 1..2) bellManPoits.remove(position!!.end)
-                                bellManPoits.add(position!!.end)
+                                bellManPoits.add(position.end!!)
                                 bellManPoits = ArrayList(Arrays.asList(
                                         *BellmannFord.process(bellManPoits.toTypedArray()))
                                 )
@@ -257,7 +255,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                 }
                                 val order = route.order
                                 println("order is $order")
-                                if (order.size == position!!.extraPoints.size - 1) println("order.size() is fine")
+                                if (order.size == position.extraPoints.size - 1) println("order.size() is fine")
                                 val temp = ArrayList<String>()
                                 run {
                                     val iterator: Iterator<*> = order.iterator()
@@ -273,10 +271,10 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                                 .hasNext()) {
                                     val index = iterator.next() as Int
                                     println("index=$index, index_=$index_")
-                                    temp[index] = position!!.extraPoints[index_++]
+                                    temp[index] = position.extraPoints[index_++]
                                 }
-                                position!!.setExtraPointsFromCopy(temp)
-                                position!!.getExtraPoints().add(UtilePointSerializer().serialize(position?.end!!).toString())
+                                position.setExtraPointsFromCopy(temp)
+                                position.extraPoints.add(UtilePointSerializer().serialize(position.end!!).toString())
                                 //}
                                 //add end point
                                 //position.extraPoints.add((String)new UtilePointSerializer().serialize(position.end));
@@ -286,8 +284,8 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                         }
                         val iterator: Iterator<*>
                         if (isBellman && !isOffline) {
-                            val iStart = bellManPoits.indexOf(position!!.start?:TraceEndVM.start)
-                            val rStart = BellmannFord.round(position!!.start?:TraceEndVM.start)
+                            val iStart = bellManPoits.indexOf(position.start?:TraceEndVM.start)
+                            val rStart = BellmannFord.round(position.start?:TraceEndVM.start)
                             for (i in 0 until iStart) {
                                 val head = bellManPoits.removeAt(0)
                                 if (rStart != BellmannFord.round(head)) bellManPoits.add(head)
@@ -303,9 +301,9 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                                     )
                                 } as String)
                             }
-                            position!!.setExtraPointsFromCopy(tmp)
+                            position.setExtraPointsFromCopy(tmp)
                         }
-                        val tmp = position!!.extraPoints
+                        val tmp = position.extraPoints
                         iterator = tmp.iterator() // be happy it is just read
                         results = ResultRouteHandler(tmp.size)
                         var dataTrace: DataTrace? = null
@@ -340,7 +338,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                             if (failuresCnt >= maxFailures) {
                                 return
                             }
-                            val sPoint = iterator.next() as String
+                            val sPoint = iterator.next()
                             point = UtilePointSerializer().deserialize(sPoint) as LatLng
                             //do {
                             if (curCnt == cntRun) routing!!.execute(prevPoint, point)
@@ -463,8 +461,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             //}
             // Start marker
             var options = MarkerOptions()
-            var markerPosition: LatLng? = null
-            markerPosition = if (prevPoint != null) prevPoint else position!!.centerPosition
+            var markerPosition = if (prevPoint != null) prevPoint else position.centerPosition
             options.position(markerPosition)
             if (cnt != cntCtrl) System.err.println("cnt!=cntCtrl - error cnt=$cnt cntCtrl=$cntCtrl")
             if (cnt == 0) options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue)) else options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_red))
@@ -477,18 +474,17 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 
             // End marker
             options = MarkerOptions()
-            markerPosition = if (point != null) point else position!!.centerPosition
+            markerPosition = if (point != null) point else position.centerPosition
             options.position(markerPosition)
             //extra
             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_red))
             //end
             if (cnt == 0) options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-            if (position!!.extraPoints != null && cnt >= position!!.extraPoints.size - 1) {
+            if (cnt >= position.extraPoints.size - 1) {
                 options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                position!!.updateUILocation(resTextId)
-                val tmp = ArrayList(position!!.extraPoints)
+                position.updateUILocation(resTextId)
+                val tmp = ArrayList(position.extraPoints)
                 dataTrace!!.extraPoints = tmp
-                val allPoints: List<LatLng> = ArrayList()
                 val it: Iterator<String> = tmp.iterator()
                 for (route1 in results.routes) {
                     dataTrace!!.addPoints(route1.points)
@@ -496,7 +492,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
                         dataTrace!!.addPoint(it.next())
                     }
                 }
-                Toast.makeText(context_, String.format("КУЗьМА: %.2f км", BellmannFord.length).replace(",", "."), 15).show()
+                Toast.makeText(context_, String.format("КУЗьМА: %.2f км", BellmannFord.length).replace(",", "."), Toast.LENGTH_SHORT).show()
             }
             //DO NOT write end
             mMap!!.addMarker(options)
@@ -508,45 +504,45 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
     }
 
     private fun getName(point: LatLng?): String {
-        return DbFunctions.getNamePointByData(point) ?: return ""
+        return DbFunctions.getNamePointByData(point)
     }
 
     fun goPosition(isBeforeAnimation: Boolean) {
-        runOnUiThread(Runnable {
+        runOnUiThread( {
             if (mMap != null) {
                 if (cursorMarker != null) cursorMarker!!.remove()
                 cursorMarker = mMap!!.addMarker(options!!
-                        .position(position!!.location)
+                        .position(position.location)
                 )
                 try {
                     fetchWayPoints()
                     BellmannFord.getBearing(wayPoints.toTypedArray())
-                    while (BellmannFord.bearing == Float.NaN && wayPoints.size > 2) {
+                    while (BellmannFord.bearing.isNaN() && wayPoints.size > 2) {
                         println("try fix bearing")
                         wayPoints.removeAt(1)
                         BellmannFord.getBearing(wayPoints.toTypedArray())
                     }
                 } catch (e: NoDirectionException) {
                     e.printStackTrace()
-                    Toast.makeText(this@MapsActivity, "Нет направления, задайте маршрут", 15).show()
+                    Toast.makeText(this@MapsActivity, "Нет направления, задайте маршрут", Toast.LENGTH_SHORT).show()
                 } catch (e: MissMatchDataException) {
                     e.printStackTrace()
-                    Toast.makeText(this@MapsActivity, "Все точки маршрута одинаковы, задайте маршрут", 15).show()
+                    Toast.makeText(this@MapsActivity, "Все точки маршрута одинаковы, задайте маршрут", Toast.LENGTH_SHORT).show()
                 }
                 if (!isBeforeAnimation) positionReciever!!.onReceive(this@MapsActivity, this@MapsActivity.getIntent())
-                println("from geo: move to " + position!!.location)
+                println("from geo: move to " + position.location)
             }
             //mMap.moveCamera(update);
         })
     }
 
     override fun onCameraChange(position: CameraPosition) {
-        if (position != null) {
-            this.position!!.zoom = position.zoom
-            this.position!!.centerPosition = position.target
+        if (this::position.isInitialized ) {
+            this.position.zoom = position.zoom
+            this.position.centerPosition = position.target
             println("MapsActivity position:"
-                    + this.position!!.centerPosition.latitude + " "
-                    + this.position!!.centerPosition.longitude)
+                    + this.position.centerPosition!!.latitude + " "
+                    + this.position.centerPosition!!.longitude)
         }
     }
 
@@ -569,7 +565,7 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 	 */
     override fun onStop() {
         //saveEmergencyUseOnce ();
-        position!!.mGoogleApiClient.disconnect()
+        position.mGoogleApiClient!!.disconnect()
         if (positionReciever != null) TimerService.mListners!!.remove(positionReciever)
         super.onStop()
     }
@@ -582,11 +578,11 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
 
     //private static Long idTrace = new Long (-1);
     private fun saveOrReplaceTrace(name: String?): Boolean { // or use id, load and save
-        if (dataTrace != null && TraceEndVM.isStart(position?.start) && position?.end != null) {
+        if (dataTrace != null && TraceEndVM.isStart(position.start) && position.end != null) {
             if (dataTrace!!.extraPoints?.size == 0) { // null entity case
                 val utilPoint = UtilePointSerializer()
 //                dataTrace!!.extraPoints.add(utilPoint.serialize(position!!.start?:TraceEndVM.start) as String?)
-                dataTrace!!.extraPoints?.add(utilPoint.serialize(position?.end!!) as String)
+                dataTrace!!.extraPoints?.add(utilPoint.serialize(position.end!!) as String)
             }
             val traceOld = DbFunctions.getTraceByName(name)  //back null if add lock
             //traces = new Select ().from (Trace.class).where ("name = ?",currentName).limit (1).execute ();
@@ -596,8 +592,8 @@ class MapsActivity : AbstractActivity<ActivityMapsBinding>(), HasAndroidInjector
             //else if (trace==null)
             //trace = Model.load (Trace.class, idTrace.longValue ());
             trace.data = dataTrace
-            trace.start = position!!.start?:TraceEndVM.start
-            trace.end = position!!.end
+            trace.start = position.start?:TraceEndVM.start
+            trace.end = position.end
             trace.name = name
             trace.save()
             val traceNew = DbFunctions.getTraceByName(name)

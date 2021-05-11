@@ -14,5 +14,5 @@ interface IGeoModel : IInfoModel {
     var activity: IActivity
     val onCameraChanged: GoogleMap.OnCameraChangeListener
     var config: Config
-    var hidePanel: ObservableInt
+    val hidePanel: ObservableInt
 }
