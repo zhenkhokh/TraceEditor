@@ -17,7 +17,7 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
     private val optimizationNo: ObservableBoolean
     private val optimizationGoogle: ObservableBoolean
     private val optimizationBellmanFord: ObservableBoolean
-    private val spinner: ObservableField<SpinnerHandler>
+    private val _spinner: ObservableField<SpinnerHandler>
     override val spinnerTimer: ObservableField<SpinnerHandler?>
     override val spinnerTravel: ObservableField<SpinnerHandler?>
     override val speedTrace: ObservableInt
@@ -28,9 +28,8 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
     override val avoidInDoor: ObservableBoolean
     override val offline: ObservableBoolean
 
-    override fun getSpinner(): ObservableField<SpinnerHandler> {
-        return spinner
-    }
+    override val spinner: ObservableField<SpinnerHandler>
+        get()=_spinner
 
     override fun updateLen(): ObservableBoolean {
         return updateLen
@@ -56,10 +55,10 @@ class SettingsModel(view: Context) : PanelModel(view), ISettingsModel {
         optimizationNo = ObservableBoolean(!config.optimization!! && !isBellman)
         optimizationBellmanFord = ObservableBoolean(isBellman)
         optimizationGoogle = ObservableBoolean(config.optimization!! && !isBellman)
-        spinner = ObservableField(SpinnerHandler() )// TODO put some object or null
+        _spinner = ObservableField(SpinnerHandler() )
         val spinnerData = Arrays.asList(*view.resources.getStringArray(R.array.speedList))
         var pos = -1
-        val spinnerSelected = java.lang.Double.valueOf(config.rateLimit_ms) / 1000.0
+        val spinnerSelected = java.lang.Double.valueOf(config.rateLimit_ms!!) / 1000.0
         while (++pos < spinnerData.size) if (spinnerSelected == java.lang.Double.valueOf(spinnerData[pos])) break
         speedTrace = ObservableInt(pos)
         val timerData = view.resources.getStringArray(R.array.timerdatalist)

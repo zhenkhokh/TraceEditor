@@ -20,5 +20,4 @@ interface ISettingsModel : IInfoModel {
     val posTimer: ObservableInt
     val posTravel: ObservableInt
     val speedTrace: ObservableInt
-    override fun getSpinner(): ObservableField<SpinnerHandler>
 }
