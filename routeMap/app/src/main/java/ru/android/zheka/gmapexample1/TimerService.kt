@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class TimerService : IntentService("TimerService") {
-    override fun onHandleIntent(intent: Intent) {
+    override fun onHandleIntent(intent: Intent?) {
         interrupted = false
         var config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                 , Config::class.java) as Config
@@ -22,7 +22,7 @@ class TimerService : IntentService("TimerService") {
             e.printStackTrace()
             return
         }
-        intent.action = BROADCAST_ACTION
+        intent?.action = BROADCAST_ACTION
         val start = System.nanoTime()
         while (ms != 0
                 && !interrupted) {
@@ -33,7 +33,7 @@ class TimerService : IntentService("TimerService") {
             }
             val time = (System.nanoTime() - start) / 1000000
             println("current time(ms): $time")
-            sendBroadcast(intent)
+            sendBroadcast(intent!!)
             config = DbFunctions.getModelByName(DbFunctions.DEFAULT_CONFIG_NAME
                     , Config::class.java) as Config
             try {

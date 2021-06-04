@@ -6,7 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import ru.android.zheka.core.IInfoModel
 
-interface IPanelModel {
+open interface IPanelModel {
     fun keyListener(): ObservableField<View.OnKeyListener>
     fun input(): ObservableField<String>
     fun success(): ObservableField<String> // can be translated

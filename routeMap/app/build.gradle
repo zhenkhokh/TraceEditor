@@ -139,9 +139,7 @@ android {
 repositories {
 //    maven { url "file://home/zheka/.m2/repository/" }
     jcenter()
-    maven { url "https://mvnrepository.com/artifact" } //TODO remove
-    maven { url "https://jitpack.io" }//TODO remove
-    maven { url "http://109.173.124.103:8081/repository/publicRepo" }
+    mavenLocal()
 }
 
 dependencies {
@@ -276,6 +274,8 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:3.12.0"){
         force = true
     }
+    implementation "androidx.core:core-ktx:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //provided (group: 'com.almende.eve', name: 'eve-bundle-android-ws', version:'3.1.1'){
 //exclude(group: 'com.android.support')
