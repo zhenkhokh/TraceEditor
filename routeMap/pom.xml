@@ -25,7 +25,7 @@ com.simpligility.maven.plugins -->
 	<platform.sdk>22</platform.sdk>
 	<!-- 22.2.0 or 18.0.0 depend from play-service version -->
 	<support.version>18.0.0</support.version>
-	<play-services.version>11.6.0</play-services.version>
+	<play-services.version>18.0.2</play-services.version>
     </properties>
     
 <profiles>
